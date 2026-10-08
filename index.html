@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InteractUp | Premium Immersive Dashboard</title>
+    <meta name="description" content="InteractUp is a premium, high-performance community platform. Conquer stage fear, join wellness circles, upskill, and make lifelong friends in an immersive dashboard playground.">
+    <!-- Google Fonts: Montserrat (Bold Nike-style headers) & Inter (Comfortable body text) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="theme-yellow">
+    <!-- Canvas for Mouse-Interactive Particle Network (Hero Background) -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- 1. FULL INTRO LOADER (Motion Graphic Startup Animation - Exact logo.png) -->
+    <div class="intro-loader" id="startup-loader">
+        <canvas id="loader-3d-canvas"></canvas>
+        <div class="loader-content">
+            <div class="loader-logo-container">
+                <div class="logo-glow-aura"></div>
+                <img src="assets/images/logo.png" alt="InteractUp Brand Logo" class="loader-logo-img" id="loader-logo-target">
+            </div>
+            <div class="loader-status-text">Accelerating Potential</div>
+        </div>
+    </div>
+
+    <!-- 2. INTER-PAGE TRANSITION OVERLAY (Exact logo.png) -->
+    <div class="transition-overlay" id="page-swipe-loader">
+        <div class="transition-logo-wrapper">
+            <div class="transition-glow-aura"></div>
+            <img src="assets/images/logo.png" alt="InteractUp Logo" class="transition-logo-img" width="140" height="140">
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD LAYOUT WRAPPER -->
+    <div class="dashboard-container">
+        
+        <!-- 1. LEFT-HAND FIXED DRAWER SIDEBAR (10% Width Collapsible) -->
+        <aside class="dashboard-sidebar collapsed" id="main-sidebar">
+            <div class="sidebar-header">
+                <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Toggle Sidebar Drawer">
+                    <svg class="toggle-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="sidebar-brand-box">
+                    <img src="assets/images/logo.png" alt="InteractUp Logo" class="sidebar-logo-img">
+                    <span class="sidebar-brand-text">INTERACT<span class="logo-accent">UP</span></span>
+                </div>
+            </div>
+
+            <!-- Dashboard Navigation List -->
+            <nav class="sidebar-nav">
+                <a href="#home" class="nav-item active" data-view="home" data-theme="yellow">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Home Lounge</span>
+                </a>
+                <a href="#booth" class="nav-item" data-view="booth" data-theme="cyan">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Speak Booth</span>
+                </a>
+                <a href="#gallery" class="nav-item" data-view="gallery" data-theme="gallery">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Event Gallery</span>
+                </a>
+                <a href="#streak" class="nav-item" data-view="streak" data-theme="gold">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                            <path d="M4 22h16"/>
+                            <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/>
+                            <path d="M12 2a4 4 0 0 1 4 4v5a4 4 0 0 1-4 4 4 4 0 0 1-4-4V6a4 4 0 0 1 4-4z"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Streak Arena</span>
+                </a>
+                <a href="#matchmaker" class="nav-item" data-view="matchmaker" data-theme="emerald">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Circle Matches</span>
+                </a>
+                <a href="#announcements" class="nav-item" data-view="announcements" data-theme="violet">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Announcements</span>
+                </a>
+                <a href="#startup" class="nav-item" data-view="startup" data-theme="amber">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Startup Launch</span>
+                </a>
+                <a href="#nutrients" class="nav-item" data-view="nutrients" data-theme="indigo">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="5" r="3"/>
+                            <circle cx="12" cy="19" r="3"/>
+                            <circle cx="5" cy="12" r="3"/>
+                            <circle cx="19" cy="12" r="3"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Mind Nutrients</span>
+                </a>
+            </nav>
+
+            <!-- Sidebar Footer (Integrates Lo-Fi Player Toggles) -->
+            <div class="sidebar-footer">
+                <button class="btn-sidebar-lofi" id="btn-sidebar-lofi-toggle" aria-label="Toggle Soundboard">
+                    <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <circle cx="18" cy="16" r="3"/>
+                    </svg>
+                    <span class="nav-label">Lo-Fi Player</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 2. MORPHING ACTIVE VIEWPORT (90% Width Scoped Panels) -->
+        <main class="dashboard-viewport" id="dashboard-viewport">
+
+            <!-- PANEL 1: HOME & VIBE LOUNGE (theme-yellow) -->
+            <div class="view-panel active" id="view-home">
+                <section class="hero-section">
+                    <div class="hero-grid-split section-container">
+                        <div class="hero-text-side">
+                            <div class="hero-badge">
+                                <svg class="inline-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="margin-right: 6px;">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                </svg>
+                                14+ ACTIVE INITIATIVES
+                            </div>
+                            <h1 class="hero-title">
+                                YOU DON'T HAVE TO BE <span class="text-gradient">GREAT TO START</span>, BUT YOU HAVE TO <span class="text-gradient-alt">START TO BE GREAT</span>.
+                            </h1>
+                            <p class="hero-subtitle">
+                                InteractUp is a premium, high-contrast ecosystem designed for ambitious minds. Conquer stage fear, master public speaking, join wellness support circles, and build lifelong friendships in a 100% free and supportive community.
+                            </p>
+                            <div class="hero-actions">
+                                <button class="btn btn-primary trigger-view-jump" data-target-view="matchmaker">Find Your Circle</button>
+                                <a href="https://chat.whatsapp.com/DP8whg5bU2RAB50nalQCEU?mode=ac_t" target="_blank" class="btn btn-outline" id="hero-btn-whatsapp">
+                                    <svg class="icon-whatsapp" viewBox="0 0 24 24" width="20" height="20" style="margin-right: 8px;">
+                                        <path fill="currentColor" d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.96 9.96 0 0 0 1.333 4.982L2 22l5.233-1.371a9.994 9.994 0 0 0 4.779 1.208h.004c5.505 0 9.988-4.478 9.99-9.985a9.983 9.983 0 0 0-2.927-7.065A9.957 9.957 0 0 0 12.012 2zm5.827 14.195c-.32.451-1.636 1.61-2.222 1.67-.586.06-1.173.3-3.957-.812-2.784-1.112-4.57-3.93-4.71-4.111-.139-.18-1.153-1.534-1.153-2.927 0-1.392.73-2.073.99-2.353.26-.28.567-.35.756-.35h.54c.17 0 .397-.07.616.452.22.523.755 1.839.82 1.97.066.132.11.285.02.463-.09.18-.135.29-.27.452-.135.161-.284.36-.405.483-.135.132-.277.276-.12.547.157.27.7 1.15 1.502 1.861.802.71 1.478.93 1.688 1.036.21.106.335.09.46-.053.125-.146.54-.627.683-.84.143-.213.287-.179.484-.106.197.073 1.248.589 1.462.696.214.106.357.16.41.25.053.09.053.52-.167.971z"/>
+                                    </svg>
+                                    Join Official WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="hero-image-side">
+                            <div class="premium-3d-frame">
+                                <div class="hologram-video-simulator" id="hero-hologram-container">
+                                    <div class="hologram-image-slides">
+                                        <div class="holo-slide active" id="holo-slide-0" style="background-image: url('assets/images/hologram_friends.png');"></div>
+                                        <div class="holo-slide" id="holo-slide-1" style="background-image: url('assets/images/hologram_speaking.png');"></div>
+                                        <div class="holo-slide" id="holo-slide-2" style="background-image: url('assets/images/hologram_stage.png');"></div>
+                                        <div class="holo-slide" id="holo-slide-3" style="background-image: url('assets/images/hologram_networking.png');"></div>
+                                    </div>
+                                    <div class="holo-scanlines"></div>
+                                    <div class="holo-glow-vignette"></div>
+                                    <canvas id="hero-hologram-canvas"></canvas>
+                                    <div class="hologram-text-overlay" id="hologram-text-overlay">
+                                        <div class="hologram-bubble animate-in">
+                                            <div class="hologram-question" id="holo-question">Do you want to make friends?</div>
+                                            <div class="hologram-sub" id="holo-sub">Connect with genuine, supportive student builders.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="active-members-indicator">
+                                    <span class="pulse-dot"></span>
+                                    <span class="indicator-text">2500+ Members Active Online</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Core Pillars (Steady Board) -->
+                <section class="live-events-section" style="padding-top: 20px;">
+                    <div class="section-container" style="padding-top: 0;">
+                        <div class="live-events-split-grid">
+                            
+                            <!-- Carousel Card (Sized down by half) -->
+                            <div class="live-events-carousel-side">
+                                <div class="live-events-header">
+                                    <span class="live-badge-glow">Active Competitions</span>
+                                    <h2>DON'T JUST WATCH. <span class="text-gradient">JUMP IN!</span></h2>
+                                </div>
+                                <div class="events-carousel-track" id="events-carousel-container">
+                                    <!-- Injected dynamically by JS -->
+                                </div>
+                                <div class="carousel-control-wrapper">
+                                    <div class="carousel-indicators" id="carousel-dots"></div>
+                                    <button class="btn btn-outline btn-all-events" id="btn-open-all-events">
+                                        View All List
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Development & Happiness Promise -->
+                            <div class="live-events-promise-side glass">
+                                <div class="promise-card-header">
+                                    <h4>OUR GROWTH PROMISE</h4>
+                                </div>
+                                <h3>DEVELOPMENT & HAPPINESS</h3>
+                                <p class="promise-card-lead">InteractUp is built on three core pillars designed to make you more confident, supportive, and happy.</p>
+                                <ul class="promise-list">
+                                    <li>
+                                        <div class="promise-list-detail">
+                                            <strong>Supportive Peer Network:</strong>
+                                            <span>No card-swapping ego. Students, MBAs, CAs, and creatives connect as genuine, supportive peers.</span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="promise-list-detail">
+                                            <strong>Fearless Impromptu Expression:</strong>
+                                            <span>Crush stage anxiety and public speaking fear in weekly certified fluency batches.</span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="promise-list-detail">
+                                            <strong>Wellness & Authentic Bonds:</strong>
+                                            <span>Curated wellness circles that provide absolute life support. Strangers become deep family.</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- High-Contrast Clean Stats Bar -->
+                <section class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-card" id="stat-initiatives">
+                            <div class="stat-num">14+</div>
+                            <div class="stat-label">Inclusive Initiatives</div>
+                        </div>
+                        <div class="stat-card" id="stat-wellness">
+                            <div class="stat-num">Wellness</div>
+                            <div class="stat-label">Support & Peer chapters</div>
+                        </div>
+                        <div class="stat-card" id="stat-speaking">
+                            <div class="stat-num">Soft Skills</div>
+                            <div class="stat-label">Fluency & Impromptu debates</div>
+                        </div>
+                        <div class="stat-card" id="stat-cost">
+                            <div class="stat-num">100% Free</div>
+                            <div class="stat-label">Designed For All Student Builders</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PANEL 2: SPEAK BOOTH & ARENA (theme-cyan) -->
+            <div class="view-panel" id="view-booth">
+                <section class="speaker-booth-section">
+                    <div class="section-container">
+                        <div class="speaker-booth-layout">
+                            <div class="booth-info-side">
+                                <div class="hero-badge">STAGE ANXIETY ANNIHILATOR</div>
+                                <h2>THE 30-SECOND <span class="text-gradient">SPEAKER BOOTH</span></h2>
+                                <p class="booth-lead">Ditch the speech jitters. Click "Start Challenge", get a spontaneous Gen-Z topic, speak for 30 seconds, and get an instant confidence diagnostic scorecard.</p>
+                                <div class="booth-guarantees">
+                                    <div class="guarantee-item">
+                                        <svg class="inline-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="margin-right: 8px;">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                        <strong>Real-Time Waveform:</strong> Watch your vocal frequency paint neon visual waves.
+                                    </div>
+                                    <div class="guarantee-item">
+                                        <svg class="inline-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="margin-right: 8px;">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                        <strong>Diagnostic Metrics:</strong> Track your filler words, speed, and confidence level.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="booth-console-side glass">
+                                <div class="console-header">
+                                    <span class="pulse-dot-recording" id="recording-indicator"></span>
+                                    <span class="console-title" id="console-status">Microphone Ready</span>
+                                </div>
+                                <div class="console-body">
+                                    <div class="topic-box" id="booth-topic-box">
+                                        <div class="topic-label">Your Impromptu Topic:</div>
+                                        <div class="topic-text" id="booth-topic-text">Click "Start Recording" to generate challenge topic...</div>
+                                    </div>
+                                    <div class="visualizer-container">
+                                        <canvas id="booth-wave-canvas"></canvas>
+                                        <div class="timer-overlay" id="booth-timer">30s</div>
+                                    </div>
+                                    <div class="equalizer-bars" id="booth-eq-bars">
+                                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                                    </div>
+                                </div>
+                                <div class="console-footer">
+                                    <button class="btn btn-primary btn-block" id="btn-booth-action">Start 30s Challenge</button>
+                                </div>
+                                
+                                <div class="scorecard-overlay" id="booth-scorecard">
+                                    <div class="scorecard-card">
+                                        <h4>SPEECH COMPLETED!</h4>
+                                        <h3>YOUR UP-SKILLING DIAGNOSTIC</h3>
+                                        <div class="score-grid">
+                                            <div class="score-box">
+                                                <div class="score-val text-gradient" id="score-fluency">92%</div>
+                                                <div class="score-label">Fluency Score</div>
+                                            </div>
+                                            <div class="score-box">
+                                                <div class="score-val" id="score-fillers">2</div>
+                                                <div class="score-label">Filler Words</div>
+                                            </div>
+                                        </div>
+                                        <div class="scorecard-feedback" id="score-feedback">
+                                            "Excellent confidence! Your tone was extremely engaging. Try placing 1-second pauses before major assertions to boost authority."
+                                        </div>
+                                        <div class="scorecard-actions">
+                                            <a href="https://chat.whatsapp.com/DP8whg5bU2RAB50nalQCEU?mode=ac_t" target="_blank" class="btn btn-secondary btn-sm">Share on WhatsApp</a>
+                                            <button class="btn btn-outline btn-sm" id="btn-booth-reset">Try Again</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PANEL 3: PAST EVENTS GALLERY (theme-gallery) -->
+            <div class="view-panel" id="view-gallery">
+                <section class="gallery-section">
+                    <div class="section-container" style="padding-top: 40px;">
+                        <div class="section-header">
+                            <div class="hero-badge" style="display: table; margin: 0 auto 24px;">COMMUNITY LIVE ARCHIVE</div>
+                            <h2 class="section-title text-center">THE LIVE <span class="text-gradient">EXPERIENCE GALLERY</span></h2>
+                            <p class="section-subtitle text-center" style="max-width: 700px; margin: 0 auto 40px;">Real-life glimpses of our masterclasses, mock presses, debate battles, and offline networking chapters.</p>
+                        </div>
+
+                        <!-- Gallery Filters -->
+                        <div class="gallery-filter-container">
+                            <button class="gallery-filter-btn active" data-filter="all" id="gfilter-all">All Archive</button>
+                            <button class="gallery-filter-btn" data-filter="talks" id="gfilter-talks">Leader Talks</button>
+                            <button class="gallery-filter-btn" data-filter="battles" id="gfilter-battles">Debates & Battles</button>
+                            <button class="gallery-filter-btn" data-filter="videos" id="gfilter-videos">Reels & Clips</button>
+                            <button class="gallery-filter-btn" data-filter="workshops" id="gfilter-workshops">Workshops & Meetups</button>
+                        </div>
+
+                        <!-- Masonry Gallery Grid -->
+                        <div class="gallery-grid" id="gallery-grid-container">
+                            <!-- Injected dynamically by JS -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PANEL 4: STREAK & LEADERBOARD (theme-gold) -->
+            <div class="view-panel" id="view-streak">
+                <section class="streak-section">
+                    <div class="section-container" style="padding-top: 40px;">
+                        <div class="streak-layout">
+                            <div class="streak-info">
+                                <div class="hero-badge">STREAK REWARDS LADDER</div>
+                                <h2 class="section-title">CERTIFICATE <span class="text-gradient">STREAK SYSTEM</span></h2>
+                                <p class="streak-text">
+                                    Consistent winning requires extreme discipline. Win soft-skill competitions, fluency debates, and active showcases to move up the ladder and claim secure, verified achievement certificates.
+                                </p>
+                                <ul class="streak-rules">
+                                    <li><strong>Pauses on Loss:</strong> Losing does NOT reset your rank! Your level is saved.</li>
+                                    <li><strong>Resume Journey:</strong> Your next victory picks up exactly where your streak paused.</li>
+                                    <li><strong>LinkedIn Verification:</strong> Every certificate includes a secure database verification ID for resumes and job applications.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Streak Simulator Dashboard -->
+                            <div class="streak-simulator steady-board" id="streak-simulator-widget">
+                                <div class="simulator-header">
+                                    <img src="assets/images/badge.png" alt="InteractUp Gold Badge" class="badge-icon-img">
+                                    <h3>Streak Simulator</h3>
+                                </div>
+                                <div class="ladder-visual" id="ladder-visualizer"></div>
+                                <div class="simulator-controls">
+                                    <button class="btn btn-primary" id="btn-streak-win">Win Match</button>
+                                    <button class="btn btn-accent" id="btn-streak-lose">Lose Match</button>
+                                    <button class="btn btn-outline" id="btn-streak-reset">Reset</button>
+                                </div>
+                                <div class="simulator-status" id="simulator-status-display">
+                                    <span class="status-title">Current Level:</span>
+                                    <span class="status-level text-gradient" id="curr-level-name">Newcomer</span>
+                                    <div class="streak-counter">Win Streak: <span id="streak-count">0</span></div>
+                                </div>
+                                <div class="simulator-log" id="simulator-log-box">
+                                    <div class="log-title">Simulation Feed</div>
+                                    <div class="log-entries" id="simulator-feed-entries">
+                                        <div class="feed-entry init">Welcome to the InteractUp Streak Simulator! Win or lose matches to view our locked progress system in action.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Gamified LinkedIn Streak Post Formatter -->
+                            <div class="linkedin-formatter-card glass" id="post-formatter">
+                                <div class="formatter-header">
+                                    <span class="linkedin-brand-badge">in</span>
+                                    <h3>VIRAL LINKEDIN PORTFOLIO BUILDER</h3>
+                                </div>
+                                <p class="formatter-desc">Convert your upskilling streaks and weekly casing wins into highly engaging personal branding content instantly.</p>
+                                <div class="formatter-grid">
+                                    <div class="formatter-inputs-panel">
+                                        <div class="form-field">
+                                            <label for="formatter-milestone">Select Your Accomplishment</label>
+                                            <select id="formatter-milestone">
+                                                <option value="fluency">Completed weekly Fluency Debate Session</option>
+                                                <option value="streak">Unlocked verified Streak Rewards Certificate</option>
+                                                <option value="casing">Solved a corporate case study casing challenge</option>
+                                                <option value="wellness">Shared a wellness milestone in Connect Circle</option>
+                                                <option value="startup">Pitched a co-created startup idea at Hub</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-field">
+                                            <label for="formatter-win-input">Describe Your Win in 1 Sentence</label>
+                                            <input type="text" id="formatter-win-input" placeholder="e.g. I finally conquered my stage fear and spoke for 2 minutes straight without hesitating!" value="I finally conquered my stage fear and spoke for 2 minutes straight without hesitating!">
+                                        </div>
+                                        <button class="btn btn-primary" id="btn-generate-post">Generate Copywriter Post</button>
+                                    </div>
+                                    <div class="formatter-preview-panel">
+                                        <div class="linkedin-preview-header">
+                                            <div class="linkedin-avatar">IB</div>
+                                            <div class="linkedin-meta">
+                                                <span class="user-name">InteractUp Student Builder</span>
+                                                <span class="user-headline">Upskilling in Soft Skills & Impromptu Debating</span>
+                                            </div>
+                                        </div>
+                                        <div class="linkedin-preview-body" id="post-preview-text">
+                                            Click "Generate" to format your custom personal branding post...
+                                        </div>
+                                        <div class="linkedin-preview-footer">
+                                            <button class="btn btn-outline btn-sm" id="btn-copy-post">Copy Post Content</button>
+                                            <span class="copy-success-indicator" id="copy-indicator">Copied! Chime Played!</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PANEL 5: CIRCLE MATCHMAKER (theme-emerald) -->
+            <div class="view-panel" id="view-matchmaker">
+                <section class="matchmaker-section">
+                    <div class="section-container" style="padding-top: 40px;">
+                        <div class="matchmaker-box" id="quiz-container">
+                            <div class="quiz-header">
+                                <h2 class="section-title text-center">FIND YOUR PERFECT <span class="text-gradient">CIRCLE</span></h2>
+                                <p class="section-subtitle text-center">Answer 3 brief questions to determine which InteractUp initiatives suit your immediate goals.</p>
+                            </div>
+                            <div class="quiz-progress-bar">
+                                <div class="quiz-progress-fill" id="quiz-progress" style="width: 0%;"></div>
+                            </div>
+
+                            <!-- Step 1 -->
+                            <div class="quiz-step active" data-step="1" id="quiz-step-1">
+                                <h3 class="quiz-question">1. What is your current profile?</h3>
+                                <div class="quiz-options">
+                                    <button class="quiz-option-btn" data-answer="student">College / University Student</button>
+                                    <button class="quiz-option-btn" data-answer="mba-ca">MBA Student, CA, or Finance Professional</button>
+                                    <button class="quiz-option-btn" data-answer="founder">Early Stage Founder or Entrepreneur</button>
+                                    <button class="quiz-option-btn" data-answer="professional">General Corporate Working Professional</button>
+                                    <button class="quiz-option-btn" data-answer="creative">Creative Writer, Actor, or Artist</button>
+                                </div>
+                            </div>
+
+                            <!-- Step 2 -->
+                            <div class="quiz-step" data-step="2" id="quiz-step-2">
+                                <h3 class="quiz-question">2. What is your highest upskilling priority?</h3>
+                                <div class="quiz-options">
+                                    <button class="quiz-option-btn" data-answer="speaking">Impromptu Speaking, Stage Fear & Fluency</button>
+                                    <button class="quiz-option-btn" data-answer="branding">Personal Branding & LinkedIn Networks</button>
+                                    <button class="quiz-option-btn" data-answer="friendship">Mental Wellness, Support & True Friends</button>
+                                    <button class="quiz-option-btn" data-answer="valuation">Corporate Casing, Excel & Valuation Modelling</button>
+                                    <button class="quiz-option-btn" data-answer="business">Pitching Startups & Raising Venture Funding</button>
+                                </div>
+                            </div>
+
+                            <!-- Step 3 -->
+                            <div class="quiz-step" data-step="3" id="quiz-step-3">
+                                <h3 class="quiz-question">3. What is your weekly commitment capability?</h3>
+                                <div class="quiz-options">
+                                    <button class="quiz-option-btn" data-answer="high">Highly consistent: Active weekly meetings</button>
+                                    <button class="quiz-option-btn" data-answer="medium">Flexible: Bi-weekly workshops & panels</button>
+                                    <button class="quiz-option-btn" data-answer="low">Casual: Weekend debates & open DMs</button>
+                                </div>
+                            </div>
+
+                            <!-- Quiz Results -->
+                            <div class="quiz-step" data-step="results" id="quiz-step-results">
+                                <h3 class="quiz-question text-center">Your Curated Initiatives Match</h3>
+                                <div class="recommendations-container" id="quiz-recommendations-list"></div>
+                                
+                                <!-- Co-Ed Student Live Peer Matching Directory -->
+                                <div class="live-peers-directory" id="live-peers-directory">
+                                    <h4 class="peers-title">ACTIVE PEERS ONLINE NOW MATCHING YOUR PROFILE</h4>
+                                    <p class="peers-subtitle">Connect casually with these modern student builders on WhatsApp to discuss upskilling or attend a weekend table together.</p>
+                                    <div class="peers-grid" id="live-peers-grid-container"></div>
+                                </div>
+                                <div class="text-center" style="margin-top: 2rem;">
+                                    <button class="btn btn-outline" id="btn-quiz-restart">Restart Quiz</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PANEL 6: ANNOUNCEMENTS & NEWS (theme-violet) -->
+            <div class="view-panel" id="view-announcements">
+                <section class="announcements-section section-container" style="padding-top: 40px;">
+                    <div class="section-header">
+                        <div class="hero-badge" style="display: table; margin: 0 auto 24px;">LIVE HUB CONSOLE</div>
+                        <h2 class="section-title text-center">ANNOUNCEMENTS & <span class="text-gradient">NEWSLETTERS</span></h2>
+                        <p class="section-subtitle text-center">Stay updated with live community milestones, debate schedules, and open workshop slots.</p>
+                    </div>
+
+                    <div class="announcements-grid">
+                        <div class="announcement-card glass">
+                            <div class="announcement-header">
+                                <span class="announcement-tag active-tag">Active Slots</span>
+                                <span class="announcement-date">May 2026</span>
+                            </div>
+                            <h3>Mrs. Shukla's Fluency Chapters: Mon/Wed Slots Open</h3>
+                            <p>Mrs. Shweta Shukla has opened 2 remaining slot allocations for the intensive impromptu speaking and operations coaching batches. Batch sizes are strictly capped at 4 people to maximize diagnostics.</p>
+                            <a href="#portal" class="btn btn-primary btn-sm trigger-view-jump" data-target-view="matchmaker">Book Slot Allocation</a>
+                        </div>
+                        <div class="announcement-card glass">
+                            <div class="announcement-header">
+                                <span class="announcement-tag newsletter-tag">Community Update</span>
+                                <span class="announcement-date">May 2026</span>
+                            </div>
+                            <h3>Connect Circle: City Chapter Bangalore Meetup</h3>
+                            <p>Announcing the offline Bangalore Chapter mixer for CA, MBA, and tech builders next weekend. Exchange zero-ego referrals, share CV diagnostics, and build real human support chapters.</p>
+                            <a href="https://chat.whatsapp.com/DP8whg5bU2RAB50nalQCEU?mode=ac_t" target="_blank" class="btn btn-outline btn-sm">Request Invite</a>
+                        </div>
+                        <div class="announcement-card glass">
+                            <div class="announcement-header">
+                                <span class="announcement-tag milestone-tag">Global Achievement</span>
+                                <span class="announcement-date">May 2026</span>
+                            </div>
+                            <h3>InteractUp Crosses 2,500 Confident Builders</h3>
+                            <p>We are thrilled to celebrate reaching 2,500 active members in our virtual community! Together, we have solved over 400 business casing outlines and helped 300+ students conquer stage anxiety.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PANEL 7: STARTUP LAUNCHPAD (theme-amber) -->
+            <div class="view-panel" id="view-startup">
+                <section class="startup-section section-container" style="padding-top: 40px;">
+                    <div class="section-header">
+                        <div class="hero-badge" style="display: table; margin: 0 auto 24px;">BUILDERS LAUNCHPAD</div>
+                        <h2 class="section-title text-center">STARTUP <span class="text-gradient">LAUNCHPAD</span></h2>
+                        <p class="section-subtitle text-center">Turn theories into real execution. Co-create early-stage products and track operational checklists.</p>
+                    </div>
+
+                    <div class="startup-grid">
+                        <div class="startup-card glass">
+                            <h3>Startup Check-in Guidelines</h3>
+                            <p>Our weekly peer checking session focuses on getting early feedback, resolving launch roadblocks, and building minimum viable products. Zero transactional card-swapping. Just peer ownership.</p>
+                            <ul class="startup-list">
+                                <li>
+                                    <strong>MVP Testing:</strong> Launch a functional, simple mockup of your business to the community.
+                                </li>
+                                <li>
+                                    <strong>Co-Founder Matchmaking:</strong> Interconnect with CA, MBA, and tech minds who match your missing operating qualities.
+                                </li>
+                                <li>
+                                    <strong>Venture Pitching:</strong> Share outlines and pitch files inside safe weekend showcases.
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="startup-card glass">
+                            <h3>Co-Founder Matching Portal</h3>
+                            <p>Submit your startup idea outline and list what operational skills you are seeking. Our system matches you directly with compatible builder profiles.</p>
+                            <a href="https://forms.gle/HYiU5XBBmQqhFTzx6" target="_blank" class="btn btn-secondary btn-block" style="margin-top: 20px;">Submit Pitch Deck</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PANEL 8: MIND NUTRIENTS (theme-indigo) -->
+            <div class="view-panel" id="view-nutrients">
+                <section class="nutrients-section section-container" style="padding-top: 40px;">
+                    <div class="section-header">
+                        <div class="hero-badge" style="display: table; margin: 0 auto 24px;">PEER INTELLECTUAL HUB</div>
+                        <h2 class="section-title text-center">MIND <span class="text-gradient">NUTRIENTS</span></h2>
+                        <p class="section-subtitle text-center">Weekly peer sharing batched sessions where builders take turns teaching complex modern casing frameworks.</p>
+                    </div>
+
+                    <div class="nutrients-grid">
+                        <div class="nutrient-card glass">
+                            <h3>How Mind Nutrients Operates</h3>
+                            <p>Every week, groups of 6-7 student builders pick complex modern topics (operations, casing frameworks, startup models, valuation) to study independently and then teach in 10 minutes.</p>
+                            <div class="nutrient-benefits">
+                                <div class="benefit-item">💡 Refines rapid thought structuring under strict timers.</div>
+                                <div class="benefit-item">💡 Accelerates upskilling by teaching others what you learn.</div>
+                                <div class="benefit-item">💡 Builds lasting, zero-jealousy professional networks.</div>
+                            </div>
+                        </div>
+                        <div class="nutrient-card glass">
+                            <h3>Apply to Invite-Only Circle</h3>
+                            <p>To preserve high-quality sharing Batches are strictly invite-only. Apply to the weekend active showcase to secure your invitation badge.</p>
+                            <a href="https://forms.gle/HPDf9FKAobU9k91t7" target="_blank" class="btn btn-primary btn-block" style="margin-top: 20px;">Apply for Invite Allocation</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Central Application Portal -->
+            <section class="portal-section" id="portal">
+                <div class="section-container">
+                    <div class="section-header">
+                        <h2 class="section-title text-center">CENTRALIZED <span class="text-gradient">APPLICATION PORTAL</span></h2>
+                        <p class="section-subtitle text-center">Access open registration forms and contact community admins directly. All student matches are completely free.</p>
+                    </div>
+                    <div class="portal-grid" id="forms-portal-container">
+                        <!-- Dynamic forms portal injected by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Nike-Inspired High-Contrast Footer -->
+            <footer class="footer">
+                <div class="footer-container">
+                    <div class="footer-brand">
+                        <a href="#" class="logo">INTERACT<span class="logo-accent">UP</span></a>
+                        <p>A global community of student builders and creative minds, upskilling, networking, and growing beyond limits.</p>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Quick Navigation</h4>
+                        <a href="#about" class="trigger-view-jump" data-target-view="home">About</a>
+                        <a href="#initiatives" class="trigger-view-jump" data-target-view="matchmaker">Initiatives</a>
+                        <a href="#streak-system" class="trigger-view-jump" data-target-view="streak">Streak Ladder</a>
+                        <a href="#matchmaker" class="trigger-view-jump" data-target-view="matchmaker">Find Your Circle</a>
+                    </div>
+                    <div class="footer-contact">
+                        <h4>Join Ecosystem</h4>
+                        <p>Have specific partnership queries? Reach our team:</p>
+                        <a href="https://wa.me/918383848516" target="_blank" class="btn btn-secondary btn-sm" id="footer-wa-link">
+                            Chat on WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 InteractUp Community. All rights reserved. Created for students and builders. <a href="#admin" class="hidden-admin-key" id="footer-admin-trigger" title="Admin Portal Access">🔑</a></p>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- 3. ALL COMPETITIONS TABLE MODAL OVERLAY -->
+    <div class="modal-backdrop" id="all-events-modal">
+        <div class="modal-card all-events-modal-card">
+            <div class="modal-header">
+                <h3>🏆 Active Competitions & Showcases</h3>
+                <button class="btn-close-modal" id="btn-close-all-events" aria-label="Close Modal">&times;</button>
+            </div>
+            <p class="modal-subtitle">Browse active public speaking showcases, debate tournaments, and wellness socials inside the InteractUp ecosystem.</p>
+            <div class="table-scroll-container">
+                <table class="events-table">
+                    <thead>
+                        <tr>
+                            <th>Competition / Event Title</th>
+                            <th>Status</th>
+                            <th>Details & Soft Skill Focus</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="events-table-body">
+                        <!-- Injected dynamically by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ADMIN PASSCODE AUTHENTICATION MODAL -->
+    <div class="modal-backdrop" id="admin-passcode-modal">
+        <div class="modal-card passcode-card">
+            <div class="modal-header">
+                <h3>🔐 Administrator Login</h3>
+                <button class="btn-close-modal" id="btn-close-passcode" aria-label="Close Modal">&times;</button>
+            </div>
+            <p class="passcode-subtitle">Input the administrator security passcode to enter the live content management dashboard.</p>
+            <div class="passcode-form-group">
+                <input type="password" id="admin-passcode-input" placeholder="Enter passcode..." autocomplete="off">
+                <button class="btn btn-primary" id="btn-validate-passcode">Verify Entry</button>
+            </div>
+            <div class="passcode-error-msg" id="passcode-error">Incorrect passcode. Try again.</div>
+        </div>
+    </div>
+
+    <!-- 5. ADMIN MANAGEMENT DASHBOARD MODAL -->
+    <div class="modal-backdrop" id="admin-dashboard-modal">
+        <div class="modal-card admin-dashboard-card">
+            <div class="modal-header">
+                <h3>🛠 Live Website Editor</h3>
+                <button class="btn-close-modal" id="btn-close-admin-dash" aria-label="Close Editor">&times;</button>
+            </div>
+            <p class="admin-subtitle">Publish new active competitions, upskilling events, or delete outdated listings in real time. Changes sync automatically.</p>
+            
+            <div class="admin-grid-layout">
+                <div class="admin-form-pane">
+                    <h4>➕ Create Live Competition</h4>
+                    <form id="admin-event-form" onsubmit="return false;">
+                        <div class="form-field">
+                            <label for="event-title">Competition / Event Name</label>
+                            <input type="text" id="event-title" placeholder="e.g. Stage Presence Mastery Challenge" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="event-badge">Status Badge Tag</label>
+                            <select id="event-badge">
+                                <option value="🔥 Active Competition">🔥 Active Competition</option>
+                                <option value="✨ Live Workshop">✨ Live Workshop</option>
+                                <option value="🚀 Ongoing Challenge">🚀 Ongoing Challenge</option>
+                                <option value="📅 Upcoming Session">📅 Upcoming Session</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="event-desc">Thematic Description (Emphasis on Soft Skills, Wellness, Friends)</label>
+                            <textarea id="event-desc" rows="3" placeholder="Highlight how this helps students, certificates awarded, or bonding format..." required></textarea>
+                        </div>
+                        <div class="form-field">
+                            <label for="event-link">Registration URL</label>
+                            <input type="url" id="event-link" placeholder="https://forms.gle/..." required>
+                        </div>
+                        <div class="form-field">
+                            <label for="event-image-template">Backdrop Graphic Theme</label>
+                            <select id="event-image-template">
+                                <option value="speaking">🗣 Public Speaking & Soft Skills</option>
+                                <option value="wellness">🤍 Wellness & Making Friends</option>
+                                <option value="casing">📊 Peer Casing & Networking</option>
+                                <option value="creative">🎭 Creative Arts & Theatre</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="btn-save-new-event">Publish Event Live</button>
+                    </form>
+                </div>
+                <div class="admin-list-pane">
+                    <h4>📋 Currently Listed Live Competitions</h4>
+                    <p class="admin-list-subtitle">Manage active display cards. Deleting updates the homepage immediately.</p>
+                    <div class="admin-events-list" id="admin-current-events-list">
+                        <!-- Loaded dynamically by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Cozy Lo-Fi Wellness Synthesized Soundboard (Floating Player Body) -->
+    <div class="wellness-audio-player glass" id="wellness-player">
+        <div class="wellness-player-body" id="wellness-player-body">
+            <div class="wellness-track-name" id="wellness-track-info">Wellness Synthesizer: Off</div>
+            <div class="wellness-controls">
+                <button class="wellness-control-btn active" id="btn-well-pad" data-mode="pad">Ambient Pad</button>
+                <button class="wellness-control-btn" id="btn-well-chimes" data-mode="chimes">Pentatonic Chimes</button>
+            </div>
+            <div class="wellness-volume-group">
+                <span class="vol-icon">🔊</span>
+                <input type="range" id="wellness-volume-slider" min="0" max="100" value="40" aria-label="Ambient volume">
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Lightbox Modal Backdrop -->
+    <div class="modal-backdrop" id="gallery-lightbox-modal">
+        <div class="lightbox-modal-card glass">
+            <div class="lightbox-modal-header">
+                <h3 id="lightbox-title">Event Title</h3>
+                <button class="btn-close-lightbox" id="btn-close-lightbox" aria-label="Close Lightbox">&times;</button>
+            </div>
+            <div class="lightbox-media-wrapper" id="lightbox-media-content">
+                <!-- Dynamic image or video tags injected by JS -->
+            </div>
+            <div class="lightbox-details">
+                <p id="lightbox-desc">Event description and highlights...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>

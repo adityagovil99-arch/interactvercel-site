@@ -104,7 +104,7 @@ const initiativesData = [
         desc: "Our grassroots social welfare arm dedicated to organizing donation drives, youth mental health support, and community service.",
         details: "Join young changemakers to drive tangible positive impacts. Address local challenges while building deep empathy and leadership values.",
         benefits: "Local volunteer chapters, leadership roles, organic networking, certified community welfare badges.",
-        applyUrl: "https://chat.whatsapp.com/DP8whg5bU2RAB50nalQCEU?mode=ac_t"
+        applyUrl: "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0"
     },
     {
         id: "weekend-sessions",
@@ -117,7 +117,7 @@ const initiativesData = [
         desc: "Interactive weekend debates, speech contests, and open fluency rounds. Your direct gateway to the exclusive community Inner Circle.",
         details: "Participate in fun speaking games on Saturday & Sunday. Consistent attendance secures CV review credits, senior mentorship circles, and offline local meetups.",
         benefits: "Weekly speech and debate challenges, guest speaker workshops, verified winner certificates, unlock exclusive Inner Circle status.",
-        applyUrl: "https://chat.whatsapp.com/DP8whg5bU2RAB50nalQCEU?mode=ac_t"
+        applyUrl: "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0"
     }
 ];
 
@@ -248,7 +248,7 @@ const defaultLiveEvents = [
         title: "Impromptu debates & Stage Presence",
         badge: "Active Competition",
         desc: "Ditch the stage fright! Register for this quick, fun impromptu speaking challenge. Get a surprise topic, share your ideas in 2 minutes, and claim your certified winner badge. 100% friendly and supportive.",
-        link: "https://chat.whatsapp.com/DP8whg5bU2RAB50nalQCEU?mode=ac_t",
+        link: "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0",
         template: "speaking",
         icon: "🎙️"
     },
@@ -266,7 +266,7 @@ const defaultLiveEvents = [
         title: "Collaborative Soft Skills Casing Challenge",
         badge: "Ongoing Challenge",
         desc: "Solve practical business and social problems in friendly groups of 3. Excellent for learning team leadership, building active communication skills, and gaining confident collaboration experience.",
-        link: "https://chat.whatsapp.com/DP8whg5bU2RAB50nalQCEU?mode=ac_t",
+        link: "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0",
         template: "casing",
         icon: "📊"
     }
@@ -806,7 +806,7 @@ function renderPortal() {
     portalGrid.innerHTML = "";
     
     const formsList = [
-        { name: "InteractUp WhatsApp Official", desc: "Main entry point to communicate, interact and join weekend debates.", icon: "💬", url: "https://chat.whatsapp.com/DP8whg5bU2RAB50nalQCEU?mode=ac_t" },
+        { name: "InteractUp WhatsApp Official", desc: "Main entry point to communicate, interact and join weekend debates.", icon: "💬", url: "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0" },
         { name: "Connect Circle Registration", desc: "Join curated emotional wellness circles of 10-12 peers.", icon: "🤍", url: "https://forms.gle/EJ5njy2RpcLyCZdo7" },
         { name: "Certified Fluency Coaching", desc: "Secure your place in Shweta Shukla's weekly 4-person coaching.", icon: "🗣", url: "https://forms.gle/SZy3e6jAoV2F4b1NA" },
         { name: "LinkedIn Personal Branding", desc: "Paid lifetime access to accelerate reach and network selflessly.", icon: "🚀", url: "https://lnkd.in/dD9iUi76" },

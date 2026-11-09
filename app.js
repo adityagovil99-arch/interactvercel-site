@@ -579,6 +579,15 @@ function saveTeamData() {
             db.collection("interactup_config").doc("team_data").set(appTeamData)
                 .then(() => {
                     console.log("🔥 Successfully synced to Firebase Cloud Database!");
+                    const cloudSyncStatus = document.getElementById("cloud-sync-status");
+                    if (cloudSyncStatus) {
+                        cloudSyncStatus.style.display = "block";
+                        cloudSyncStatus.style.color = "#10b981";
+                        cloudSyncStatus.innerHTML = "✓ Auto-saved & Synced to Live Site! 🚀";
+                        setTimeout(() => {
+                            if (cloudSyncStatus) cloudSyncStatus.style.display = "none";
+                        }, 4000);
+                    }
                 })
                 .catch(err => {
                     console.error("Firebase cloud sync error:", err);
@@ -1085,6 +1094,50 @@ function setupModalsController() {
         });
     }
     
+    // Admin Direct Cloud Sync Button
+    const btnSyncCloud = document.getElementById("btn-sync-cloud");
+    const cloudSyncStatus = document.getElementById("cloud-sync-status");
+    if (btnSyncCloud) {
+        btnSyncCloud.addEventListener("click", () => {
+            if (!db) {
+                if (cloudSyncStatus) {
+                    cloudSyncStatus.style.display = "block";
+                    cloudSyncStatus.style.color = "#ef4444";
+                    cloudSyncStatus.innerHTML = "❌ Firebase not ready. Check internet connection or browser console.";
+                }
+                return;
+            }
+
+            if (cloudSyncStatus) {
+                cloudSyncStatus.style.display = "block";
+                cloudSyncStatus.style.color = "#2563eb";
+                cloudSyncStatus.innerHTML = "⏳ Syncing to live cloud database...";
+            }
+
+            db.collection("interactup_config").doc("team_data").set(appTeamData)
+                .then(() => {
+                    if (cloudSyncStatus) {
+                        cloudSyncStatus.style.color = "#10b981";
+                        cloudSyncStatus.innerHTML = "✓ Synced to Live Site! 🚀 Website is updated!";
+                        setTimeout(() => {
+                            if (cloudSyncStatus) cloudSyncStatus.style.display = "none";
+                        }, 5000);
+                    }
+                })
+                .catch(err => {
+                    console.error("Firebase sync error:", err);
+                    if (cloudSyncStatus) {
+                        cloudSyncStatus.style.color = "#ef4444";
+                        if (err.code === "permission-denied" || (err.message && err.message.toLowerCase().includes("permission"))) {
+                            cloudSyncStatus.innerHTML = "⚠️ Permission Denied: In Firebase Console &rarr; Firestore &rarr; Rules, change <code>allow read, write: if false;</code> to <code>allow read, write: if true;</code> and click Publish!";
+                        } else {
+                            cloudSyncStatus.innerHTML = "❌ Cloud Error: " + (err.message || "Failed to update");
+                        }
+                    }
+                });
+        });
+    }
+
     // Admin Copy Export Code
     const btnCopyExport = document.getElementById("btn-copy-export-code");
     if (btnCopyExport) {

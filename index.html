@@ -1035,18 +1035,56 @@
 
             <!-- TAB 5: SAVE & EXPORT -->
             <div class="admin-tab-content" id="tab-export">
-                <div class="admin-export-pane" style="max-width: 680px; margin: 0 auto; padding: 10px 0;">
-                    <h4>💾 Make Changes Permanent on www.interactup.in</h4>
-                    <p class="admin-list-subtitle">All your changes are automatically saved right now in your laptop's browser. When you want to update the live public website for all team members, click <strong>"Copy Export Code"</strong> and paste it into <code>app.js</code>, then copy files to <code>interactvercel-site</code> and push via GitHub Desktop!</p>
-                    
-                    <div style="margin: 16px 0;">
-                        <button type="button" class="btn btn-primary" id="btn-copy-export-code">📋 Copy Export Code</button>
-                        <span id="export-copy-status" style="margin-left: 12px; font-weight: 800; font-size: 0.85rem; color: #10b981; display: none;">✓ Copied to clipboard!</span>
+                <div class="admin-export-pane" style="max-width: 780px; margin: 0 auto; padding: 10px 0;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                        
+                        <!-- CARD 1: DIRECT CLOUD SYNC -->
+                        <div style="background: rgba(16, 185, 129, 0.07); border: 2px solid #10b981; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                                    <h4 style="margin: 0; color: #10b981; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                                        ☁️ Option 1: Live Cloud Sync
+                                    </h4>
+                                    <span style="background: #10b981; color: #fff; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 999px;">Instant Live</span>
+                                </div>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.45; margin-bottom: 14px;">
+                                    Saves all changes directly to your live Firebase Cloud database. Updates <strong>www.interactup.in</strong> instantly for every user worldwide without touching code or GitHub!
+                                </p>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary" id="btn-sync-cloud" style="width: 100%; background: #10b981; border-color: #10b981; font-weight: 700; padding: 12px; font-size: 0.95rem; cursor: pointer;">
+                                    ☁️ Save & Update Live Site Directly
+                                </button>
+                                <div id="cloud-sync-status" style="margin-top: 10px; font-size: 0.82rem; font-weight: 700; display: none; text-align: center;"></div>
+                            </div>
+                        </div>
+
+                        <!-- CARD 2: BACKUP CODE EXPORT -->
+                        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                                    <h4 style="margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                                        📋 Option 2: Manual Backup Code
+                                    </h4>
+                                    <span style="background: var(--bg-slate); color: var(--text-muted); font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 999px;">Offline Backup</span>
+                                </div>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.45; margin-bottom: 14px;">
+                                    Manual offline backup. Copies your full data snapshot JSON so you can paste it into <code>app.js</code> and push via GitHub Desktop.
+                                </p>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-secondary" id="btn-copy-export-code" style="width: 100%; padding: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer;">
+                                    📋 Copy Backup Export Code
+                                </button>
+                                <div id="export-copy-status" style="margin-top: 10px; font-size: 0.82rem; font-weight: 700; color: #10b981; display: none; text-align: center;">✓ Copied to clipboard!</div>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="form-field">
-                        <label for="admin-export-textarea">Export Code Snapshot (JSON):</label>
-                        <textarea id="admin-export-textarea" rows="8" readonly style="font-family: monospace; font-size: 0.8rem; background: var(--bg-slate);"></textarea>
+                    <div class="form-field" style="margin-top: 12px;">
+                        <label for="admin-export-textarea" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; display: block;">Export Code Snapshot (JSON):</label>
+                        <textarea id="admin-export-textarea" rows="7" readonly style="font-family: monospace; font-size: 0.78rem; background: var(--bg-slate); width: 100%; border-radius: 8px; padding: 10px; border: 1px solid var(--border-subtle); box-sizing: border-box;"></textarea>
                     </div>
                 </div>
             </div>

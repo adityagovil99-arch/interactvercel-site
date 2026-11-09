@@ -155,7 +155,7 @@ function playClickSound() {
 }
 
 function attachSoundToButtons() {
-    document.querySelectorAll(".btn, .filter-btn, .quiz-option-btn, .nav-link, .nav-item, .btn-sidebar-lofi, .indicator, .btn-close-modal, .btn-close-lightbox, .hidden-admin-key, .gallery-filter-btn, .tenure-pill").forEach(btn => {
+    document.querySelectorAll(".btn, .filter-btn, .quiz-option-btn, .nav-link, .nav-item, .btn-sidebar-lofi, .indicator, .btn-close-modal, .btn-close-lightbox, .hidden-admin-key, .gallery-filter-btn, .tenure-pill, .mobile-toggle-btn").forEach(btn => {
         btn.addEventListener("click", playClickSound);
     });
 }
@@ -2319,17 +2319,55 @@ if (stageCanvas && stageCtx) {
 function initDashboardNavigation() {
     const sidebar = document.getElementById("main-sidebar");
     const toggle = document.getElementById("sidebar-toggle");
+    const mobileToggle = document.getElementById("mobile-sidebar-toggle");
+    const overlay = document.getElementById("sidebar-overlay");
     const navItems = document.querySelectorAll(".nav-item");
     const viewPanels = document.querySelectorAll(".view-panel");
     const viewport = document.getElementById("dashboard-viewport");
     
-    if (!sidebar || !toggle) return;
-    
-    // Toggle sidebar collapsed state on click
-    toggle.addEventListener("click", () => {
-        sidebar.classList.toggle("collapsed");
+    if (!sidebar) return;
+
+    const closeMobileSidebar = () => {
+        sidebar.classList.remove("mobile-open");
+        if (overlay) overlay.classList.remove("active");
+    };
+
+    const openMobileSidebar = () => {
+        sidebar.classList.add("mobile-open");
+        if (overlay) overlay.classList.add("active");
         playClickSound();
-    });
+    };
+    
+    // Toggle sidebar collapsed state on click (desktop) or close on mobile
+    if (toggle) {
+        toggle.addEventListener("click", () => {
+            if (window.innerWidth <= 1024) {
+                closeMobileSidebar();
+            } else {
+                sidebar.classList.toggle("collapsed");
+            }
+            playClickSound();
+        });
+    }
+
+    // Mobile Hamburger button open/toggle
+    if (mobileToggle) {
+        mobileToggle.addEventListener("click", () => {
+            if (sidebar.classList.contains("mobile-open")) {
+                closeMobileSidebar();
+            } else {
+                openMobileSidebar();
+            }
+        });
+    }
+
+    // Click on overlay backdrop to close mobile drawer
+    if (overlay) {
+        overlay.addEventListener("click", () => {
+            closeMobileSidebar();
+            playClickSound();
+        });
+    }
     
     // Smooth navigation viewport swap
     navItems.forEach(item => {
@@ -2357,10 +2395,15 @@ function initDashboardNavigation() {
             else if (targetView === "streak") morphStageToShape("ladder");
             else if (targetView === "matchmaker") morphStageToShape("constellation");
             else if (targetView === "announcements") morphStageToShape("sphere");
+            else if (targetView === "committee") morphStageToShape("sphere");
             else if (targetView === "startup") morphStageToShape("rocket");
             else if (targetView === "nutrients") morphStageToShape("constellation");
-            else if (targetView === "committee") morphStageToShape("sphere");
             
+            // Close mobile sidebar drawer after tapping a view
+            if (window.innerWidth <= 1024) {
+                closeMobileSidebar();
+            }
+
             playClickSound();
         });
     });
@@ -2372,6 +2415,9 @@ function initDashboardNavigation() {
             const targetView = this.getAttribute("data-target-view");
             const navBtn = document.querySelector(`.nav-item[data-view="${targetView}"]`);
             if (navBtn) navBtn.click();
+            if (window.innerWidth <= 1024) {
+                closeMobileSidebar();
+            }
         });
     });
 

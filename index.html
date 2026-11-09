@@ -39,14 +39,21 @@
     <!-- MAIN DASHBOARD LAYOUT WRAPPER -->
     <div class="dashboard-container">
         
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
         <!-- 1. LEFT-HAND FIXED DRAWER SIDEBAR (Collapsible, Open by Default) -->
         <aside class="dashboard-sidebar" id="main-sidebar">
             <div class="sidebar-header">
                 <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Toggle Sidebar Drawer">
-                    <svg class="toggle-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg class="toggle-svg-icon toggle-hamburger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <line x1="3" y1="12" x2="21" y2="12"></line>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                    <svg class="toggle-svg-icon toggle-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
                 <div class="sidebar-brand-box">
@@ -166,6 +173,26 @@
 
         <!-- 2. MORPHING ACTIVE VIEWPORT (90% Width Scoped Panels) -->
         <main class="dashboard-viewport" id="dashboard-viewport">
+
+            <!-- MOBILE TOP HEADER BAR (Visible only on <= 1024px screens) -->
+            <header class="mobile-top-bar" id="mobile-top-bar">
+                <button class="mobile-toggle-btn" id="mobile-sidebar-toggle" aria-label="Open Navigation Menu">
+                    <svg class="toggle-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="mobile-brand-box">
+                    <img src="assets/images/logo.png" alt="InteractUp Logo" class="mobile-logo-img">
+                    <span class="mobile-brand-text">INTERACT<span class="logo-accent">UP</span></span>
+                </div>
+                <a href="https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0" target="_blank" class="mobile-wa-btn" aria-label="Join WhatsApp Community">
+                    <svg class="icon-whatsapp" viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.96 9.96 0 0 0 1.333 4.982L2 22l5.233-1.371a9.994 9.994 0 0 0 4.779 1.208h.004c5.505 0 9.988-4.478 9.99-9.985a9.983 9.983 0 0 0-2.927-7.065A9.957 9.957 0 0 0 12.012 2zm5.827 14.195c-.32.451-1.636 1.61-2.222 1.67-.586.06-1.173.3-3.957-.812-2.784-1.112-4.57-3.93-4.71-4.111-.139-.18-1.153-1.534-1.153-2.927 0-1.392.73-2.073.99-2.353.26-.28.567-.35.756-.35h.54c.17 0 .397-.07.616.452.22.523.755 1.839.82 1.97.066.132.11.285.02.463-.09.18-.135.29-.27.452-.135.161-.284.36-.405.483-.135.132-.277.276-.12.547.157.27.7 1.15 1.502 1.861.802.71 1.478.93 1.688 1.036.21.106.335.09.46-.053.125-.146.54-.627.683-.84.143-.213.287-.179.484-.106.197.073 1.248.589 1.462.696.214.106.357.16.41.25.053.09.053.52-.167.971z"/>
+                    </svg>
+                </a>
+            </header>
 
             <!-- PANEL 1: HOME & VIBE LOUNGE (theme-yellow) -->
             <div class="view-panel active" id="view-home">

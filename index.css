@@ -2977,18 +2977,186 @@ body.theme-indigo .dashboard-viewport {
     accent-color: var(--primary);
 }
 
+/* Base default styles for mobile navigation components (Hidden on Desktop) */
+.mobile-top-bar {
+    display: none;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+.toggle-close {
+    display: none;
+}
+
+.toggle-hamburger {
+    display: block;
+}
+
 /* ==========================================================================
-   RESPONSIVE DESIGN ADAPTATIONS
+   RESPONSIVE DESIGN ADAPTATIONS (TABLET & MOBILE)
    ========================================================================== */
 @media (max-width: 1024px) {
     .dashboard-container {
         grid-template-columns: 1fr;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        position: relative;
     }
     
+    /* Mobile Top Bar */
+    .mobile-top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 18px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 2px solid var(--border-bold);
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1100;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+    
+    .mobile-toggle-btn {
+        background: var(--bg-slate);
+        border: 2px solid var(--border-bold);
+        cursor: pointer;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-sm);
+        transition: var(--transition-smooth);
+    }
+    
+    .mobile-toggle-btn:hover,
+    .mobile-toggle-btn:active {
+        background: var(--primary);
+    }
+    
+    .mobile-brand-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .mobile-logo-img {
+        height: 28px;
+        width: auto;
+        object-fit: contain;
+    }
+    
+    .mobile-brand-text {
+        font-family: var(--font-heading);
+        font-size: 1.15rem;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        color: var(--text-primary);
+    }
+    
+    .mobile-wa-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-sm);
+        background: #25D366;
+        color: #fff;
+        border: 2px solid var(--border-bold);
+        transition: var(--transition-smooth);
+        box-shadow: 3px 3px 0 var(--border-bold);
+    }
+
+    .mobile-wa-btn:hover {
+        transform: translate(-1px, -1px);
+        box-shadow: 4px 4px 0 var(--border-bold);
+    }
+    
+    /* Overlay Backdrop */
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 9998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .sidebar-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    /* Sliding Mobile Off-Canvas Drawer */
     .dashboard-sidebar {
-        display: none; /* In top notch tablet modes sidebar drawer is usually an absolute slider */
+        display: flex !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 290px;
+        max-width: 85vw;
+        height: 100vh;
+        z-index: 9999;
+        transform: translateX(-100%);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+        box-shadow: none;
+        background: var(--bg-white);
     }
     
+    .dashboard-sidebar.mobile-open {
+        transform: translateX(0);
+        box-shadow: 14px 0 35px rgba(0, 0, 0, 0.35);
+    }
+    
+    /* Ensure labels & brand box are always visible inside the mobile drawer */
+    .dashboard-sidebar .nav-label,
+    .dashboard-sidebar.collapsed .nav-label {
+        opacity: 1 !important;
+        width: auto !important;
+        display: inline-block !important;
+    }
+    
+    .dashboard-sidebar .sidebar-brand-box,
+    .dashboard-sidebar.collapsed .sidebar-brand-box {
+        opacity: 1 !important;
+        transform: none !important;
+        width: auto !important;
+        pointer-events: auto !important;
+    }
+    
+    .dashboard-sidebar .btn-sidebar-lofi .nav-label,
+    .dashboard-sidebar.collapsed .btn-sidebar-lofi .nav-label {
+        opacity: 1 !important;
+        width: auto !important;
+    }
+    
+    /* Show 'X' Close icon inside open mobile drawer header */
+    .dashboard-sidebar .toggle-hamburger {
+        display: none !important;
+    }
+    
+    .dashboard-sidebar .toggle-close {
+        display: block !important;
+    }
+
     .hero-grid-split,
     .live-events-split-grid,
     .speaker-booth-layout,
@@ -3006,7 +3174,56 @@ body.theme-indigo .dashboard-viewport {
     }
     
     .dashboard-viewport {
-        padding-left: 16px;
-        padding-right: 16px;
+        padding-left: 14px;
+        padding-right: 14px;
+        padding-bottom: 80px;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+        line-height: 1.2;
+    }
+
+    .section-title {
+        font-size: 1.7rem;
+    }
+
+    .section-container {
+        padding: 40px 14px;
+    }
+
+    .table-scroll-container {
+        overflow-x: auto;
+    }
+}
+
+/* Small Smartphone Optimizations */
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+        font-size: 1.85rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .committee-tenure-tabs {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .tenure-pill {
+        width: 100%;
+        text-align: center;
     }
 }

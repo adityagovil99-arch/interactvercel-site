@@ -158,7 +158,7 @@
                 </a>
             </nav>
 
-            <!-- Sidebar Footer (Integrates Lo-Fi Player Toggles) -->
+            <!-- Sidebar Footer (Integrates Lo-Fi & Team Access) -->
             <div class="sidebar-footer">
                 <button class="btn-sidebar-lofi" id="btn-sidebar-lofi-toggle" aria-label="Toggle Soundboard">
                     <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -167,6 +167,15 @@
                         <circle cx="18" cy="16" r="3"/>
                     </svg>
                     <span class="nav-label">Lo-Fi Player</span>
+                </button>
+                <button class="btn-sidebar-team" id="btn-team-login-trigger" aria-label="InteractUp Team Login">
+                    <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span class="nav-label">Team Login</span>
                 </button>
             </div>
         </aside>
@@ -641,19 +650,22 @@
                         <div class="committee-archive-icon">🏛️</div>
                         <h3>National Core Committee Directory</h3>
                         <p class="committee-archive-desc">
-                            This section is reserved for the official hall of leadership. Member profiles, roles, portfolios, and tenure achievements will be cataloged here soon.
+                            Recognizing dedicated student leadership and alumni who steered InteractUp across diverse operational tenures.
                         </p>
                         
-                        <!-- Tenure Filter Placeholders (Ready to populate) -->
-                        <div class="committee-tenure-tabs">
-                            <span class="tenure-pill active">Tenure 2025 - 2026</span>
-                            <span class="tenure-pill">Tenure 2024 - 2025</span>
-                            <span class="tenure-pill">Founding Tenure</span>
+                        <!-- Tenure Filter Tabs (Rendered Dynamically by JS) -->
+                        <div class="committee-tenure-tabs" id="committee-tenure-tabs-container">
+                            <!-- Injected dynamically by JS -->
                         </div>
 
-                        <div class="committee-empty-state">
+                        <!-- Committee Members Dynamic Grid -->
+                        <div class="committee-members-grid" id="committee-members-grid">
+                            <!-- Injected dynamically by JS -->
+                        </div>
+
+                        <div class="committee-empty-state" id="committee-empty-state">
                             <span class="status-pulse-dot"></span>
-                            <span>Tenure Rosters & Profiles Under Curation</span>
+                            <span id="committee-empty-state-text">Tenure Rosters & Profiles Under Curation</span>
                         </div>
                     </div>
                 </section>
@@ -790,76 +802,255 @@
         </div>
     </div>
 
-    <!-- 4. ADMIN PASSCODE AUTHENTICATION MODAL -->
-    <div class="modal-backdrop" id="admin-passcode-modal">
+    <!-- 4. TEAM & ADMIN UNIFIED PASSCODE AUTHENTICATION MODAL -->
+    <div class="modal-backdrop" id="team-login-modal">
         <div class="modal-card passcode-card">
             <div class="modal-header">
-                <h3>🔐 Administrator Login</h3>
-                <button class="btn-close-modal" id="btn-close-passcode" aria-label="Close Modal">&times;</button>
+                <h3>🔐 InteractUp Team Access</h3>
+                <button class="btn-close-modal" id="btn-close-team-login" aria-label="Close Modal">&times;</button>
             </div>
-            <p class="passcode-subtitle">Input the administrator security passcode to enter the live content management dashboard.</p>
+            <p class="passcode-subtitle">Enter your assigned team passcode to unlock the internal community tools.</p>
             <div class="passcode-form-group">
-                <input type="password" id="admin-passcode-input" placeholder="Enter passcode..." autocomplete="off">
-                <button class="btn btn-primary" id="btn-validate-passcode">Verify Entry</button>
+                <input type="password" id="team-passcode-input" placeholder="Enter team passcode..." autocomplete="off">
+                <button class="btn btn-primary" id="btn-validate-team-passcode">Unlock Portal</button>
             </div>
-            <div class="passcode-error-msg" id="passcode-error">Incorrect passcode. Try again.</div>
+            <div class="passcode-error-msg" id="team-passcode-error">Invalid passcode. Please verify and try again.</div>
         </div>
     </div>
 
-    <!-- 5. ADMIN MANAGEMENT DASHBOARD MODAL -->
-    <div class="modal-backdrop" id="admin-dashboard-modal">
-        <div class="modal-card admin-dashboard-card">
+    <!-- 5. TEAM APPRECIATION POINTS LEADERBOARD MODAL (View-Only) -->
+    <div class="modal-backdrop" id="team-leaderboard-modal">
+        <div class="modal-card leaderboard-modal-card">
             <div class="modal-header">
-                <h3>🛠 Live Website Editor</h3>
-                <button class="btn-close-modal" id="btn-close-admin-dash" aria-label="Close Editor">&times;</button>
+                <h3>🏆 Team Appreciation Leaderboard</h3>
+                <button class="btn-close-modal" id="btn-close-team-leaderboard" aria-label="Close Modal">&times;</button>
             </div>
-            <p class="admin-subtitle">Publish new active competitions, upskilling events, or delete outdated listings in real time. Changes sync automatically.</p>
+            <p class="modal-subtitle">Celebrating member ownership, consistency, and active contributions across InteractUp cohorts.</p>
             
-            <div class="admin-grid-layout">
-                <div class="admin-form-pane">
-                    <h4>➕ Create Live Competition</h4>
-                    <form id="admin-event-form" onsubmit="return false;">
-                        <div class="form-field">
-                            <label for="event-title">Competition / Event Name</label>
-                            <input type="text" id="event-title" placeholder="e.g. Stage Presence Mastery Challenge" required>
-                        </div>
-                        <div class="form-field">
-                            <label for="event-badge">Status Badge Tag</label>
-                            <select id="event-badge">
-                                <option value="🔥 Active Competition">🔥 Active Competition</option>
-                                <option value="✨ Live Workshop">✨ Live Workshop</option>
-                                <option value="🚀 Ongoing Challenge">🚀 Ongoing Challenge</option>
-                                <option value="📅 Upcoming Session">📅 Upcoming Session</option>
-                            </select>
-                        </div>
-                        <div class="form-field">
-                            <label for="event-desc">Thematic Description (Emphasis on Soft Skills, Wellness, Friends)</label>
-                            <textarea id="event-desc" rows="3" placeholder="Highlight how this helps students, certificates awarded, or bonding format..." required></textarea>
-                        </div>
-                        <div class="form-field">
-                            <label for="event-link">Registration URL</label>
-                            <input type="url" id="event-link" placeholder="https://forms.gle/..." required>
-                        </div>
-                        <div class="form-field">
-                            <label for="event-image-template">Backdrop Graphic Theme</label>
-                            <select id="event-image-template">
-                                <option value="speaking">🗣 Public Speaking & Soft Skills</option>
-                                <option value="wellness">🤍 Wellness & Making Friends</option>
-                                <option value="casing">📊 Peer Casing & Networking</option>
-                                <option value="creative">🎭 Creative Arts & Theatre</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary" id="btn-save-new-event">Publish Event Live</button>
-                    </form>
-                </div>
-                <div class="admin-list-pane">
-                    <h4>📋 Currently Listed Live Competitions</h4>
-                    <p class="admin-list-subtitle">Manage active display cards. Deleting updates the homepage immediately.</p>
-                    <div class="admin-events-list" id="admin-current-events-list">
+            <div class="leaderboard-search-box">
+                <input type="text" id="leaderboard-search-input" class="leaderboard-search-input" placeholder="🔍 Search member by name..." autocomplete="off">
+            </div>
+
+            <div class="leaderboard-table-container">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th class="leaderboard-rank-col">Rank</th>
+                            <th class="leaderboard-name-col">Member Name</th>
+                            <th class="leaderboard-points-col">Appreciation Points</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-table-body">
                         <!-- Loaded dynamically by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. MASTER ADMIN MANAGEMENT CONSOLE (Secret Dual-Password Entry) -->
+    <div class="modal-backdrop" id="admin-master-modal">
+        <div class="modal-card admin-master-card">
+            <div class="modal-header">
+                <h3>🛡️ Master Admin Console</h3>
+                <button class="btn-close-modal" id="btn-close-admin-master" aria-label="Close Admin Console">&times;</button>
+            </div>
+            <p class="admin-subtitle">Manage appreciation points, core committee directory, tenures, competitions, and security settings.</p>
+            
+            <!-- Navigation Tabs -->
+            <div class="admin-nav-tabs">
+                <button class="admin-tab-btn active" data-tab="tab-points">🏆 Leaderboard & Points</button>
+                <button class="admin-tab-btn" data-tab="tab-committee">🏛️ Tenures & Committee</button>
+                <button class="admin-tab-btn" data-tab="tab-events">📅 Live Competitions</button>
+                <button class="admin-tab-btn" data-tab="tab-passwords">🔑 Passwords</button>
+                <button class="admin-tab-btn" data-tab="tab-export">💾 Save & Export</button>
+            </div>
+
+            <!-- TAB 1: LEADERBOARD & POINTS -->
+            <div class="admin-tab-content active" id="tab-points">
+                <div class="admin-grid-layout">
+                    <div class="admin-form-pane">
+                        <h4>➕ Add Team Member</h4>
+                        <form id="admin-add-member-form" onsubmit="return false;">
+                            <div class="form-field">
+                                <label for="admin-member-name">Member Name</label>
+                                <input type="text" id="admin-member-name" placeholder="Full Name..." required>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-member-points">Initial Appreciation Points</label>
+                                <input type="number" id="admin-member-points" placeholder="e.g. 100" min="0" value="50" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-admin-add-member">Add to Leaderboard</button>
+                        </form>
+                    </div>
+                    <div class="admin-list-pane">
+                        <h4>📋 Current Leaderboard Roster</h4>
+                        <p class="admin-list-subtitle">Quickly award points or remove members. Changes update the team leaderboard instantly.</p>
+                        <div class="admin-table-scroll">
+                            <table class="admin-mini-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Points</th>
+                                        <th>Quick Adjust</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-leaderboard-list">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- TAB 2: TENURES & COMMITTEE -->
+            <div class="admin-tab-content" id="tab-committee">
+                <div class="admin-grid-layout">
+                    <!-- Left: Tenures Management & Add Committee Member Form -->
+                    <div class="admin-form-pane">
+                        <h4>🏛️ Manage Tenures</h4>
+                        <p class="admin-list-subtitle">Add or remove tenure tabs shown on the main Core Committee page.</p>
+                        <div class="tenure-add-inline">
+                            <input type="text" id="admin-new-tenure-input" placeholder="e.g. Tenure 2026 - 2027">
+                            <button type="button" class="btn btn-primary btn-sm" id="btn-admin-add-tenure">Add Tenure</button>
+                        </div>
+                        <div class="admin-tenure-chips" id="admin-tenure-chips-list">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <hr style="margin: 20px 0; border: none; border-top: 1.5px solid var(--border-light);">
+
+                        <h4>👤 Add Committee Member</h4>
+                        <form id="admin-committee-form" onsubmit="return false;">
+                            <div class="form-field">
+                                <label for="admin-comm-tenure-select">Assign Tenure</label>
+                                <select id="admin-comm-tenure-select" required>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-comm-name">Member Name</label>
+                                <input type="text" id="admin-comm-name" placeholder="Member Name..." required>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-comm-desc">Description (2-3 lines, max 50 words)</label>
+                                <textarea id="admin-comm-desc" rows="3" placeholder="Brief portfolio highlight or contribution..." required></textarea>
+                                <span class="word-count-badge" id="admin-comm-word-badge"><span id="committee-desc-word-count">0</span> / 50 words max</span>
+                            </div>
+                            <div class="form-field">
+                                <label>Member Photo</label>
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <input type="file" id="admin-comm-photo-file" accept="image/*" style="font-size: 0.8rem;">
+                                    <div class="photo-preview-box">
+                                        <img id="admin-comm-photo-preview" class="photo-preview-img" style="display: none;" alt="Preview">
+                                        <span id="admin-comm-photo-placeholder" style="font-size: 0.7rem; color: var(--text-muted);">No Photo</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-admin-add-committee">Add to Directory</button>
+                        </form>
+                    </div>
+
+                    <!-- Right: Current Committee Members by Tenure -->
+                    <div class="admin-list-pane">
+                        <h4>📋 Committee Members List</h4>
+                        <p class="admin-list-subtitle">Members listed across active tenures. Remove or update anytime.</p>
+                        <div class="admin-committee-list" id="admin-committee-roster-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: LIVE COMPETITIONS (Existing functionality preserved) -->
+            <div class="admin-tab-content" id="tab-events">
+                <div class="admin-grid-layout">
+                    <div class="admin-form-pane">
+                        <h4>➕ Create Live Competition</h4>
+                        <form id="admin-event-form" onsubmit="return false;">
+                            <div class="form-field">
+                                <label for="event-title">Competition / Event Name</label>
+                                <input type="text" id="event-title" placeholder="e.g. Stage Presence Mastery Challenge" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="event-badge">Status Badge Tag</label>
+                                <select id="event-badge">
+                                    <option value="🔥 Active Competition">🔥 Active Competition</option>
+                                    <option value="✨ Live Workshop">✨ Live Workshop</option>
+                                    <option value="🚀 Ongoing Challenge">🚀 Ongoing Challenge</option>
+                                    <option value="📅 Upcoming Session">📅 Upcoming Session</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="event-desc">Thematic Description</label>
+                                <textarea id="event-desc" rows="3" placeholder="Highlight soft skills, wellness, or bonding format..." required></textarea>
+                            </div>
+                            <div class="form-field">
+                                <label for="event-link">Registration URL</label>
+                                <input type="url" id="event-link" placeholder="https://forms.gle/..." required>
+                            </div>
+                            <div class="form-field">
+                                <label for="event-image-template">Backdrop Graphic Theme</label>
+                                <select id="event-image-template">
+                                    <option value="speaking">🗣 Public Speaking & Soft Skills</option>
+                                    <option value="wellness">🤍 Wellness & Making Friends</option>
+                                    <option value="casing">📊 Peer Casing & Networking</option>
+                                    <option value="creative">🎭 Creative Arts & Theatre</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-save-new-event">Publish Event Live</button>
+                        </form>
+                    </div>
+                    <div class="admin-list-pane">
+                        <h4>📋 Currently Listed Live Competitions</h4>
+                        <p class="admin-list-subtitle">Manage active display cards.</p>
+                        <div class="admin-events-list" id="admin-current-events-list">
+                            <!-- Loaded dynamically by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: PASSWORDS -->
+            <div class="admin-tab-content" id="tab-passwords">
+                <div class="admin-passwords-pane" style="max-width: 500px; margin: 0 auto; padding: 20px 0;">
+                    <h4>🔑 Update System Access Passcodes</h4>
+                    <p class="admin-list-subtitle">Change the passcode for team members or your secret master admin passcode.</p>
+                    <form id="admin-passwords-form" onsubmit="return false;">
+                        <div class="form-field">
+                            <label for="admin-edit-team-passcode">Team Password (for Leaderboard)</label>
+                            <input type="text" id="admin-edit-team-passcode" placeholder="Enter team passcode..." required>
+                        </div>
+                        <div class="form-field">
+                            <label for="admin-edit-admin-passcode">Secret Admin Master Password</label>
+                            <input type="text" id="admin-edit-admin-passcode" placeholder="Enter secret admin passcode..." required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="btn-save-passwords">Save Passcodes</button>
+                        <div id="password-save-feedback" style="display: none; color: #10b981; font-weight: 800; font-size: 0.85rem; margin-top: 12px;">✓ Passcodes successfully updated!</div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 5: SAVE & EXPORT -->
+            <div class="admin-tab-content" id="tab-export">
+                <div class="admin-export-pane" style="max-width: 680px; margin: 0 auto; padding: 10px 0;">
+                    <h4>💾 Make Changes Permanent on www.interactup.in</h4>
+                    <p class="admin-list-subtitle">All your changes are automatically saved right now in your laptop's browser. When you want to update the live public website for all team members, click <strong>"Copy Export Code"</strong> and paste it into <code>app.js</code>, then copy files to <code>interactvercel-site</code> and push via GitHub Desktop!</p>
+                    
+                    <div style="margin: 16px 0;">
+                        <button type="button" class="btn btn-primary" id="btn-copy-export-code">📋 Copy Export Code</button>
+                        <span id="export-copy-status" style="margin-left: 12px; font-weight: 800; font-size: 0.85rem; color: #10b981; display: none;">✓ Copied to clipboard!</span>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="admin-export-textarea">Export Code Snapshot (JSON):</label>
+                        <textarea id="admin-export-textarea" rows="8" readonly style="font-family: monospace; font-size: 0.8rem; background: var(--bg-slate);"></textarea>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 

@@ -155,7 +155,7 @@ function playClickSound() {
 }
 
 function attachSoundToButtons() {
-    document.querySelectorAll(".btn, .filter-btn, .quiz-option-btn, .nav-link, .nav-item, .btn-sidebar-lofi, .indicator, .btn-close-modal, .btn-close-lightbox, .hidden-admin-key, .gallery-filter-btn, .tenure-pill, .mobile-toggle-btn").forEach(btn => {
+    document.querySelectorAll(".btn, .filter-btn, .quiz-option-btn, .nav-link, .nav-item, .btn-sidebar-lofi, .btn-sidebar-team, .indicator, .btn-close-modal, .btn-close-lightbox, .hidden-admin-key, .gallery-filter-btn, .tenure-pill, .mobile-toggle-btn, .admin-tab-btn, .quick-adjust-btn, .btn-remove-tenure").forEach(btn => {
         btn.addEventListener("click", playClickSound);
     });
 }
@@ -458,12 +458,273 @@ function deleteEvent(id) {
     renderAdminEventsList();
 }
 
-// Setup Modals and Admin Login Trigger actions
-const allEventsModal = document.getElementById("all-events-modal");
-const adminPasscodeModal = document.getElementById("admin-passcode-modal");
-const adminDashboardModal = document.getElementById("admin-dashboard-modal");
+// ==========================================================================
+// 🛡️ INTERACTUP TEAM PORTAL, LEADERBOARD & MASTER ADMIN SYSTEM
+// ==========================================================================
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
+const DEFAULT_TEAM_DATA = {
+    "teamPasscode": "teamup2026",
+    "adminPasscode": "adminup2026",
+    "tenures": [
+        "Tenure 2025 - 2026",
+        "Tenure 2024 - 2025",
+        "Founding Tenure"
+    ],
+    "leaderboard": [],
+    "committeeMembers": []
+};
+
+let appTeamData = (() => {
+    try {
+        const saved = localStorage.getItem("interactup_team_portal_data");
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            return {
+                teamPasscode: parsed.teamPasscode || DEFAULT_TEAM_DATA.teamPasscode,
+                adminPasscode: parsed.adminPasscode || DEFAULT_TEAM_DATA.adminPasscode,
+                tenures: Array.isArray(parsed.tenures) && parsed.tenures.length > 0 ? parsed.tenures : DEFAULT_TEAM_DATA.tenures,
+                leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : DEFAULT_TEAM_DATA.leaderboard,
+                committeeMembers: Array.isArray(parsed.committeeMembers) ? parsed.committeeMembers : DEFAULT_TEAM_DATA.committeeMembers
+            };
+        }
+    } catch (e) {
+        console.error("Failed to parse saved team data", e);
+    }
+    return JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA));
+})();
+
+let currentActiveTenure = appTeamData.tenures[0] || "Tenure 2025 - 2026";
+let adminCommPhotoData = "";
+
+function saveTeamData() {
+    try {
+        localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
+    } catch (e) {
+        console.error("Failed to save team data to localStorage", e);
+    }
+    renderLeaderboardTable();
+    renderCoreCommitteeMainView();
+    renderAdminLeaderboardList();
+    renderAdminTenureChips();
+    renderAdminCommitteeTenureDropdown();
+    renderAdminCommitteeRosterList();
+    renderAdminExportCode();
+}
+
+// 1. RENDER MAIN PAGE CORE COMMITTEE DIRECTORY
+function renderCoreCommitteeMainView() {
+    const tabsContainer = document.getElementById("committee-tenure-tabs-container");
+    const gridContainer = document.getElementById("committee-members-grid");
+    const emptyState = document.getElementById("committee-empty-state");
+    
+    if (!tabsContainer || !gridContainer) return;
+    
+    if (!appTeamData.tenures.includes(currentActiveTenure)) {
+        currentActiveTenure = appTeamData.tenures[0] || "";
+    }
+    
+    tabsContainer.innerHTML = appTeamData.tenures.map(tenure => {
+        const isActive = tenure === currentActiveTenure ? "active" : "";
+        return `<span class="tenure-pill ${isActive}" data-tenure="${escapeHtml(tenure)}">${escapeHtml(tenure)}</span>`;
+    }).join("");
+    
+    tabsContainer.querySelectorAll(".tenure-pill").forEach(pill => {
+        pill.addEventListener("click", function() {
+            currentActiveTenure = this.getAttribute("data-tenure");
+            renderCoreCommitteeMainView();
+            playClickSound();
+        });
+    });
+    
+    const members = appTeamData.committeeMembers.filter(m => m.tenure === currentActiveTenure);
+    
+    if (members.length === 0) {
+        gridContainer.innerHTML = "";
+        if (emptyState) {
+            emptyState.style.display = "inline-flex";
+            const emptyText = document.getElementById("committee-empty-state-text");
+            if (emptyText) emptyText.textContent = `${currentActiveTenure}: Profiles Under Curation`;
+        }
+    } else {
+        if (emptyState) emptyState.style.display = "none";
+        gridContainer.innerHTML = members.map(m => `
+            <div class="committee-member-card">
+                <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="committee-member-img" onerror="this.src='assets/images/logo.png'">
+                <div class="committee-member-name">${escapeHtml(m.name)}</div>
+                <div class="committee-member-desc">${escapeHtml(m.desc)}</div>
+            </div>
+        `).join("");
+    }
+}
+
+// 2. RENDER VIEW-ONLY TEAM LEADERBOARD
+function renderLeaderboardTable(filterText = "") {
+    const tbody = document.getElementById("leaderboard-table-body");
+    if (!tbody) return;
+    
+    const sorted = [...appTeamData.leaderboard].sort((a, b) => (b.points || 0) - (a.points || 0));
+    const query = (filterText || "").trim().toLowerCase();
+    const filtered = query ? sorted.filter(m => m.name.toLowerCase().includes(query)) : sorted;
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 24px; color: var(--text-muted);">No members found matching "${escapeHtml(query)}"</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = filtered.map(m => {
+        const rank = sorted.indexOf(m) + 1;
+        return `
+            <tr>
+                <td class="leaderboard-rank-col">#${rank}</td>
+                <td class="leaderboard-name-col">${escapeHtml(m.name)}</td>
+                <td class="leaderboard-points-col">${m.points} pts</td>
+            </tr>
+        `;
+    }).join("");
+}
+
+// 3. ADMIN: LEADERBOARD ROSTER LIST
+function renderAdminLeaderboardList() {
+    const tbody = document.getElementById("admin-leaderboard-list");
+    if (!tbody) return;
+    
+    const sorted = [...appTeamData.leaderboard].sort((a, b) => (b.points || 0) - (a.points || 0));
+    
+    if (sorted.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 16px;">No members added yet. Add one above!</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = sorted.map(m => `
+        <tr>
+            <td><strong>${escapeHtml(m.name)}</strong></td>
+            <td>${m.points} pts</td>
+            <td>
+                <button type="button" class="quick-adjust-btn" data-id="${m.id}" data-delta="10">+10</button>
+                <button type="button" class="quick-adjust-btn" data-id="${m.id}" data-delta="50">+50</button>
+                <button type="button" class="quick-adjust-btn" data-id="${m.id}" data-delta="-10">-10</button>
+            </td>
+            <td>
+                <button type="button" class="btn-delete-row" data-id="${m.id}" title="Remove Member">✕</button>
+            </td>
+        </tr>
+    `).join("");
+    
+    tbody.querySelectorAll(".quick-adjust-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            const delta = parseInt(this.getAttribute("data-delta"), 10);
+            const mem = appTeamData.leaderboard.find(x => x.id === id);
+            if (mem) {
+                mem.points = Math.max(0, (mem.points || 0) + delta);
+                saveTeamData();
+                playClickSound();
+            }
+        });
+    });
+    
+    tbody.querySelectorAll(".btn-delete-row").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            appTeamData.leaderboard = appTeamData.leaderboard.filter(x => x.id !== id);
+            saveTeamData();
+            playClickSound();
+        });
+    });
+}
+
+// 4. ADMIN: TENURE CHIPS LIST
+function renderAdminTenureChips() {
+    const chipsContainer = document.getElementById("admin-tenure-chips-list");
+    if (!chipsContainer) return;
+    
+    chipsContainer.innerHTML = appTeamData.tenures.map(tenure => `
+        <span class="tenure-chip-item">
+            ${escapeHtml(tenure)}
+            <button type="button" class="btn-remove-tenure" data-tenure="${escapeHtml(tenure)}" title="Delete Tenure">&times;</button>
+        </span>
+    `).join("");
+    
+    chipsContainer.querySelectorAll(".btn-remove-tenure").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const t = this.getAttribute("data-tenure");
+            if (appTeamData.tenures.length <= 1) {
+                alert("You must maintain at least one active tenure.");
+                return;
+            }
+            if (confirm(`Delete '${t}' and its associated committee profiles?`)) {
+                appTeamData.tenures = appTeamData.tenures.filter(x => x !== t);
+                appTeamData.committeeMembers = appTeamData.committeeMembers.filter(m => m.tenure !== t);
+                saveTeamData();
+                playClickSound();
+            }
+        });
+    });
+}
+
+// 5. ADMIN: COMMITTEE TENURE DROPDOWN
+function renderAdminCommitteeTenureDropdown() {
+    const select = document.getElementById("admin-comm-tenure-select");
+    if (!select) return;
+    select.innerHTML = appTeamData.tenures.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+}
+
+// 6. ADMIN: COMMITTEE MEMBERS ROSTER
+function renderAdminCommitteeRosterList() {
+    const list = document.getElementById("admin-committee-roster-list");
+    if (!list) return;
+    
+    if (appTeamData.committeeMembers.length === 0) {
+        list.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.82rem;">No committee members listed yet. Add one on the left!</div>`;
+        return;
+    }
+    
+    list.innerHTML = appTeamData.committeeMembers.map(m => `
+        <div class="admin-comm-item-card">
+            <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="admin-comm-item-img" onerror="this.src='assets/images/logo.png'">
+            <div class="admin-comm-item-info">
+                <span class="admin-comm-item-name">${escapeHtml(m.name)}</span>
+                <span class="admin-comm-item-tenure">${escapeHtml(m.tenure)}</span>
+                <p class="admin-comm-item-desc">${escapeHtml(m.desc)}</p>
+            </div>
+            <button type="button" class="btn-delete-row" data-id="${m.id}" title="Remove Member">✕</button>
+        </div>
+    `).join("");
+    
+    list.querySelectorAll(".btn-delete-row").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            appTeamData.committeeMembers = appTeamData.committeeMembers.filter(x => x.id !== id);
+            saveTeamData();
+            playClickSound();
+        });
+    });
+}
+
+// 7. ADMIN: EXPORT CODE GENERATOR
+function renderAdminExportCode() {
+    const textarea = document.getElementById("admin-export-textarea");
+    if (!textarea) return;
+    textarea.value = `const DEFAULT_TEAM_DATA = ${JSON.stringify(appTeamData, null, 4)};`;
+}
+
+// 8. MASTER SETUP CONTROLLER FOR MODALS & ACCESS
 function setupModalsController() {
+    const allEventsModal = document.getElementById("all-events-modal");
+    const teamLoginModal = document.getElementById("team-login-modal");
+    const teamLeaderboardModal = document.getElementById("team-leaderboard-modal");
+    const adminMasterModal = document.getElementById("admin-master-modal");
+    
+    // Competitions Modal open / close
     const btnOpenAll = document.getElementById("btn-open-all-events");
     if (btnOpenAll) {
         btnOpenAll.addEventListener("click", () => {
@@ -479,6 +740,7 @@ function setupModalsController() {
         });
     }
     
+    // Close on backdrop click for all modals
     document.querySelectorAll(".modal-backdrop").forEach(modal => {
         modal.addEventListener("click", function(e) {
             if (e.target === this) {
@@ -487,33 +749,84 @@ function setupModalsController() {
         });
     });
     
+    // Team Login Trigger (Sidebar Button & Footer Key)
+    const btnTeamLoginTrigger = document.getElementById("btn-team-login-trigger");
+    if (btnTeamLoginTrigger) {
+        btnTeamLoginTrigger.addEventListener("click", () => {
+            const sidebar = document.getElementById("main-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            if (sidebar) sidebar.classList.remove("mobile-open");
+            if (overlay) overlay.classList.remove("active");
+            openTeamLoginPrompt();
+            playClickSound();
+        });
+    }
+    
     const adminTrigger = document.getElementById("footer-admin-trigger");
     if (adminTrigger) {
         adminTrigger.addEventListener("click", (e) => {
             e.preventDefault();
-            openPasscodePrompt();
+            openTeamLoginPrompt();
+            playClickSound();
         });
     }
     
-    const btnClosePasscode = document.getElementById("btn-close-passcode");
-    if (btnClosePasscode) {
-        btnClosePasscode.addEventListener("click", () => {
-            if (adminPasscodeModal) adminPasscodeModal.classList.remove("active");
+    // Close buttons for Team Login, Leaderboard, Admin Master
+    const btnCloseTeamLogin = document.getElementById("btn-close-team-login");
+    if (btnCloseTeamLogin) {
+        btnCloseTeamLogin.addEventListener("click", () => {
+            if (teamLoginModal) teamLoginModal.classList.remove("active");
         });
     }
     
-    const btnValidate = document.getElementById("btn-validate-passcode");
-    const passcodeField = document.getElementById("admin-passcode-input");
-    const passcodeError = document.getElementById("passcode-error");
+    const btnCloseLeaderboard = document.getElementById("btn-close-team-leaderboard");
+    if (btnCloseLeaderboard) {
+        btnCloseLeaderboard.addEventListener("click", () => {
+            if (teamLeaderboardModal) teamLeaderboardModal.classList.remove("active");
+        });
+    }
     
-    function validatePasscode() {
-        const val = passcodeField.value.trim();
-        if (val === "interactup2026") {
+    const btnCloseAdminMaster = document.getElementById("btn-close-admin-master");
+    if (btnCloseAdminMaster) {
+        btnCloseAdminMaster.addEventListener("click", () => {
+            if (adminMasterModal) adminMasterModal.classList.remove("active");
+        });
+    }
+    
+    // DUAL-ROLE PASSCODE VERIFICATION
+    const passcodeField = document.getElementById("team-passcode-input");
+    const passcodeError = document.getElementById("team-passcode-error");
+    const btnValidatePasscode = document.getElementById("btn-validate-team-passcode");
+    
+    function validateTeamPasscode() {
+        const val = (passcodeField.value || "").trim();
+        if (val === appTeamData.adminPasscode) {
+            // ADMIN LOGIN
             passcodeError.style.display = "none";
             passcodeField.value = "";
-            if (adminPasscodeModal) adminPasscodeModal.classList.remove("active");
+            if (teamLoginModal) teamLoginModal.classList.remove("active");
+            
+            // Populate admin fields
+            document.getElementById("admin-edit-team-passcode").value = appTeamData.teamPasscode;
+            document.getElementById("admin-edit-admin-passcode").value = appTeamData.adminPasscode;
+            renderAdminLeaderboardList();
+            renderAdminTenureChips();
+            renderAdminCommitteeTenureDropdown();
+            renderAdminCommitteeRosterList();
             renderAdminEventsList();
-            if (adminDashboardModal) adminDashboardModal.classList.add("active");
+            renderAdminExportCode();
+            
+            if (adminMasterModal) adminMasterModal.classList.add("active");
+            playClickSound();
+        } else if (val === appTeamData.teamPasscode) {
+            // TEAM LEADERBOARD LOGIN
+            passcodeError.style.display = "none";
+            passcodeField.value = "";
+            if (teamLoginModal) teamLoginModal.classList.remove("active");
+            
+            renderLeaderboardTable();
+            if (teamLeaderboardModal) teamLeaderboardModal.classList.add("active");
+            playClickSound();
         } else {
             passcodeError.style.display = "block";
             passcodeError.style.animation = 'none';
@@ -522,23 +835,227 @@ function setupModalsController() {
         }
     }
     
-    if (btnValidate) btnValidate.addEventListener("click", validatePasscode);
+    if (btnValidatePasscode) btnValidatePasscode.addEventListener("click", validateTeamPasscode);
     if (passcodeField) {
         passcodeField.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
-                validatePasscode();
-                playClickSound();
+                validateTeamPasscode();
             }
         });
     }
     
-    const btnCloseAdminDash = document.getElementById("btn-close-admin-dash");
-    if (btnCloseAdminDash) {
-        btnCloseAdminDash.addEventListener("click", () => {
-            if (adminDashboardModal) adminDashboardModal.classList.remove("active");
+    // Leaderboard search filter
+    const searchInput = document.getElementById("leaderboard-search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", function() {
+            renderLeaderboardTable(this.value);
         });
     }
     
+    // Admin Tab Navigation
+    document.querySelectorAll(".admin-tab-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const tabId = this.getAttribute("data-tab");
+            document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
+            document.querySelectorAll(".admin-tab-content").forEach(c => c.classList.remove("active"));
+            this.classList.add("active");
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) targetTab.classList.add("active");
+            playClickSound();
+        });
+    });
+    
+    // Admin Add Leaderboard Member
+    const btnAddMember = document.getElementById("btn-admin-add-member");
+    if (btnAddMember) {
+        btnAddMember.addEventListener("click", () => {
+            const nameInput = document.getElementById("admin-member-name");
+            const pointsInput = document.getElementById("admin-member-points");
+            if (!nameInput.value.trim()) return;
+            
+            const newMember = {
+                id: "mem-" + Date.now(),
+                name: nameInput.value.trim(),
+                points: parseInt(pointsInput.value, 10) || 0
+            };
+            
+            appTeamData.leaderboard.push(newMember);
+            saveTeamData();
+            nameInput.value = "";
+            pointsInput.value = "50";
+            playClickSound();
+        });
+    }
+    
+    // Admin Add Tenure
+    const btnAddTenure = document.getElementById("btn-admin-add-tenure");
+    if (btnAddTenure) {
+        btnAddTenure.addEventListener("click", () => {
+            const input = document.getElementById("admin-new-tenure-input");
+            const val = (input.value || "").trim();
+            if (!val) return;
+            if (appTeamData.tenures.includes(val)) {
+                alert("This tenure already exists.");
+                return;
+            }
+            appTeamData.tenures.push(val);
+            input.value = "";
+            saveTeamData();
+            playClickSound();
+        });
+    }
+    
+    // 50-Word limit enforcement on committee description
+    const commDesc = document.getElementById("admin-comm-desc");
+    const commWordCount = document.getElementById("committee-desc-word-count");
+    const commWordBadge = document.getElementById("admin-comm-word-badge");
+    
+    if (commDesc) {
+        commDesc.addEventListener("input", function() {
+            const words = this.value.trim().split(/\s+/).filter(Boolean);
+            if (words.length > 50) {
+                this.value = words.slice(0, 50).join(" ");
+            }
+            const currentCount = Math.min(50, this.value.trim().split(/\s+/).filter(Boolean).length);
+            if (commWordCount) commWordCount.textContent = currentCount;
+            if (commWordBadge) {
+                if (currentCount >= 50) commWordBadge.classList.add("limit-reached");
+                else commWordBadge.classList.remove("limit-reached");
+            }
+        });
+    }
+    
+    // Photo File Upload to Base64
+    const commPhotoFile = document.getElementById("admin-comm-photo-file");
+    const commPhotoPreview = document.getElementById("admin-comm-photo-preview");
+    const commPhotoPlaceholder = document.getElementById("admin-comm-photo-placeholder");
+    
+    if (commPhotoFile) {
+        commPhotoFile.addEventListener("change", function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    adminCommPhotoData = evt.target.result;
+                    if (commPhotoPreview) {
+                        commPhotoPreview.src = adminCommPhotoData;
+                        commPhotoPreview.style.display = "block";
+                    }
+                    if (commPhotoPlaceholder) commPhotoPlaceholder.style.display = "none";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Admin Add Committee Member
+    const btnAddCommittee = document.getElementById("btn-admin-add-committee");
+    if (btnAddCommittee) {
+        btnAddCommittee.addEventListener("click", () => {
+            const tenureSelect = document.getElementById("admin-comm-tenure-select");
+            const nameInput = document.getElementById("admin-comm-name");
+            const descInput = document.getElementById("admin-comm-desc");
+            
+            if (!nameInput.value.trim() || !descInput.value.trim()) {
+                alert("Please enter both the member name and description.");
+                return;
+            }
+            
+            const newComm = {
+                id: "comm-" + Date.now(),
+                name: nameInput.value.trim(),
+                tenure: tenureSelect.value,
+                desc: descInput.value.trim(),
+                image: adminCommPhotoData || "assets/images/logo.png"
+            };
+            
+            appTeamData.committeeMembers.push(newComm);
+            saveTeamData();
+            
+            nameInput.value = "";
+            descInput.value = "";
+            if (commWordCount) commWordCount.textContent = "0";
+            adminCommPhotoData = "";
+            if (commPhotoPreview) commPhotoPreview.style.display = "none";
+            if (commPhotoPlaceholder) commPhotoPlaceholder.style.display = "block";
+            if (commPhotoFile) commPhotoFile.value = "";
+            playClickSound();
+        });
+    }
+    
+    // Admin Save Passwords
+    const btnSavePasswords = document.getElementById("btn-save-passwords");
+    if (btnSavePasswords) {
+        btnSavePasswords.addEventListener("click", () => {
+            const teamInput = document.getElementById("admin-edit-team-passcode");
+            const adminInput = document.getElementById("admin-edit-admin-passcode");
+            
+            if (!teamInput.value.trim() || !adminInput.value.trim()) {
+                alert("Passcodes cannot be empty.");
+                return;
+            }
+            
+            appTeamData.teamPasscode = teamInput.value.trim();
+            appTeamData.adminPasscode = adminInput.value.trim();
+            saveTeamData();
+            
+            const feedback = document.getElementById("password-save-feedback");
+            if (feedback) {
+                feedback.style.display = "block";
+                setTimeout(() => { feedback.style.display = "none"; }, 3500);
+            }
+            playClickSound();
+        });
+    }
+    
+    // Admin Copy Export Code
+    const btnCopyExport = document.getElementById("btn-copy-export-code");
+    if (btnCopyExport) {
+        btnCopyExport.addEventListener("click", () => {
+            const textarea = document.getElementById("admin-export-textarea");
+            const status = document.getElementById("export-copy-status");
+            if (textarea) {
+                textarea.focus();
+                textarea.select();
+                textarea.setSelectionRange(0, 999999);
+                
+                let success = false;
+                try {
+                    success = document.execCommand("copy");
+                } catch (err) {
+                    success = false;
+                }
+                
+                if (success) {
+                    if (status) {
+                        status.style.display = "inline-block";
+                        setTimeout(() => { status.style.display = "none"; }, 3500);
+                    }
+                } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textarea.value).then(() => {
+                        if (status) {
+                            status.style.display = "inline-block";
+                            setTimeout(() => { status.style.display = "none"; }, 3500);
+                        }
+                    }).catch(() => {
+                        alert("Please select the text in the box and press Ctrl + C to copy.");
+                    });
+                } else {
+                    alert("Please select the text in the box and press Ctrl + C to copy.");
+                }
+            }
+        });
+    }
+
+    // Auto-select text on textarea click
+    const exportTextarea = document.getElementById("admin-export-textarea");
+    if (exportTextarea) {
+        exportTextarea.addEventListener("click", function() {
+            this.select();
+        });
+    }
+    
+    // Live Competitions Save Event
     const btnSaveEvent = document.getElementById("btn-save-new-event");
     if (btnSaveEvent) {
         btnSaveEvent.addEventListener("click", (e) => {
@@ -576,21 +1093,28 @@ function setupModalsController() {
         });
     }
     
+    // Initial Render of Core Committee & Leaderboard
+    renderCoreCommitteeMainView();
+    renderLeaderboardTable();
+    
     window.addEventListener("hashchange", checkHashAccess);
     checkHashAccess();
 }
 
-function openPasscodePrompt() {
-    if (adminPasscodeModal) {
-        document.getElementById("admin-passcode-input").value = "";
-        document.getElementById("passcode-error").style.display = "none";
-        adminPasscodeModal.classList.add("active");
+function openTeamLoginPrompt() {
+    const teamLoginModal = document.getElementById("team-login-modal");
+    if (teamLoginModal) {
+        const input = document.getElementById("team-passcode-input");
+        const error = document.getElementById("team-passcode-error");
+        if (input) input.value = "";
+        if (error) error.style.display = "none";
+        teamLoginModal.classList.add("active");
     }
 }
 
 function checkHashAccess() {
-    if (window.location.hash === "#admin") {
-        openPasscodePrompt();
+    if (window.location.hash === "#admin" || window.location.hash === "#team") {
+        openTeamLoginPrompt();
         window.history.replaceState(null, null, ' ');
     }
 }
@@ -2418,15 +2942,6 @@ function initDashboardNavigation() {
             if (window.innerWidth <= 1024) {
                 closeMobileSidebar();
             }
-        });
-    });
-
-    // Support Tenure tabs switching in National Core Committee
-    document.querySelectorAll(".tenure-pill").forEach(pill => {
-        pill.addEventListener("click", function() {
-            document.querySelectorAll(".tenure-pill").forEach(p => p.classList.remove("active"));
-            this.classList.add("active");
-            playClickSound();
         });
     });
 }

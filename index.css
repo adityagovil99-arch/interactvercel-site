@@ -461,6 +461,44 @@ body {
     width: 0;
 }
 
+.btn-sidebar-team {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--bg-slate);
+    border: 2px solid var(--border-bold);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    gap: 16px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: 3px 3px 0 var(--border-bold);
+    white-space: nowrap;
+    margin-top: 10px;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.btn-sidebar-team:hover {
+    background: var(--primary);
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0 var(--border-bold);
+}
+
+.dashboard-sidebar.collapsed .btn-sidebar-team {
+    padding: 12px 0;
+    justify-content: center;
+}
+
+.dashboard-sidebar.collapsed .btn-sidebar-team .nav-label {
+    opacity: 0;
+    width: 0;
+    display: none;
+}
+
 /* Right Dashboard Viewport Container */
 .dashboard-viewport {
     height: 100vh;
@@ -2504,6 +2542,60 @@ body.theme-indigo .dashboard-viewport {
     box-shadow: 0 0 8px rgba(234, 179, 8, 0.6);
 }
 
+.committee-members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+    width: 100%;
+    margin-top: 24px;
+    text-align: left;
+}
+
+.committee-member-card {
+    background: var(--bg-slate);
+    border: 2px solid var(--border-bold);
+    box-shadow: 4px 4px 0 var(--border-bold);
+    border-radius: var(--radius-md);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: var(--transition-smooth);
+}
+
+.committee-member-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 6px 6px 0 var(--border-bold);
+    border-color: var(--primary);
+}
+
+.committee-member-img {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-bold);
+    margin-bottom: 14px;
+    background: var(--bg-white);
+}
+
+.committee-member-name {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
+
+.committee-member-desc {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+}
+
 /* ==========================================================================
    CENTRAL APPLICATION PORTAL & FORM CARDS
    ========================================================================== */
@@ -2799,6 +2891,343 @@ body.theme-indigo .dashboard-viewport {
     font-weight: 800;
     margin-top: 10px;
     text-transform: uppercase;
+}
+
+/* ==========================================================================
+   🔐 TEAM LEADERBOARD & ADMIN MASTER CONSOLE STYLES
+   ========================================================================== */
+.leaderboard-modal-card {
+    max-width: 680px;
+    width: 95%;
+}
+
+.leaderboard-search-box {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.leaderboard-search-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-bold);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    background: var(--bg-slate);
+    color: var(--text-primary);
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.leaderboard-search-input:focus {
+    border-color: var(--primary);
+    background: var(--bg-white);
+}
+
+.leaderboard-table-container {
+    max-height: 440px;
+    overflow-y: auto;
+    border: 2px solid var(--border-bold);
+    border-radius: var(--radius-sm);
+    box-shadow: 4px 4px 0 var(--border-bold);
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.leaderboard-table th {
+    background: var(--text-primary);
+    color: var(--bg-white);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.leaderboard-table td {
+    padding: 12px 16px;
+    border-bottom: 1.5px solid var(--border-light);
+    background: var(--bg-white);
+    color: var(--text-primary);
+}
+
+.leaderboard-table tr:hover td {
+    background: var(--bg-slate);
+}
+
+.leaderboard-rank-col {
+    font-weight: 900;
+    font-family: var(--font-heading);
+    width: 75px;
+    color: var(--text-primary);
+}
+
+.leaderboard-name-col {
+    font-weight: 700;
+}
+
+.leaderboard-points-col {
+    font-weight: 900;
+    font-family: var(--font-heading);
+    text-align: right;
+    color: var(--primary);
+}
+
+/* Master Admin Console */
+.admin-master-card {
+    max-width: 960px;
+    width: 95%;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-nav-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--border-bold);
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+}
+
+.admin-tab-btn {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    border: 2px solid var(--border-bold);
+    background: var(--bg-slate);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.admin-tab-btn.active,
+.admin-tab-btn:hover {
+    background: var(--primary);
+    border-color: var(--border-bold);
+}
+
+.admin-tab-content {
+    display: none;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.admin-tab-content.active {
+    display: block;
+}
+
+/* Admin Mini Table & Point Modifiers */
+.admin-table-scroll {
+    max-height: 380px;
+    overflow-y: auto;
+    border: 2px solid var(--border-bold);
+    border-radius: var(--radius-sm);
+    background: var(--bg-slate);
+}
+
+.admin-mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.admin-mini-table th {
+    background: var(--text-primary);
+    color: var(--bg-white);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    padding: 8px 12px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.admin-mini-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-white);
+    vertical-align: middle;
+}
+
+.quick-adjust-btn {
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    background: var(--bg-slate);
+    border: 1.5px solid var(--border-bold);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin-right: 4px;
+    transition: var(--transition-smooth);
+}
+
+.quick-adjust-btn:hover {
+    background: var(--primary);
+}
+
+/* Tenure Manager in Admin */
+.tenure-add-inline {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.tenure-add-inline input {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--border-bold);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+}
+
+.admin-tenure-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tenure-chip-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background: var(--bg-white);
+    border: 1.5px solid var(--border-bold);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    font-family: var(--font-heading);
+}
+
+.btn-remove-tenure {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* Word Counter Badge */
+.word-count-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin-top: 4px;
+    display: inline-block;
+    color: var(--text-muted);
+}
+
+.word-count-badge.limit-reached {
+    color: #ef4444;
+}
+
+/* Photo Preview Box */
+.photo-preview-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px dashed var(--border-bold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--bg-slate);
+    flex-shrink: 0;
+}
+
+.photo-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Admin Committee Roster List */
+.admin-committee-list {
+    max-height: 480px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-comm-item-card {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--bg-white);
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-sm);
+}
+
+.admin-comm-item-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid var(--border-bold);
+    flex-shrink: 0;
+}
+
+.admin-comm-item-info {
+    flex-grow: 1;
+}
+
+.admin-comm-item-name {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.admin-comm-item-tenure {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+    display: block;
+}
+
+.admin-comm-item-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.btn-delete-row {
+    background: #fee2e2;
+    color: #9f1239;
+    border: 1.5px solid var(--border-bold);
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-delete-row:hover {
+    background: #ef4444;
+    color: var(--bg-white);
 }
 
 .admin-dashboard-card {

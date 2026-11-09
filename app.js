@@ -240,61 +240,85 @@ function initScrollReveals() {
 }
 
 // ==========================================================================
-// 🔥 LIVE EVENTS DYNAMIC CAROUSEL & BACKGROUND LOCALSTORAGE ADMIN SYSTEM
+// 🛡️ UNIFIED SYSTEM DATA: TEAM, COMMITTEE, TENURES & ACTIVE COMPETITIONS
 // ==========================================================================
-const defaultLiveEvents = [
-    {
-        id: "debate-impromptu",
-        title: "Impromptu debates & Stage Presence",
-        badge: "Active Competition",
-        desc: "Ditch the stage fright! Register for this quick, fun impromptu speaking challenge. Get a surprise topic, share your ideas in 2 minutes, and claim your certified winner badge. 100% friendly and supportive.",
-        link: "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0",
-        template: "speaking",
-        icon: "🎙️"
-    },
-    {
-        id: "wellness-mixer",
-        title: "Connect Circle Wellness Mixer",
-        badge: "Live Workshop",
-        desc: "Looking to make authentic friends? Jump into our next curated wellness session! Share stories, play bonding games, and connect with people who support your mental health and soft-skills goals.",
-        link: "https://forms.gle/EJ5njy2RpcLyCZdo7",
-        template: "wellness",
-        icon: "🤍"
-    },
-    {
-        id: "casing-nutrients",
-        title: "Collaborative Soft Skills Casing Challenge",
-        badge: "Ongoing Challenge",
-        desc: "Solve practical business and social problems in friendly groups of 3. Excellent for learning team leadership, building active communication skills, and gaining confident collaboration experience.",
-        link: "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0",
-        template: "casing",
-        icon: "📊"
-    }
-];
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
-let liveEvents = [];
+const DEFAULT_TEAM_DATA = {
+    "teamPasscode": "teamup2026",
+    "adminPasscode": "adminup2026",
+    "tenures": [
+        "Tenure 2025 - 2026",
+        "Tenure 2024 - 2025",
+        "Founding Tenure"
+    ],
+    "leaderboard": [],
+    "committeeMembers": [],
+    "competitions": [
+        {
+            "id": "debate-impromptu",
+            "title": "Impromptu debates & Stage Presence",
+            "badge": "Active Competition",
+            "desc": "Ditch the stage fright! Register for this quick, fun impromptu speaking challenge. Get a surprise topic, share your ideas in 2 minutes, and claim your certified winner badge. 100% friendly and supportive.",
+            "link": "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0",
+            "template": "speaking",
+            "icon": "🎙️"
+        },
+        {
+            "id": "wellness-mixer",
+            "title": "Connect Circle Wellness Mixer",
+            "badge": "Live Workshop",
+            "desc": "Looking to make authentic friends? Jump into our next curated wellness session! Share stories, play bonding games, and connect with people who support your mental health and soft-skills goals.",
+            "link": "https://forms.gle/EJ5njy2RpcLyCZdo7",
+            "template": "wellness",
+            "icon": "🤍"
+        },
+        {
+            "id": "casing-nutrients",
+            "title": "Collaborative Soft Skills Casing Challenge",
+            "badge": "Ongoing Challenge",
+            "desc": "Solve practical business and social problems in friendly groups of 3. Excellent for learning team leadership, building active communication skills, and gaining confident collaboration experience.",
+            "link": "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0",
+            "template": "casing",
+            "icon": "📊"
+        }
+    ]
+};
+
+let appTeamData = (() => {
+    try {
+        const saved = localStorage.getItem("interactup_team_portal_data");
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            return {
+                teamPasscode: parsed.teamPasscode || DEFAULT_TEAM_DATA.teamPasscode,
+                adminPasscode: parsed.adminPasscode || DEFAULT_TEAM_DATA.adminPasscode,
+                tenures: Array.isArray(parsed.tenures) && parsed.tenures.length > 0 ? parsed.tenures : DEFAULT_TEAM_DATA.tenures,
+                leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : DEFAULT_TEAM_DATA.leaderboard,
+                committeeMembers: Array.isArray(parsed.committeeMembers) ? parsed.committeeMembers : DEFAULT_TEAM_DATA.committeeMembers,
+                competitions: Array.isArray(parsed.competitions) && parsed.competitions.length > 0 ? parsed.competitions : DEFAULT_TEAM_DATA.competitions
+            };
+        }
+    } catch (e) {
+        console.error("Failed to parse saved team data", e);
+    }
+    return JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA));
+})();
+
+let liveEvents = appTeamData.competitions;
 let currentCarouselIndex = 0;
 let carouselTimer = null;
 
 function initEventsEngine() {
-    try {
-        const stored = localStorage.getItem("interactup_events");
-        if (stored) {
-            try {
-                liveEvents = JSON.parse(stored);
-            } catch (e) {
-                liveEvents = [...defaultLiveEvents];
-            }
-        } else {
-            liveEvents = [...defaultLiveEvents];
-            try {
-                localStorage.setItem("interactup_events", JSON.stringify(liveEvents));
-            } catch (e) {}
-        }
-    } catch (e) {
-        console.warn("localStorage is blocked or disabled. Falling back to default list.", e);
-        liveEvents = [...defaultLiveEvents];
-    }
+    liveEvents = appTeamData.competitions;
 }
 
 function renderLiveEventsCarousel() {
@@ -448,8 +472,9 @@ function renderAdminEventsList() {
 }
 
 function deleteEvent(id) {
-    liveEvents = liveEvents.filter(ev => ev.id !== id);
-    localStorage.setItem("interactup_events", JSON.stringify(liveEvents));
+    appTeamData.competitions = appTeamData.competitions.filter(ev => ev.id !== id);
+    liveEvents = appTeamData.competitions;
+    saveTeamData();
     if (currentCarouselIndex >= liveEvents.length) {
         currentCarouselIndex = Math.max(0, liveEvents.length - 1);
     }
@@ -461,56 +486,17 @@ function deleteEvent(id) {
 // ==========================================================================
 // 🛡️ INTERACTUP TEAM PORTAL, LEADERBOARD & MASTER ADMIN SYSTEM
 // ==========================================================================
-function escapeHtml(str) {
-    if (!str) return "";
-    return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-const DEFAULT_TEAM_DATA = {
-    "teamPasscode": "teamup2026",
-    "adminPasscode": "adminup2026",
-    "tenures": [
-        "Tenure 2025 - 2026",
-        "Tenure 2024 - 2025",
-        "Founding Tenure"
-    ],
-    "leaderboard": [],
-    "committeeMembers": []
-};
-
-let appTeamData = (() => {
-    try {
-        const saved = localStorage.getItem("interactup_team_portal_data");
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            return {
-                teamPasscode: parsed.teamPasscode || DEFAULT_TEAM_DATA.teamPasscode,
-                adminPasscode: parsed.adminPasscode || DEFAULT_TEAM_DATA.adminPasscode,
-                tenures: Array.isArray(parsed.tenures) && parsed.tenures.length > 0 ? parsed.tenures : DEFAULT_TEAM_DATA.tenures,
-                leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : DEFAULT_TEAM_DATA.leaderboard,
-                committeeMembers: Array.isArray(parsed.committeeMembers) ? parsed.committeeMembers : DEFAULT_TEAM_DATA.committeeMembers
-            };
-        }
-    } catch (e) {
-        console.error("Failed to parse saved team data", e);
-    }
-    return JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA));
-})();
-
 let currentActiveTenure = appTeamData.tenures[0] || "Tenure 2025 - 2026";
 let adminCommPhotoData = "";
 
 function saveTeamData() {
     try {
         localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
+        localStorage.setItem("interactup_events", JSON.stringify(appTeamData.competitions));
     } catch (e) {
         console.error("Failed to save team data to localStorage", e);
     }
+    liveEvents = appTeamData.competitions;
     renderLeaderboardTable();
     renderCoreCommitteeMainView();
     renderAdminLeaderboardList();
@@ -1079,8 +1065,9 @@ function setupModalsController() {
                 icon: "🎙️"
             };
             
-            liveEvents.unshift(newEv);
-            localStorage.setItem("interactup_events", JSON.stringify(liveEvents));
+            appTeamData.competitions.unshift(newEv);
+            liveEvents = appTeamData.competitions;
+            saveTeamData();
             
             titleField.value = "";
             descField.value = "";

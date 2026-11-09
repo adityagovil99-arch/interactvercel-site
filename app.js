@@ -322,6 +322,79 @@ let appTeamData = (() => {
     return JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA));
 })();
 
+// ==========================================================================
+// 🔥 GOOGLE FIREBASE REALTIME CLOUD DATABASE INTEGRATION
+// ==========================================================================
+const firebaseConfig = {
+    apiKey: "AIzaSyChFIHDUso_wY3AdWSO4O4Dw9MRmo7z_Ts",
+    authDomain: "interactup-3881b.firebaseapp.com",
+    projectId: "interactup-3881b",
+    storageBucket: "interactup-3881b.firebasestorage.app",
+    messagingSenderId: "318701080525",
+    appId: "1:318701080525:web:c99980fffceea178dd3e84"
+};
+
+let db = null;
+let isFirestoreSeeded = false;
+
+try {
+    if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
+        console.log("🔥 Firebase initialized. Listening for real-time cloud updates...");
+        
+        db.collection("interactup_config").doc("team_data").onSnapshot((doc) => {
+            if (doc.exists) {
+                const cloud = doc.data();
+                if (cloud && typeof cloud === 'object') {
+                    appTeamData.teamPasscode = cloud.teamPasscode || appTeamData.teamPasscode;
+                    appTeamData.adminPasscode = cloud.adminPasscode || appTeamData.adminPasscode;
+                    if (Array.isArray(cloud.tenures) && cloud.tenures.length > 0) {
+                        appTeamData.tenures = cloud.tenures;
+                    }
+                    if (Array.isArray(cloud.leaderboard)) {
+                        appTeamData.leaderboard = cloud.leaderboard;
+                    }
+                    if (Array.isArray(cloud.committeeMembers)) {
+                        appTeamData.committeeMembers = cloud.committeeMembers;
+                    }
+                    if (Array.isArray(cloud.competitions) && cloud.competitions.length > 0) {
+                        appTeamData.competitions = cloud.competitions;
+                        liveEvents = appTeamData.competitions;
+                    }
+                    try {
+                        localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
+                    } catch(e) {}
+                    
+                    // Trigger live UI re-render across the entire website
+                    if (typeof renderLeaderboardTable === 'function') renderLeaderboardTable();
+                    if (typeof renderCoreCommitteeMainView === 'function') renderCoreCommitteeMainView();
+                    if (typeof renderLiveEventsCarousel === 'function') renderLiveEventsCarousel();
+                    if (typeof renderAllEventsTable === 'function') renderAllEventsTable();
+                    if (typeof renderAdminLeaderboardList === 'function') renderAdminLeaderboardList();
+                    if (typeof renderAdminTenureChips === 'function') renderAdminTenureChips();
+                    if (typeof renderAdminCommitteeTenureDropdown === 'function') renderAdminCommitteeTenureDropdown();
+                    if (typeof renderAdminCommitteeRosterList === 'function') renderAdminCommitteeRosterList();
+                    if (typeof renderAdminEventsList === 'function') renderAdminEventsList();
+                    if (typeof renderAdminExportCode === 'function') renderAdminExportCode();
+                }
+            } else if (!isFirestoreSeeded) {
+                isFirestoreSeeded = true;
+                console.log("🔥 Initializing Firestore document with current team data...");
+                db.collection("interactup_config").doc("team_data").set(appTeamData)
+                    .then(() => console.log("🔥 Successfully seeded Firestore with initial team data!"))
+                    .catch(err => console.error("Firestore seed error:", err));
+            }
+        }, (err) => {
+            console.warn("Firestore sync warning (falling back to local cache):", err);
+        });
+    }
+} catch (e) {
+    console.warn("Firebase initialization skipped or failed:", e);
+}
+
 let liveEvents = appTeamData.competitions;
 let currentCarouselIndex = 0;
 let carouselTimer = null;
@@ -502,6 +575,15 @@ function saveTeamData() {
     try {
         localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
         localStorage.setItem("interactup_events", JSON.stringify(appTeamData.competitions));
+        if (db) {
+            db.collection("interactup_config").doc("team_data").set(appTeamData)
+                .then(() => {
+                    console.log("🔥 Successfully synced to Firebase Cloud Database!");
+                })
+                .catch(err => {
+                    console.error("Firebase cloud sync error:", err);
+                });
+        }
     } catch (e) {
         console.error("Failed to save team data to localStorage", e);
     }

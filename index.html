@@ -39,8 +39,8 @@
     <!-- MAIN DASHBOARD LAYOUT WRAPPER -->
     <div class="dashboard-container">
         
-        <!-- 1. LEFT-HAND FIXED DRAWER SIDEBAR (10% Width Collapsible) -->
-        <aside class="dashboard-sidebar collapsed" id="main-sidebar">
+        <!-- 1. LEFT-HAND FIXED DRAWER SIDEBAR (Collapsible, Open by Default) -->
+        <aside class="dashboard-sidebar" id="main-sidebar">
             <div class="sidebar-header">
                 <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Toggle Sidebar Drawer">
                     <svg class="toggle-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -118,6 +118,15 @@
                         </svg>
                     </div>
                     <span class="nav-label">Announcements</span>
+                </a>
+                <a href="#committee" class="nav-item" data-view="committee" data-theme="gold">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="8" r="6"/>
+                            <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">National Core Committee</span>
                 </a>
                 <a href="#startup" class="nav-item" data-view="startup" data-theme="amber">
                     <div class="nav-icon-wrapper">
@@ -592,7 +601,38 @@
                 </section>
             </div>
 
-            <!-- PANEL 7: STARTUP LAUNCHPAD (theme-amber) -->
+            <!-- PANEL 7: NATIONAL CORE COMMITTEE MEMBERS (theme-gold) -->
+            <div class="view-panel" id="view-committee">
+                <section class="committee-section section-container" style="padding-top: 40px;">
+                    <div class="section-header">
+                        <div class="hero-badge" style="display: table; margin: 0 auto 24px;">LEADERSHIP & GOVERNANCE</div>
+                        <h2 class="section-title text-center">NATIONAL CORE <span class="text-gradient">COMMITTEE MEMBERS</span></h2>
+                        <p class="section-subtitle text-center">Recognizing our dedicated student and alumni leadership who steered InteractUp across diverse operational tenures.</p>
+                    </div>
+
+                    <div class="committee-archive-card glass">
+                        <div class="committee-archive-icon">🏛️</div>
+                        <h3>National Core Committee Directory</h3>
+                        <p class="committee-archive-desc">
+                            This section is reserved for the official hall of leadership. Member profiles, roles, portfolios, and tenure achievements will be cataloged here soon.
+                        </p>
+                        
+                        <!-- Tenure Filter Placeholders (Ready to populate) -->
+                        <div class="committee-tenure-tabs">
+                            <span class="tenure-pill active">Tenure 2025 - 2026</span>
+                            <span class="tenure-pill">Tenure 2024 - 2025</span>
+                            <span class="tenure-pill">Founding Tenure</span>
+                        </div>
+
+                        <div class="committee-empty-state">
+                            <span class="status-pulse-dot"></span>
+                            <span>Tenure Rosters & Profiles Under Curation</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PANEL 8: STARTUP LAUNCHPAD (theme-amber) -->
             <div class="view-panel" id="view-startup">
                 <section class="startup-section section-container" style="padding-top: 40px;">
                     <div class="section-header">
@@ -626,7 +666,7 @@
                 </section>
             </div>
 
-            <!-- PANEL 8: MIND NUTRIENTS (theme-indigo) -->
+            <!-- PANEL 9: MIND NUTRIENTS (theme-indigo) -->
             <div class="view-panel" id="view-nutrients">
                 <section class="nutrients-section section-container" style="padding-top: 40px;">
                     <div class="section-header">
@@ -680,6 +720,7 @@
                         <a href="#initiatives" class="trigger-view-jump" data-target-view="matchmaker">Initiatives</a>
                         <a href="#streak-system" class="trigger-view-jump" data-target-view="streak">Streak Ladder</a>
                         <a href="#matchmaker" class="trigger-view-jump" data-target-view="matchmaker">Find Your Circle</a>
+                        <a href="#committee" class="trigger-view-jump" data-target-view="committee">Core Committee</a>
                     </div>
                     <div class="footer-contact">
                         <h4>Join Ecosystem</h4>

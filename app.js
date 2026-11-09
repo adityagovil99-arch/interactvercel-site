@@ -155,7 +155,7 @@ function playClickSound() {
 }
 
 function attachSoundToButtons() {
-    document.querySelectorAll(".btn, .filter-btn, .quiz-option-btn, .nav-link, .nav-item, .btn-sidebar-lofi, .indicator, .btn-close-modal, .btn-close-lightbox, .hidden-admin-key, .gallery-filter-btn").forEach(btn => {
+    document.querySelectorAll(".btn, .filter-btn, .quiz-option-btn, .nav-link, .nav-item, .btn-sidebar-lofi, .indicator, .btn-close-modal, .btn-close-lightbox, .hidden-admin-key, .gallery-filter-btn, .tenure-pill").forEach(btn => {
         btn.addEventListener("click", playClickSound);
     });
 }
@@ -2359,6 +2359,7 @@ function initDashboardNavigation() {
             else if (targetView === "announcements") morphStageToShape("sphere");
             else if (targetView === "startup") morphStageToShape("rocket");
             else if (targetView === "nutrients") morphStageToShape("constellation");
+            else if (targetView === "committee") morphStageToShape("sphere");
             
             playClickSound();
         });
@@ -2371,6 +2372,15 @@ function initDashboardNavigation() {
             const targetView = this.getAttribute("data-target-view");
             const navBtn = document.querySelector(`.nav-item[data-view="${targetView}"]`);
             if (navBtn) navBtn.click();
+        });
+    });
+
+    // Support Tenure tabs switching in National Core Committee
+    document.querySelectorAll(".tenure-pill").forEach(pill => {
+        pill.addEventListener("click", function() {
+            document.querySelectorAll(".tenure-pill").forEach(p => p.classList.remove("active"));
+            this.classList.add("active");
+            playClickSound();
         });
     });
 }

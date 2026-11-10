@@ -642,13 +642,72 @@ function renderCoreCommitteeMainView() {
         }
     } else {
         if (emptyState) emptyState.style.display = "none";
-        gridContainer.innerHTML = members.map(m => `
-            <div class="committee-member-card">
+        gridContainer.innerHTML = members.map((m, idx) => `
+            <div class="committee-member-card ${isAdminModeActive ? 'admin-card-active' : ''}">
+                ${isAdminModeActive ? `
+                    <div class="member-card-admin-bar">
+                        <button type="button" class="btn-card-move-prev" data-id="${m.id}" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Left / Earlier">⬅️</button>
+                        <span class="member-order-badge">Order #${idx + 1}</span>
+                        <button type="button" class="btn-card-move-next" data-id="${m.id}" data-idx="${idx}" ${idx === members.length - 1 ? 'disabled' : ''} title="Move Right / Later">➡️</button>
+                        <button type="button" class="btn-card-delete-member" data-id="${m.id}" title="Remove Member">🗑️</button>
+                    </div>
+                ` : ''}
                 <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="committee-member-img" onerror="this.src='assets/images/logo.png'">
                 <div class="committee-member-name">${escapeHtml(m.name)}</div>
                 <div class="committee-member-desc">${escapeHtml(m.desc)}</div>
             </div>
         `).join("");
+        
+        if (isAdminModeActive) {
+            gridContainer.querySelectorAll(".btn-card-move-prev").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const idx = parseInt(this.getAttribute("data-idx"), 10);
+                    if (idx > 0) {
+                        moveCommitteeMemberOrder(currentActiveTenure, idx, idx - 1);
+                    }
+                });
+            });
+            gridContainer.querySelectorAll(".btn-card-move-next").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const idx = parseInt(this.getAttribute("data-idx"), 10);
+                    if (idx < members.length - 1) {
+                        moveCommitteeMemberOrder(currentActiveTenure, idx, idx + 1);
+                    }
+                });
+            });
+            gridContainer.querySelectorAll(".btn-card-delete-member").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const id = this.getAttribute("data-id");
+                    if (confirm("Remove this member profile from " + currentActiveTenure + "?")) {
+                        appTeamData.committeeMembers = appTeamData.committeeMembers.filter(x => x.id !== id);
+                        saveTeamData();
+                        playClickSound();
+                    }
+                });
+            });
+        }
+    }
+}
+
+// HELPER: REORDER COMMITTEE MEMBERS WITHIN A TENURE
+function moveCommitteeMemberOrder(tenure, fromIdx, toIdx) {
+    const tenureMembers = appTeamData.committeeMembers.filter(m => m.tenure === tenure);
+    if (!tenureMembers[fromIdx] || !tenureMembers[toIdx]) return;
+    
+    const memberA = tenureMembers[fromIdx];
+    const memberB = tenureMembers[toIdx];
+    
+    const realIndexA = appTeamData.committeeMembers.indexOf(memberA);
+    const realIndexB = appTeamData.committeeMembers.indexOf(memberB);
+    
+    if (realIndexA !== -1 && realIndexB !== -1) {
+        appTeamData.committeeMembers[realIndexA] = memberB;
+        appTeamData.committeeMembers[realIndexB] = memberA;
+        saveTeamData();
+        playClickSound();
     }
 }
 
@@ -728,17 +787,50 @@ function renderAdminLeaderboardList() {
     });
 }
 
-// 4. ADMIN: TENURE CHIPS LIST
+// 4. ADMIN: TENURE CHIPS LIST WITH REORDERING
 function renderAdminTenureChips() {
     const chipsContainer = document.getElementById("admin-tenure-chips-list");
     if (!chipsContainer) return;
     
-    chipsContainer.innerHTML = appTeamData.tenures.map(tenure => `
-        <span class="tenure-chip-item">
-            ${escapeHtml(tenure)}
-            <button type="button" class="btn-remove-tenure" data-tenure="${escapeHtml(tenure)}" title="Delete Tenure">&times;</button>
-        </span>
+    chipsContainer.innerHTML = appTeamData.tenures.map((tenure, idx) => `
+        <div class="tenure-reorder-card">
+            <div class="tenure-reorder-info">
+                <span class="tenure-order-num">${idx + 1}</span>
+                <span class="tenure-order-title">${escapeHtml(tenure)}</span>
+            </div>
+            <div class="tenure-reorder-actions">
+                <button type="button" class="btn-order-move btn-tenure-move-up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Earlier (Higher)">⬆️</button>
+                <button type="button" class="btn-order-move btn-tenure-move-down" data-idx="${idx}" ${idx === appTeamData.tenures.length - 1 ? 'disabled' : ''} title="Move Later (Lower)">⬇️</button>
+                <button type="button" class="btn-order-delete btn-remove-tenure" data-tenure="${escapeHtml(tenure)}" title="Delete Tenure">🗑️</button>
+            </div>
+        </div>
     `).join("");
+    
+    chipsContainer.querySelectorAll(".btn-tenure-move-up").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const idx = parseInt(this.getAttribute("data-idx"), 10);
+            if (idx > 0) {
+                const temp = appTeamData.tenures[idx];
+                appTeamData.tenures[idx] = appTeamData.tenures[idx - 1];
+                appTeamData.tenures[idx - 1] = temp;
+                saveTeamData();
+                playClickSound();
+            }
+        });
+    });
+    
+    chipsContainer.querySelectorAll(".btn-tenure-move-down").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const idx = parseInt(this.getAttribute("data-idx"), 10);
+            if (idx < appTeamData.tenures.length - 1) {
+                const temp = appTeamData.tenures[idx];
+                appTeamData.tenures[idx] = appTeamData.tenures[idx + 1];
+                appTeamData.tenures[idx + 1] = temp;
+                saveTeamData();
+                playClickSound();
+            }
+        });
+    });
     
     chipsContainer.querySelectorAll(".btn-remove-tenure").forEach(btn => {
         btn.addEventListener("click", function() {
@@ -764,34 +856,80 @@ function renderAdminCommitteeTenureDropdown() {
     select.innerHTML = appTeamData.tenures.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
 }
 
-// 6. ADMIN: COMMITTEE MEMBERS ROSTER
+// 6. ADMIN: COMMITTEE MEMBERS ROSTER WITH REORDERING & TENURE FILTER
+let adminSelectedRosterTenure = "";
+
 function renderAdminCommitteeRosterList() {
     const list = document.getElementById("admin-committee-roster-list");
+    const filterSelect = document.getElementById("admin-roster-filter-tenure");
     if (!list) return;
     
-    if (appTeamData.committeeMembers.length === 0) {
-        list.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.82rem;">No committee members listed yet. Add one on the left!</div>`;
+    if (filterSelect) {
+        if (!adminSelectedRosterTenure || !appTeamData.tenures.includes(adminSelectedRosterTenure)) {
+            adminSelectedRosterTenure = appTeamData.tenures[0] || "";
+        }
+        filterSelect.innerHTML = appTeamData.tenures.map(t => `
+            <option value="${escapeHtml(t)}" ${t === adminSelectedRosterTenure ? 'selected' : ''}>${escapeHtml(t)}</option>
+        `).join("");
+        
+        filterSelect.onchange = function() {
+            adminSelectedRosterTenure = this.value;
+            renderAdminCommitteeRosterList();
+        };
+    }
+    
+    const members = appTeamData.committeeMembers.filter(m => m.tenure === adminSelectedRosterTenure);
+    
+    if (members.length === 0) {
+        list.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.84rem;">No committee members listed for <strong>${escapeHtml(adminSelectedRosterTenure)}</strong> yet. Add one on the left!</div>`;
         return;
     }
     
-    list.innerHTML = appTeamData.committeeMembers.map(m => `
-        <div class="admin-comm-item-card">
-            <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="admin-comm-item-img" onerror="this.src='assets/images/logo.png'">
-            <div class="admin-comm-item-info">
-                <span class="admin-comm-item-name">${escapeHtml(m.name)}</span>
-                <span class="admin-comm-item-tenure">${escapeHtml(m.tenure)}</span>
-                <p class="admin-comm-item-desc">${escapeHtml(m.desc)}</p>
+    list.innerHTML = members.map((m, idx) => `
+        <div class="admin-comm-item-card" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                <span style="font-weight: 800; font-size: 0.82rem; color: var(--primary); min-width: 26px;">#${idx + 1}</span>
+                <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="admin-comm-item-img" onerror="this.src='assets/images/logo.png'">
+                <div class="admin-comm-item-info">
+                    <span class="admin-comm-item-name" style="font-weight: 800; font-size: 0.95rem;">${escapeHtml(m.name)}</span>
+                    <span class="admin-comm-item-tenure" style="font-size: 0.76rem; color: var(--text-muted);">${escapeHtml(m.tenure)}</span>
+                    <p class="admin-comm-item-desc" style="font-size: 0.8rem; margin: 4px 0 0 0; color: var(--text-secondary);">${escapeHtml(m.desc)}</p>
+                </div>
             </div>
-            <button type="button" class="btn-delete-row" data-id="${m.id}" title="Remove Member">✕</button>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <button type="button" class="btn-order-move btn-comm-move-up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Earlier (Higher)">⬆️</button>
+                <button type="button" class="btn-order-move btn-comm-move-down" data-idx="${idx}" ${idx === members.length - 1 ? 'disabled' : ''} title="Move Later (Lower)">⬇️</button>
+                <button type="button" class="btn-order-delete btn-delete-row" data-id="${m.id}" title="Remove Member">🗑️</button>
+            </div>
         </div>
     `).join("");
+    
+    list.querySelectorAll(".btn-comm-move-up").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const idx = parseInt(this.getAttribute("data-idx"), 10);
+            if (idx > 0) {
+                moveCommitteeMemberOrder(adminSelectedRosterTenure, idx, idx - 1);
+            }
+        });
+    });
+    
+    list.querySelectorAll(".btn-comm-move-down").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const idx = parseInt(this.getAttribute("data-idx"), 10);
+            if (idx < members.length - 1) {
+                moveCommitteeMemberOrder(adminSelectedRosterTenure, idx, idx + 1);
+            }
+        });
+    });
     
     list.querySelectorAll(".btn-delete-row").forEach(btn => {
         btn.addEventListener("click", function() {
             const id = this.getAttribute("data-id");
-            appTeamData.committeeMembers = appTeamData.committeeMembers.filter(x => x.id !== id);
-            saveTeamData();
-            playClickSound();
+            if (confirm("Remove this member profile?")) {
+                appTeamData.committeeMembers = appTeamData.committeeMembers.filter(x => x.id !== id);
+                saveTeamData();
+                playClickSound();
+            }
         });
     });
 }
@@ -804,11 +942,79 @@ function renderAdminExportCode() {
 }
 
 // 8. MASTER SETUP CONTROLLER FOR MODALS & ACCESS
+let isAdminModeActive = false;
+
+function openAdminMasterConsole() {
+    const adminMasterModal = document.getElementById("admin-master-modal");
+    if (!adminMasterModal) return;
+    
+    // Populate admin fields
+    const teamInput = document.getElementById("admin-edit-team-passcode");
+    const adminInput = document.getElementById("admin-edit-admin-passcode");
+    if (teamInput) teamInput.value = appTeamData.teamPasscode;
+    if (adminInput) adminInput.value = appTeamData.adminPasscode;
+    
+    renderAdminLeaderboardList();
+    renderAdminTenureChips();
+    renderAdminCommitteeTenureDropdown();
+    renderAdminCommitteeRosterList();
+    renderAdminEventsList();
+    renderAdminExportCode();
+    
+    adminMasterModal.classList.add("active");
+    playClickSound();
+}
+
+function activateAdminMode() {
+    isAdminModeActive = true;
+    sessionStorage.setItem("interactup_is_admin", "true");
+    document.body.classList.add("admin-mode-active");
+    
+    const dock = document.getElementById("admin-persistent-dock");
+    if (dock) dock.classList.add("active");
+    
+    const btnTeam = document.getElementById("btn-team-login-trigger");
+    if (btnTeam) {
+        const label = btnTeam.querySelector(".nav-label");
+        if (label) label.textContent = "👑 Admin Console";
+        btnTeam.style.borderColor = "#10b981";
+    }
+    
+    renderCoreCommitteeMainView();
+}
+
+function deactivateAdminMode() {
+    isAdminModeActive = false;
+    sessionStorage.removeItem("interactup_is_admin");
+    document.body.classList.remove("admin-mode-active");
+    
+    const dock = document.getElementById("admin-persistent-dock");
+    if (dock) dock.classList.remove("active");
+    
+    const btnTeam = document.getElementById("btn-team-login-trigger");
+    if (btnTeam) {
+        const label = btnTeam.querySelector(".nav-label");
+        if (label) label.textContent = "Team Login";
+        btnTeam.style.borderColor = "";
+    }
+    
+    const adminMasterModal = document.getElementById("admin-master-modal");
+    if (adminMasterModal) adminMasterModal.classList.remove("active");
+    
+    renderCoreCommitteeMainView();
+    playClickSound();
+}
+
 function setupModalsController() {
     const allEventsModal = document.getElementById("all-events-modal");
     const teamLoginModal = document.getElementById("team-login-modal");
     const teamLeaderboardModal = document.getElementById("team-leaderboard-modal");
     const adminMasterModal = document.getElementById("admin-master-modal");
+    
+    // Check for existing active admin session
+    if (sessionStorage.getItem("interactup_is_admin") === "true") {
+        activateAdminMode();
+    }
     
     // Competitions Modal open / close
     const btnOpenAll = document.getElementById("btn-open-all-events");
@@ -835,6 +1041,47 @@ function setupModalsController() {
         });
     });
     
+    // Admin Fullscreen, Browse Site & Log Out Buttons
+    const btnFullscreen = document.getElementById("btn-admin-fullscreen");
+    const adminCardContainer = document.getElementById("admin-master-card-container");
+    const fullscreenIcon = document.getElementById("fullscreen-icon");
+    if (btnFullscreen && adminCardContainer) {
+        btnFullscreen.addEventListener("click", () => {
+            const isFull = adminCardContainer.classList.toggle("is-fullscreen");
+            if (fullscreenIcon) fullscreenIcon.textContent = isFull ? "🗗" : "⛶";
+            playClickSound();
+        });
+    }
+    
+    const btnBrowseSite = document.getElementById("btn-admin-browse-site");
+    if (btnBrowseSite) {
+        btnBrowseSite.addEventListener("click", () => {
+            if (adminMasterModal) adminMasterModal.classList.remove("active");
+            playClickSound();
+        });
+    }
+    
+    const btnAdminLogout = document.getElementById("btn-admin-logout");
+    const btnDockLogout = document.getElementById("btn-dock-logout");
+    [btnAdminLogout, btnDockLogout].forEach(btn => {
+        if (btn) btn.addEventListener("click", deactivateAdminMode);
+    });
+    
+    const btnDockOpen = document.getElementById("btn-dock-open-admin");
+    if (btnDockOpen) {
+        btnDockOpen.addEventListener("click", openAdminMasterConsole);
+    }
+    
+    const btnDockSync = document.getElementById("btn-dock-quick-sync");
+    if (btnDockSync) {
+        btnDockSync.addEventListener("click", () => {
+            saveTeamData();
+            btnDockSync.textContent = "✓ Synced!";
+            setTimeout(() => { btnDockSync.textContent = "☁️ Quick Sync"; }, 3000);
+            playClickSound();
+        });
+    }
+    
     // Team Login Trigger (Sidebar Button & Footer Key)
     const btnTeamLoginTrigger = document.getElementById("btn-team-login-trigger");
     if (btnTeamLoginTrigger) {
@@ -855,6 +1102,20 @@ function setupModalsController() {
             openTeamLoginPrompt();
             playClickSound();
         });
+    }
+    
+    function openTeamLoginPrompt() {
+        if (isAdminModeActive) {
+            openAdminMasterConsole();
+            return;
+        }
+        if (teamLoginModal) {
+            teamLoginModal.classList.add("active");
+            if (passcodeField) {
+                passcodeField.value = "";
+                setTimeout(() => passcodeField.focus(), 150);
+            }
+        }
     }
     
     // Close buttons for Team Login, Leaderboard, Admin Master
@@ -892,18 +1153,8 @@ function setupModalsController() {
             passcodeField.value = "";
             if (teamLoginModal) teamLoginModal.classList.remove("active");
             
-            // Populate admin fields
-            document.getElementById("admin-edit-team-passcode").value = appTeamData.teamPasscode;
-            document.getElementById("admin-edit-admin-passcode").value = appTeamData.adminPasscode;
-            renderAdminLeaderboardList();
-            renderAdminTenureChips();
-            renderAdminCommitteeTenureDropdown();
-            renderAdminCommitteeRosterList();
-            renderAdminEventsList();
-            renderAdminExportCode();
-            
-            if (adminMasterModal) adminMasterModal.classList.add("active");
-            playClickSound();
+            activateAdminMode();
+            openAdminMasterConsole();
         } else if (val === appTeamData.teamPasscode) {
             // TEAM LEADERBOARD LOGIN
             passcodeError.style.display = "none";
@@ -3078,6 +3329,45 @@ function initDashboardNavigation() {
 }
 
 // ==========================================================================
+// 🌙 MIDNIGHT NEON / DAYLIGHT THEME ENGINE
+// ==========================================================================
+function initThemeEngine() {
+    const btnToggle = document.getElementById("btn-theme-toggle");
+    const mobileBtnToggle = document.getElementById("mobile-theme-toggle");
+    const iconIndicator = document.getElementById("theme-icon-indicator");
+    const labelIndicator = document.getElementById("theme-label-indicator");
+    const mobileIcon = document.getElementById("mobile-theme-icon");
+    
+    function applyTheme(theme) {
+        if (theme === "dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+            if (iconIndicator) iconIndicator.textContent = "☀️";
+            if (labelIndicator) labelIndicator.textContent = "Daylight Mode";
+            if (mobileIcon) mobileIcon.textContent = "☀️";
+        } else {
+            document.documentElement.setAttribute("data-theme", "light");
+            if (iconIndicator) iconIndicator.textContent = "🌙";
+            if (labelIndicator) labelIndicator.textContent = "Midnight Neon";
+            if (mobileIcon) mobileIcon.textContent = "🌙";
+        }
+    }
+    
+    const savedTheme = localStorage.getItem("interactup_theme") || "light";
+    applyTheme(savedTheme);
+    
+    function toggle() {
+        const current = document.documentElement.getAttribute("data-theme") || "light";
+        const next = current === "dark" ? "light" : "dark";
+        applyTheme(next);
+        localStorage.setItem("interactup_theme", next);
+        playClickSound();
+    }
+    
+    if (btnToggle) btnToggle.addEventListener("click", toggle);
+    if (mobileBtnToggle) mobileBtnToggle.addEventListener("click", toggle);
+}
+
+// ==========================================================================
 // DOM INITIALIZATION
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -3097,6 +3387,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
     
+    safeInit("initThemeEngine", initThemeEngine);
     safeInit("initHeroHologramSimulator", initHeroHologramSimulator);
     safeInit("initDashboardNavigation", initDashboardNavigation);
     safeInit("initMicroSpeakerBooth", initMicroSpeakerBooth);

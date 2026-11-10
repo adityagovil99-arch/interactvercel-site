@@ -302,6 +302,7 @@ const DEFAULT_TEAM_DATA = {
         }
     ],
     "peerRatings": [],
+    "demerits": [],
     "appreciationTasks": [
         {
             "id": "task-sample-1",
@@ -339,6 +340,7 @@ let appTeamData = (() => {
                 committeeMembers: Array.isArray(parsed.committeeMembers) ? parsed.committeeMembers : DEFAULT_TEAM_DATA.committeeMembers,
                 competitions: Array.isArray(parsed.competitions) && parsed.competitions.length > 0 ? parsed.competitions : DEFAULT_TEAM_DATA.competitions,
                 peerRatings: Array.isArray(parsed.peerRatings) ? parsed.peerRatings : [],
+                demerits: Array.isArray(parsed.demerits) ? parsed.demerits : [],
                 appreciationTasks: Array.isArray(parsed.appreciationTasks) && parsed.appreciationTasks.length > 0 ? parsed.appreciationTasks : DEFAULT_TEAM_DATA.appreciationTasks
             };
             if (Array.isArray(data.committeeMembers)) {
@@ -405,6 +407,9 @@ try {
                     if (Array.isArray(cloud.peerRatings)) {
                         appTeamData.peerRatings = cloud.peerRatings;
                     }
+                    if (Array.isArray(cloud.demerits)) {
+                        appTeamData.demerits = cloud.demerits;
+                    }
                     if (Array.isArray(cloud.appreciationTasks)) {
                         appTeamData.appreciationTasks = cloud.appreciationTasks;
                     }
@@ -428,6 +433,8 @@ try {
                     if (typeof renderLiveEventsCarousel === 'function') renderLiveEventsCarousel();
                     if (typeof renderAllEventsTable === 'function') renderAllEventsTable();
                     if (typeof renderAdminLeaderboardList === 'function') renderAdminLeaderboardList();
+                    if (typeof renderAdminDemeritDropdown === 'function') renderAdminDemeritDropdown();
+                    if (typeof renderAdminDemeritsList === 'function') renderAdminDemeritsList();
                     if (typeof renderAdminTenureChips === 'function') renderAdminTenureChips();
                     if (typeof renderAdminCommitteeTenureDropdown === 'function') renderAdminCommitteeTenureDropdown();
                     if (typeof renderAdminCommitteeRosterList === 'function') renderAdminCommitteeRosterList();
@@ -459,6 +466,8 @@ function initEventsEngine() {
     liveEvents = appTeamData.competitions;
 }
 
+let carouselTotalSlides = 0;
+
 function renderLiveEventsCarousel() {
     const container = document.getElementById("events-carousel-container");
     const dotsContainer = document.getElementById("carousel-dots");
@@ -467,7 +476,21 @@ function renderLiveEventsCarousel() {
     container.innerHTML = "";
     dotsContainer.innerHTML = "";
     
-    if (liveEvents.length === 0) {
+    const impactSlide = {
+        id: "event-impact-branding",
+        title: "National Impact & Achievements Showcase",
+        badge: "🌟 Brand Impact & Footprint",
+        desc: "5,000+ Students Empowered across 45+ Premier Colleges • 120+ Public Speaking & Debate Showcases. Discover how InteractUp creates real student goodwill & leadership across India.",
+        link: "#impact-showcase",
+        template: "impact",
+        icon: "🌟",
+        isImpact: true
+    };
+    
+    const allSlides = [...liveEvents, impactSlide];
+    carouselTotalSlides = allSlides.length;
+    
+    if (allSlides.length === 0) {
         container.innerHTML = `
             <div class="live-event-card active theme-speaking">
                 <div class="event-card-header">
@@ -480,7 +503,7 @@ function renderLiveEventsCarousel() {
         return;
     }
     
-    liveEvents.forEach((ev, idx) => {
+    allSlides.forEach((ev, idx) => {
         const card = document.createElement("div");
         card.className = `live-event-card theme-${ev.template} ${idx === currentCarouselIndex ? 'active' : ''}`;
         
@@ -488,15 +511,30 @@ function renderLiveEventsCarousel() {
         if (ev.template === "wellness") badgeClass = "badge-wellness";
         if (ev.template === "casing") badgeClass = "badge-casing";
         if (ev.template === "creative") badgeClass = "badge-creative";
+        if (ev.template === "impact") badgeClass = "badge-impact";
         
-        card.innerHTML = `
-            <div class="event-card-header">
-                <span class="event-card-badge ${badgeClass}">${ev.badge}</span>
-            </div>
-            <h4>${ev.title}</h4>
-            <p>${ev.desc}</p>
-            <a href="${ev.link}" target="_blank" class="btn btn-primary btn-apply-event">Apply Now & Register</a>
-        `;
+        if (ev.isImpact) {
+            card.innerHTML = `
+                <div class="event-card-header">
+                    <span class="event-card-badge ${badgeClass}">${ev.badge}</span>
+                </div>
+                <h4 style="color: #f59e0b;">${ev.title}</h4>
+                <p>${ev.desc}</p>
+                <button type="button" class="btn btn-primary btn-open-impact-showcase" style="background: linear-gradient(135deg, #f59e0b, #ef4444); border: none; font-weight: 800; width: 100%;">
+                    ✨ Explore Impact & Achievements ➜
+                </button>
+            `;
+        } else {
+            card.innerHTML = `
+                <div class="event-card-header">
+                    <span class="event-card-badge ${badgeClass}">${ev.badge}</span>
+                </div>
+                <h4>${ev.title}</h4>
+                <p>${ev.desc}</p>
+                <a href="${ev.link}" target="_blank" class="btn btn-primary btn-apply-event">Apply Now & Register</a>
+            `;
+        }
+        
         container.appendChild(card);
         
         const dot = document.createElement("span");
@@ -508,11 +546,17 @@ function renderLiveEventsCarousel() {
         dotsContainer.appendChild(dot);
     });
     
+    container.querySelectorAll(".btn-open-impact-showcase").forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (typeof openImpactShowcase === 'function') openImpactShowcase();
+        });
+    });
+    
     startCarouselLoop();
 }
 
 function selectCarouselCard(index) {
-    if (index < 0 || index >= liveEvents.length) return;
+    if (index < 0 || index >= carouselTotalSlides) return;
     currentCarouselIndex = index;
     stopCarouselLoop();
     
@@ -533,12 +577,13 @@ function selectCarouselCard(index) {
 
 function nextCarouselCard() {
     let nextIndex = currentCarouselIndex + 1;
-    if (nextIndex >= liveEvents.length) nextIndex = 0;
+    if (nextIndex >= carouselTotalSlides) nextIndex = 0;
     selectCarouselCard(nextIndex);
 }
 
 function startCarouselLoop() {
-    if (liveEvents.length <= 1) return;
+    if (carouselTotalSlides <= 1) return;
+    stopCarouselLoop();
     carouselTimer = setInterval(nextCarouselCard, 5000);
 }
 
@@ -656,6 +701,8 @@ function saveTeamData() {
     renderLeaderboardTable();
     renderCoreCommitteeMainView();
     renderAdminLeaderboardList();
+    if (typeof renderAdminDemeritDropdown === 'function') renderAdminDemeritDropdown();
+    if (typeof renderAdminDemeritsList === 'function') renderAdminDemeritsList();
     renderAdminTenureChips();
     renderAdminCommitteeTenureDropdown();
     renderAdminCommitteeRosterList();
@@ -796,7 +843,7 @@ function renderLeaderboardTable(filterText = "") {
     }).join("");
 }
 
-// 3. ADMIN: LEADERBOARD ROSTER LIST
+// 3. ADMIN: DIRECT POINTS REWRITER & LEADERBOARD TABLE
 function renderAdminLeaderboardList() {
     const tbody = document.getElementById("admin-leaderboard-list");
     if (!tbody) return;
@@ -804,18 +851,29 @@ function renderAdminLeaderboardList() {
     const sorted = [...appTeamData.leaderboard].sort((a, b) => (b.points || 0) - (a.points || 0));
     
     if (sorted.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 16px;">No members added yet. Add one above!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 20px; color: var(--text-muted);">No members added yet. Add one on the left!</td></tr>`;
         return;
     }
     
-    tbody.innerHTML = sorted.map(m => `
+    tbody.innerHTML = sorted.map((m, idx) => `
         <tr>
-            <td><strong>${escapeHtml(m.name)}</strong></td>
-            <td>${m.points} pts</td>
+            <td style="font-size: 0.88rem; color: var(--text-primary); font-weight: 700;">
+                <span style="color: var(--primary); font-weight: 800; font-size: 0.78rem; margin-right: 4px;">#${idx + 1}</span>
+                <strong>${escapeHtml(m.name)}</strong>
+            </td>
             <td>
-                <button type="button" class="quick-adjust-btn" data-id="${m.id}" data-delta="10">+10</button>
-                <button type="button" class="quick-adjust-btn" data-id="${m.id}" data-delta="50">+50</button>
-                <button type="button" class="quick-adjust-btn" data-id="${m.id}" data-delta="-10">-10</button>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <input type="number" class="admin-rewrite-input" data-id="${m.id}" value="${m.points}" style="width: 70px; padding: 4px 6px; font-weight: 800; font-size: 0.85rem; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: #10b981; text-align: center;">
+                    <button type="button" class="btn-set-points" data-id="${m.id}" title="Rewrite & Save Exact Points" style="padding: 4px 8px; font-size: 0.72rem; font-weight: 800; border-radius: 6px; background: #10b981; color: #fff; border: none; cursor: pointer;">Set</button>
+                </div>
+            </td>
+            <td>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <input type="number" class="admin-add-delta-input" data-id="${m.id}" placeholder="+/-" style="width: 55px; padding: 4px 4px; font-size: 0.8rem; border-radius: 6px; border: 1px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); text-align: center;">
+                    <button type="button" class="btn-add-delta-points" data-id="${m.id}" title="Add Custom Points" style="padding: 4px 8px; font-size: 0.72rem; font-weight: 800; border-radius: 6px; background: var(--primary); color: #fff; border: none; cursor: pointer;">Add</button>
+                    <button type="button" class="quick-adjust-btn" data-id="${m.id}" data-delta="10" title="Quick +10">+10</button>
+                    <button type="button" class="quick-adjust-btn" data-id="${m.id}" data-delta="50" title="Quick +50">+50</button>
+                </div>
             </td>
             <td>
                 <button type="button" class="btn-delete-row" data-id="${m.id}" title="Remove Member">✕</button>
@@ -823,6 +881,58 @@ function renderAdminLeaderboardList() {
         </tr>
     `).join("");
     
+    // Wire Direct Rewrite Set buttons
+    tbody.querySelectorAll(".btn-set-points").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            const input = tbody.querySelector(`.admin-rewrite-input[data-id="${id}"]`);
+            if (!input) return;
+            const newPoints = parseInt(input.value, 10);
+            if (isNaN(newPoints)) return;
+            const mem = appTeamData.leaderboard.find(x => x.id === id);
+            if (mem) {
+                mem.points = Math.max(0, newPoints);
+                saveTeamData();
+                playClickSound();
+            }
+        });
+    });
+    
+    // Wire Enter key in Rewrite inputs
+    tbody.querySelectorAll(".admin-rewrite-input").forEach(input => {
+        input.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                const id = this.getAttribute("data-id");
+                const newPoints = parseInt(this.value, 10);
+                if (isNaN(newPoints)) return;
+                const mem = appTeamData.leaderboard.find(x => x.id === id);
+                if (mem) {
+                    mem.points = Math.max(0, newPoints);
+                    saveTeamData();
+                    playClickSound();
+                }
+            }
+        });
+    });
+    
+    // Wire Add Custom Delta buttons
+    tbody.querySelectorAll(".btn-add-delta-points").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            const input = tbody.querySelector(`.admin-add-delta-input[data-id="${id}"]`);
+            if (!input) return;
+            const delta = parseInt(input.value, 10);
+            if (isNaN(delta) || delta === 0) return;
+            const mem = appTeamData.leaderboard.find(x => x.id === id);
+            if (mem) {
+                mem.points = Math.max(0, (mem.points || 0) + delta);
+                saveTeamData();
+                playClickSound();
+            }
+        });
+    });
+    
+    // Quick adjust (+10, +50)
     tbody.querySelectorAll(".quick-adjust-btn").forEach(btn => {
         btn.addEventListener("click", function() {
             const id = this.getAttribute("data-id");
@@ -836,14 +946,97 @@ function renderAdminLeaderboardList() {
         });
     });
     
+    // Delete row
     tbody.querySelectorAll(".btn-delete-row").forEach(btn => {
         btn.addEventListener("click", function() {
             const id = this.getAttribute("data-id");
-            appTeamData.leaderboard = appTeamData.leaderboard.filter(x => x.id !== id);
-            saveTeamData();
-            playClickSound();
+            if (confirm("Remove this member from leaderboard?")) {
+                appTeamData.leaderboard = appTeamData.leaderboard.filter(x => x.id !== id);
+                saveTeamData();
+                playClickSound();
+            }
         });
     });
+}
+
+// 3B. ADMIN: DEMERITS (NEGATIVE POINTS) DROPDOWN & LOG
+function renderAdminDemeritDropdown() {
+    const select = document.getElementById("admin-demerit-member-select");
+    if (!select) return;
+    
+    const memberMap = new Map();
+    (appTeamData.committeeMembers || []).forEach(m => {
+        memberMap.set(m.name.trim().toLowerCase(), { id: m.id, name: m.name, sub: m.tenure + " (" + m.desc + ")" });
+    });
+    (appTeamData.leaderboard || []).forEach(l => {
+        const key = l.name.trim().toLowerCase();
+        if (!memberMap.has(key)) {
+            memberMap.set(key, { id: l.id, name: l.name, sub: "Leaderboard Roster" });
+        }
+    });
+    
+    const members = Array.from(memberMap.values());
+    if (members.length === 0) {
+        select.innerHTML = `<option value="">No members available</option>`;
+        return;
+    }
+    
+    select.innerHTML = `<option value="">-- Choose Member --</option>` + 
+        members.map(m => `<option value="${m.id}" data-name="${escapeHtml(m.name)}">${escapeHtml(m.name)} — ${escapeHtml(m.sub)}</option>`).join("");
+}
+
+function renderAdminDemeritsList() {
+    const tbody = document.getElementById("admin-demerits-log-tbody");
+    const countBadge = document.getElementById("admin-demerits-count-badge");
+    if (!tbody) return;
+    
+    const demerits = Array.isArray(appTeamData.demerits) ? appTeamData.demerits : [];
+    if (countBadge) countBadge.textContent = `${demerits.length} Demerits`;
+    
+    if (demerits.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 18px; color: var(--text-muted); font-size: 0.84rem;">No system demerits on file. Team compliance is 100%!</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = demerits.map(d => `
+        <tr>
+            <td style="font-weight: 700; font-size: 0.85rem;">${escapeHtml(d.memberName)}</td>
+            <td><span class="demerit-pill">${d.points} pts</span></td>
+            <td>
+                <div style="font-size: 0.8rem; color: var(--text-primary); max-width: 240px; word-break: break-word;">${escapeHtml(d.reason)}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">${escapeHtml(d.issuedAt || "Recent")}</div>
+            </td>
+            <td>
+                <button type="button" class="btn-revoke-demerit" data-id="${d.id}" title="Revoke Demerit & Refund Points" style="padding: 3px 8px; font-size: 0.72rem; font-weight: 700; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); cursor: pointer;">
+                    Revoke
+                </button>
+            </td>
+        </tr>
+    `).join("");
+    
+    tbody.querySelectorAll(".btn-revoke-demerit").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            revokeAdminDemerit(id);
+        });
+    });
+}
+
+function revokeAdminDemerit(demeritId) {
+    const d = (appTeamData.demerits || []).find(x => x.id === demeritId);
+    if (!d) return;
+    
+    if (confirm(`Revoke this system demerit (${d.points} pts) for ${d.memberName}? Points will be refunded.`)) {
+        const refund = Math.abs(d.points || 0);
+        const leaderMem = (appTeamData.leaderboard || []).find(l => l.name.trim().toLowerCase() === d.memberName.trim().toLowerCase());
+        if (leaderMem) {
+            leaderMem.points = (leaderMem.points || 0) + refund;
+        }
+        
+        appTeamData.demerits = appTeamData.demerits.filter(x => x.id !== demeritId);
+        saveTeamData();
+        playClickSound();
+    }
 }
 
 // 4. ADMIN: TENURE CHIPS LIST WITH REORDERING
@@ -1220,6 +1413,8 @@ function openAdminMasterConsole() {
     if (adminInput) adminInput.value = appTeamData.adminPasscode;
     
     renderAdminLeaderboardList();
+    renderAdminDemeritDropdown();
+    renderAdminDemeritsList();
     renderAdminTenureChips();
     renderAdminCommitteeTenureDropdown();
     renderAdminCommitteeRosterList();
@@ -1805,6 +2000,106 @@ function setupModalsController() {
         });
     }
     
+    // Admin Issue System Demerit (Negative Points)
+    const btnIssueDemerit = document.getElementById("btn-admin-issue-demerit");
+    if (btnIssueDemerit) {
+        btnIssueDemerit.addEventListener("click", (e) => {
+            e.preventDefault();
+            const memberSelect = document.getElementById("admin-demerit-member-select");
+            const pointsInput = document.getElementById("admin-demerit-points");
+            const descInput = document.getElementById("admin-demerit-desc");
+            const feedback = document.getElementById("admin-demerit-feedback");
+            
+            if (!memberSelect || !memberSelect.value) {
+                alert("Please select a member to issue the system demerit to.");
+                return;
+            }
+            
+            let pts = parseInt(pointsInput ? pointsInput.value : "-1", 10);
+            if (isNaN(pts) || pts === 0) pts = -1;
+            if (pts > 0) pts = -pts; // Guarantee negative penalty
+            
+            const reason = descInput ? descInput.value.trim() : "";
+            if (!reason) {
+                alert("Please specify the system notice reason / infraction.");
+                return;
+            }
+            
+            const selectedOpt = memberSelect.options[memberSelect.selectedIndex];
+            const memberName = selectedOpt ? selectedOpt.getAttribute("data-name") || selectedOpt.text.split(" — ")[0] : memberSelect.value;
+            const memberId = memberSelect.value;
+            
+            const newDemerit = {
+                id: "demerit-" + Date.now(),
+                memberId: memberId,
+                memberName: memberName.trim(),
+                points: pts,
+                reason: reason,
+                issuedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            };
+            
+            if (!Array.isArray(appTeamData.demerits)) appTeamData.demerits = [];
+            appTeamData.demerits.unshift(newDemerit);
+            
+            // Deduct points from member in leaderboard
+            if (Array.isArray(appTeamData.leaderboard)) {
+                let leaderMem = appTeamData.leaderboard.find(l => l.name.trim().toLowerCase() === memberName.trim().toLowerCase());
+                if (!leaderMem) {
+                    leaderMem = {
+                        id: "mem-" + Date.now(),
+                        name: memberName.trim(),
+                        points: 50
+                    };
+                    appTeamData.leaderboard.push(leaderMem);
+                }
+                leaderMem.points = (leaderMem.points || 0) + pts; // pts is negative
+            }
+            
+            saveTeamData();
+            playClickSound();
+            
+            if (descInput) descInput.value = "";
+            if (pointsInput) pointsInput.value = "-2";
+            
+            if (feedback) {
+                feedback.style.display = "block";
+                setTimeout(() => { feedback.style.display = "none"; }, 3500);
+            }
+        });
+    }
+
+    // Impact & Brand Showcase Modal Handlers
+    const impactModal = document.getElementById("impact-showcase-modal");
+    const btnOpenImpactHeader = document.getElementById("btn-open-impact-showcase-btn");
+    const btnCloseImpact = document.getElementById("btn-close-impact-modal");
+    const sidebarNavImpact = document.getElementById("sidebar-nav-impact");
+    
+    function openImpactShowcase() {
+        if (impactModal) impactModal.classList.add("active");
+        playClickSound();
+    }
+    
+    function closeImpactShowcase() {
+        if (impactModal) impactModal.classList.remove("active");
+        playClickSound();
+    }
+    
+    if (btnOpenImpactHeader) btnOpenImpactHeader.addEventListener("click", openImpactShowcase);
+    if (btnCloseImpact) btnCloseImpact.addEventListener("click", closeImpactShowcase);
+    if (sidebarNavImpact) {
+        sidebarNavImpact.addEventListener("click", (e) => {
+            e.preventDefault();
+            const sidebar = document.getElementById("main-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            if (sidebar) sidebar.classList.remove("mobile-open");
+            if (overlay) overlay.classList.remove("active");
+            openImpactShowcase();
+        });
+    }
+    
+    window.openImpactShowcase = openImpactShowcase;
+    window.closeImpactShowcase = closeImpactShowcase;
+    
     // Restore Member Session if active
     const savedMemberId = sessionStorage.getItem("interactup_member_id");
     if (savedMemberId) {
@@ -1868,7 +2163,21 @@ function renderMemberPortal() {
         const leaderItem = appTeamData.leaderboard.find(l => l.name.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase());
         if (leaderItem) myPts = leaderItem.points || 0;
     }
-    if (pointsEl) pointsEl.textContent = `${myPts} pts`;
+
+    // Demerits calculation (system audit notices for this member)
+    const myDemerits = (appTeamData.demerits || []).filter(d => 
+        (d.memberId && d.memberId === currentLoggedInMember.id) || 
+        (d.memberName && d.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
+    );
+    const totalDemeritPts = myDemerits.reduce((acc, d) => acc + (d.points || 0), 0);
+
+    if (pointsEl) {
+        if (totalDemeritPts < 0) {
+            pointsEl.innerHTML = `${myPts} pts <span style="font-size: 0.72rem; color: #ef4444; font-weight: 700; margin-left: 6px;">(${totalDemeritPts} demerits)</span>`;
+        } else {
+            pointsEl.textContent = `${myPts} pts`;
+        }
+    }
     
     // 2. Pending Teammate Invitations Banner
     renderMemberInvitationsBanner();
@@ -1881,6 +2190,9 @@ function renderMemberPortal() {
     
     // 5. Tab 3: My Claimed Tasks
     renderMemberMyClaimsTab();
+    
+    // 6. Tab 4: System Performance & Demerits Log
+    renderMemberDemeritsTab(myDemerits, totalDemeritPts);
 }
 
 function renderMemberInvitationsBanner() {
@@ -2166,6 +2478,60 @@ function renderMemberMyClaimsTab() {
                     Teammate: <strong>${escapeHtml(item.claim.teammateName)}</strong> (${escapeHtml(item.claim.teammateStatus)})
                 </div>
             ` : ''}
+        </div>
+    `).join("");
+}
+
+function renderMemberDemeritsTab(myDemerits, totalDemeritPts) {
+    const list = document.getElementById("member-demerits-list");
+    const badge = document.getElementById("member-total-demerits-badge");
+    if (!list || !currentLoggedInMember) return;
+    
+    if (badge) {
+        if (totalDemeritPts < 0) {
+            badge.textContent = `${totalDemeritPts} pts`;
+            badge.style.background = "rgba(239, 68, 68, 0.2)";
+            badge.style.color = "#ef4444";
+            badge.style.borderColor = "rgba(239, 68, 68, 0.4)";
+        } else {
+            badge.textContent = "0 pts";
+            badge.style.background = "rgba(16, 185, 129, 0.15)";
+            badge.style.color = "#10b981";
+            badge.style.borderColor = "rgba(16, 185, 129, 0.3)";
+        }
+    }
+    
+    if (!myDemerits || myDemerits.length === 0) {
+        list.innerHTML = `
+            <div style="text-align: center; padding: 36px 20px; background: var(--surface-secondary, rgba(255,255,255,0.03)); border-radius: 12px; border: 1px dashed var(--border-color);">
+                <div style="font-size: 2.2rem; margin-bottom: 8px;">🛡️</div>
+                <strong style="display: block; font-size: 1rem; color: #10b981; margin-bottom: 4px;">Clean Accountability Record!</strong>
+                <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0; max-width: 480px; margin-inline: auto;">
+                    You have zero active system demerits on file. Keep up the high standard of commitment, punctuality, and community contribution!
+                </p>
+            </div>
+        `;
+        return;
+    }
+    
+    list.innerHTML = myDemerits.map(d => `
+        <div class="demerit-notice-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap;">
+                <div>
+                    <span class="system-audit-tag">⚙️ System Compliance Audit Record</span>
+                    <strong style="display: block; font-size: 0.95rem; margin-top: 4px; color: var(--text-primary);">Notice Ref: #${d.id.slice(-6).toUpperCase()}</strong>
+                </div>
+                <div>
+                    <span class="demerit-pill" style="font-size: 0.88rem; font-weight: 800; padding: 4px 12px;">${d.points} pts</span>
+                </div>
+            </div>
+            <div style="margin: 10px 0; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5; background: rgba(0,0,0,0.04); padding: 10px 14px; border-radius: 8px; border-left: 3px solid #ef4444;">
+                ${escapeHtml(d.reason)}
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
+                <span>Recorded on: <strong>${escapeHtml(d.issuedAt || "Recent")}</strong></span>
+                <span>Audit Classification: <strong style="color: #ef4444;">Procedural Demerit</strong></span>
+            </div>
         </div>
     `).join("");
 }
@@ -3601,219 +3967,8 @@ function initLiveGallery() {
 // ==========================================================================
 // 🎧 FEATURE 5: COZY LO-FI WELLNESS SYNTHESIZED SOUNDBOARD ENGINE
 // ==========================================================================
-let wellnessAudioCtx = null;
-let wellnessPadGain = null;
-let wellnessChimeGain = null;
-let wellnessOsc1 = null;
-let wellnessOsc2 = null;
-let wellnessLfo = null;
-let wellnessChimeTimer = null;
-let isWellnessPlaying = false;
-let currentWellnessMode = "pad";
-
-function initWellnessSoundboard() {
-    const player = document.getElementById("wellness-player");
-    const btnToggle = document.getElementById("btn-sidebar-lofi-toggle");
-    const trackInfo = document.getElementById("wellness-track-info");
-    const sliderVol = document.getElementById("wellness-volume-slider");
-    
-    const btnPad = document.getElementById("btn-well-pad");
-    const btnChimes = document.getElementById("btn-well-chimes");
-    
-    if (!btnToggle) return;
-    
-    btnToggle.addEventListener("click", () => {
-        if (!isWellnessPlaying) {
-            startWellnessSynthesizer();
-            player.classList.add("active");
-            btnToggle.classList.add("active");
-        } else {
-            stopWellnessSynthesizer();
-            player.classList.remove("active");
-            btnToggle.classList.remove("active");
-        }
-    });
-    
-    if (btnPad) {
-        btnPad.addEventListener("click", () => {
-            selectWellnessMode("pad");
-            playClickSound();
-        });
-    }
-    if (btnChimes) {
-        btnChimes.addEventListener("click", () => {
-            selectWellnessMode("chimes");
-            playClickSound();
-        });
-    }
-    
-    if (sliderVol) {
-        sliderVol.addEventListener("input", function() {
-            const volVal = parseFloat(this.value) / 100.0;
-            if (wellnessPadGain && wellnessChimeGain) {
-                const now = wellnessAudioCtx.currentTime;
-                if (currentWellnessMode === "pad") {
-                    wellnessPadGain.gain.setValueAtTime(volVal * 0.15, now);
-                    wellnessChimeGain.gain.setValueAtTime(volVal * 0.08, now);
-                } else {
-                    wellnessPadGain.gain.setValueAtTime(volVal * 0.05, now);
-                    wellnessChimeGain.gain.setValueAtTime(volVal * 0.18, now);
-                }
-            }
-        });
-    }
-    
-    function selectWellnessMode(mode) {
-        currentWellnessMode = mode;
-        if (btnPad) btnPad.classList.toggle("active", mode === "pad");
-        if (btnChimes) btnChimes.classList.toggle("active", mode === "chimes");
-        
-        if (isWellnessPlaying) {
-            const sliderVal = parseFloat(sliderVol.value) / 100.0;
-            const now = wellnessAudioCtx.currentTime;
-            
-            if (mode === "pad") {
-                if (trackInfo) trackInfo.innerText = "🧘 Ambient Pad Mode";
-                if (wellnessPadGain) wellnessPadGain.gain.linearRampToValueAtTime(sliderVal * 0.15, now + 0.3);
-                if (wellnessChimeGain) wellnessChimeGain.gain.linearRampToValueAtTime(sliderVal * 0.08, now + 0.3);
-            } else {
-                if (trackInfo) trackInfo.innerText = "✨ Pentatonic Chimes Mode";
-                if (wellnessPadGain) wellnessPadGain.gain.linearRampToValueAtTime(sliderVal * 0.05, now + 0.3);
-                if (wellnessChimeGain) wellnessChimeGain.gain.linearRampToValueAtTime(sliderVal * 0.18, now + 0.3);
-            }
-        }
-    }
-    
-    function startWellnessSynthesizer() {
-        try {
-            wellnessAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        } catch (e) {
-            return;
-        }
-        
-        const now = wellnessAudioCtx.currentTime;
-        const sliderVal = parseFloat(sliderVol.value) / 100.0;
-        
-        wellnessPadGain = wellnessAudioCtx.createGain();
-        wellnessChimeGain = wellnessAudioCtx.createGain();
-        
-        wellnessPadGain.gain.setValueAtTime(0.001, now);
-        wellnessChimeGain.gain.setValueAtTime(0.001, now);
-        
-        wellnessPadGain.connect(wellnessAudioCtx.destination);
-        wellnessChimeGain.connect(wellnessAudioCtx.destination);
-        
-        wellnessOsc1 = wellnessAudioCtx.createOscillator();
-        wellnessOsc2 = wellnessAudioCtx.createOscillator();
-        
-        wellnessOsc1.type = "sine";
-        wellnessOsc2.type = "triangle";
-        
-        wellnessOsc1.frequency.setValueAtTime(196.00, now);
-        wellnessOsc2.frequency.setValueAtTime(293.66, now);
-        
-        wellnessOsc1.detune.setValueAtTime(4, now);
-        wellnessOsc2.detune.setValueAtTime(-4, now);
-        
-        const lowpassFilter = wellnessAudioCtx.createBiquadFilter();
-        lowpassFilter.type = "lowpass";
-        lowpassFilter.frequency.setValueAtTime(400, now);
-        lowpassFilter.Q.setValueAtTime(2.0, now);
-        
-        wellnessLfo = wellnessAudioCtx.createOscillator();
-        wellnessLfo.type = "sine";
-        wellnessLfo.frequency.setValueAtTime(0.12, now);
-        
-        const lfoGain = wellnessAudioCtx.createGain();
-        lfoGain.gain.setValueAtTime(150, now);
-        
-        wellnessLfo.connect(lfoGain);
-        lfoGain.connect(lowpassFilter.frequency);
-        
-        wellnessOsc1.connect(lowpassFilter);
-        wellnessOsc2.connect(lowpassFilter);
-        lowpassFilter.connect(wellnessPadGain);
-        
-        wellnessOsc1.start(now);
-        wellnessOsc2.start(now);
-        wellnessLfo.start(now);
-        
-        triggerPentatonicChimesLoop();
-        isWellnessPlaying = true;
-        selectWellnessMode(currentWellnessMode);
-    }
-    
-    function triggerPentatonicChimesLoop() {
-        const chimeNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 784.00, 880.00];
-        
-        function playChime() {
-            if (!isWellnessPlaying || !wellnessAudioCtx) return;
-            const now = wellnessAudioCtx.currentTime;
-            
-            const osc = wellnessAudioCtx.createOscillator();
-            osc.type = "sine";
-            
-            const freq = chimeNotes[Math.floor(Math.random() * chimeNotes.length)];
-            osc.frequency.setValueAtTime(freq, now);
-            
-            const noteGain = wellnessAudioCtx.createGain();
-            noteGain.gain.setValueAtTime(0.0, now);
-            
-            const targetGain = (Math.random() * 0.05 + 0.03);
-            noteGain.gain.linearRampToValueAtTime(targetGain, now + 0.04);
-            noteGain.gain.exponentialRampToValueAtTime(0.001, now + Math.random() * 2.0 + 1.5);
-            
-            const delay = wellnessAudioCtx.createDelay();
-            delay.delayTime.setValueAtTime(0.35, now);
-            const feedback = wellnessAudioCtx.createGain();
-            feedback.gain.setValueAtTime(0.4, now);
-            
-            osc.connect(noteGain);
-            noteGain.connect(wellnessChimeGain);
-            
-            noteGain.connect(delay);
-            delay.connect(feedback);
-            feedback.connect(delay);
-            feedback.connect(wellnessChimeGain);
-            
-            osc.start(now);
-            osc.stop(now + 4.0);
-            
-            const nextChimeTime = Math.random() * 2000 + 2500;
-            wellnessChimeTimer = setTimeout(playChime, nextChimeTime);
-        }
-        wellnessChimeTimer = setTimeout(playChime, 1500);
-    }
-    
-    function stopWellnessSynthesizer() {
-        isWellnessPlaying = false;
-        if (trackInfo) trackInfo.innerText = "Wellness Synthesizer: Off";
-        
-        clearTimeout(wellnessChimeTimer);
-        const now = wellnessAudioCtx ? wellnessAudioCtx.currentTime : 0;
-        
-        if (wellnessPadGain) {
-            wellnessPadGain.gain.setValueAtTime(wellnessPadGain.gain.value, now);
-            wellnessPadGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-        }
-        if (wellnessChimeGain) {
-            wellnessChimeGain.gain.setValueAtTime(wellnessChimeGain.gain.value, now);
-            wellnessChimeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-        }
-        
-        setTimeout(() => {
-            if (wellnessOsc1) { wellnessOsc1.stop(); wellnessOsc1 = null; }
-            if (wellnessOsc2) { wellnessOsc2.stop(); wellnessOsc2 = null; }
-            if (wellnessLfo) { wellnessLfo.stop(); wellnessLfo = null; }
-            if (wellnessAudioCtx) {
-                try {
-                    wellnessAudioCtx.close();
-                } catch (e) {}
-                wellnessAudioCtx = null;
-            }
-        }, 300);
-    }
-}
+// Lo-fi player retired per user preference
+function initWellnessSoundboard() {}
 
 // Helper audio melody sequencer chimes
 function playChimeMelody(freqList) {
@@ -4191,7 +4346,6 @@ document.addEventListener("DOMContentLoaded", () => {
     safeInit("initCoEdPeerDirectory", initCoEdPeerDirectory);
     safeInit("initLinkedInFormatter", initLinkedInFormatter);
     safeInit("initLiveGallery", initLiveGallery);
-    safeInit("initWellnessSoundboard", initWellnessSoundboard);
     
     safeInit("buildLadder", buildLadder);
     safeInit("updateLadderUI", updateLadderUI);

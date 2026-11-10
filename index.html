@@ -156,21 +156,21 @@
                     </div>
                     <span class="nav-label">Mind Nutrients</span>
                 </a>
+                <a href="#impact" class="nav-item" data-view="impact" id="sidebar-nav-impact" data-theme="gold">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Impact & Brand</span>
+                </a>
             </nav>
 
-            <!-- Sidebar Footer (Integrates Theme, Lo-Fi & Team Access) -->
+            <!-- Sidebar Footer (Integrates Theme & Team Access) -->
             <div class="sidebar-footer">
                 <button class="btn-sidebar-theme" id="btn-theme-toggle" aria-label="Toggle Dark Mode" title="Toggle Midnight Dark Mode">
                     <span id="theme-icon-indicator" style="font-size: 1.15rem; line-height: 1;">🌙</span>
                     <span class="nav-label" id="theme-label-indicator">Midnight Neon</span>
-                </button>
-                <button class="btn-sidebar-lofi" id="btn-sidebar-lofi-toggle" aria-label="Toggle Soundboard">
-                    <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 18V5l12-2v13"/>
-                        <circle cx="6" cy="18" r="3"/>
-                        <circle cx="18" cy="16" r="3"/>
-                    </svg>
-                    <span class="nav-label">Lo-Fi Player</span>
                 </button>
                 <button class="btn-sidebar-team" id="btn-team-login-trigger" aria-label="InteractUp Team Login">
                     <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -282,9 +282,14 @@
                                 </div>
                                 <div class="carousel-control-wrapper">
                                     <div class="carousel-indicators" id="carousel-dots"></div>
-                                    <button class="btn btn-outline btn-all-events" id="btn-open-all-events">
-                                        View All List
-                                    </button>
+                                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                        <button class="btn btn-outline" id="btn-open-impact-showcase-btn" style="border-color: #f59e0b; color: #f59e0b; font-weight: 800; font-size: 0.8rem; padding: 6px 14px;">
+                                            🌟 Our Impact
+                                        </button>
+                                        <button class="btn btn-outline btn-all-events" id="btn-open-all-events">
+                                            View All List
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -888,6 +893,7 @@
                 <button class="portal-tab-btn active" data-portal-tab="portal-tab-tasks">🎯 Claim Appreciation Tasks</button>
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-ratings">⭐ Peer Appreciation & Ratings</button>
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-activity">📜 My Claimed Tasks</button>
+                <button class="portal-tab-btn" data-portal-tab="portal-tab-demerits">⚠️ Accountability & Demerits</button>
             </div>
 
             <!-- TAB 1: CLAIM APPRECIATION TASKS -->
@@ -973,6 +979,25 @@
                     <!-- Populated dynamically -->
                 </div>
             </div>
+
+            <!-- TAB 4: SYSTEM DEMERITS & ACCOUNTABILITY LOG -->
+            <div class="portal-tab-content" id="portal-tab-demerits">
+                <div class="demerit-summary-box">
+                    <div>
+                        <h4 style="margin: 0; color: #ef4444; font-size: 1.05rem;">⚠️ System Performance & Accountability Record</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 0 0;">
+                            Automated compliance engine audit log. Records operational demerits, procedural flags, and meeting accountability notices.
+                        </p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Total System Demerits:</span>
+                        <strong id="member-total-demerits-badge" class="demerit-pill" style="font-size: 1rem; padding: 4px 14px;">-0 pts</strong>
+                    </div>
+                </div>
+                <div id="member-demerits-list">
+                    <!-- Populated dynamically with demerit notices -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1026,21 +1051,73 @@
                             </div>
                             <button type="submit" class="btn btn-primary" id="btn-admin-add-member">Add to Leaderboard</button>
                         </form>
+
+                        <hr style="margin: 22px 0; border: none; border-top: 1.5px solid var(--border-light);">
+
+                        <h4>⚠️ Assign System Demerit Points (Negative Points)</h4>
+                        <p class="admin-list-subtitle">Issue negative points to any member with an explanation. Visible to the member as an automated system audit notice (never mentions admin).</p>
+                        <form id="admin-demerit-form" onsubmit="return false;">
+                            <div class="form-field">
+                                <label for="admin-demerit-member-select">Select Member *</label>
+                                <select id="admin-demerit-member-select" required>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-demerit-points">Demerit Points (e.g. -1, -2, -6) *</label>
+                                <input type="number" id="admin-demerit-points" placeholder="e.g. -2" max="-1" value="-2" required>
+                                <span style="font-size: 0.72rem; color: var(--text-muted);">Enter negative integer (e.g. -1, -2, -6, etc.)</span>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-demerit-desc">System Notice Reason / Infraction *</label>
+                                <textarea id="admin-demerit-desc" rows="3" placeholder="e.g. Unannounced absence from mandatory coordination sync, delayed task handoff..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-admin-issue-demerit" style="background: #ef4444; border-color: #ef4444; width: 100%;">
+                                ⚡ Issue System Demerit
+                            </button>
+                            <div id="admin-demerit-feedback" style="display: none; color: #10b981; font-weight: 800; font-size: 0.82rem; margin-top: 8px; text-align: center;">
+                                ✓ System demerit recorded and deducted!
+                            </div>
+                        </form>
                     </div>
+
                     <div class="admin-list-pane">
-                        <h4>📋 Current Leaderboard Roster</h4>
-                        <p class="admin-list-subtitle">Quickly award points or remove members. Changes update the team leaderboard instantly.</p>
-                        <div class="admin-table-scroll">
+                        <h4>📋 Direct Points Editor & Leaderboard Table</h4>
+                        <p class="admin-list-subtitle">Directly rewrite any member's points to any number (e.g. 3, 4, 45, 120), or add custom points on the fly without retyping names.</p>
+                        <div class="admin-table-scroll" style="max-height: 380px;">
                             <table class="admin-mini-table">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Points</th>
-                                        <th>Quick Adjust</th>
+                                        <th>Member</th>
+                                        <th>Current (Rewrite)</th>
+                                        <th>Add Custom Points</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="admin-leaderboard-list">
+                                    <!-- Populated dynamically with editable inputs -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr style="margin: 20px 0; border: none; border-top: 1.5px solid var(--border-light);">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="margin: 0; font-size: 0.98rem; color: #ef4444;">⚠️ Active System Demerits Log</h4>
+                            <span id="admin-demerits-count-badge" style="font-size: 0.72rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 800; padding: 2px 8px; border-radius: 999px;">0 Demerits</span>
+                        </div>
+                        <p class="admin-list-subtitle">Review all negative points issued across the team. Click Revoke if a penalty was waived.</p>
+                        <div class="admin-table-scroll" style="max-height: 240px;">
+                            <table class="admin-mini-table">
+                                <thead>
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Penalty</th>
+                                        <th>Reason & Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-demerits-log-tbody">
                                     <!-- Populated dynamically -->
                                 </tbody>
                             </table>
@@ -1309,17 +1386,175 @@
         </div>
     </div>
 
-    <!-- 6. Cozy Lo-Fi Wellness Synthesized Soundboard (Floating Player Body) -->
-    <div class="wellness-audio-player glass" id="wellness-player">
-        <div class="wellness-player-body" id="wellness-player-body">
-            <div class="wellness-track-name" id="wellness-track-info">Wellness Synthesizer: Off</div>
-            <div class="wellness-controls">
-                <button class="wellness-control-btn active" id="btn-well-pad" data-mode="pad">Ambient Pad</button>
-                <button class="wellness-control-btn" id="btn-well-chimes" data-mode="chimes">Pentatonic Chimes</button>
+    <!-- 6. DEDICATED NATIONAL IMPACT & BRANDING SHOWCASE MODAL -->
+    <div class="modal-backdrop" id="impact-showcase-modal">
+        <div class="modal-card impact-modal-card">
+            <!-- Header -->
+            <div class="impact-modal-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #ef4444); display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                        🌟
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.3rem; font-weight: 800;">InteractUp National Impact & Brand Legacy</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: var(--text-muted);">Empowering India's Youth to Speak Fearlessly, Connect Authentically & Lead Boldly</p>
+                    </div>
+                </div>
+                <button class="btn-close-modal" id="btn-close-impact-modal" aria-label="Close Impact Showcase">&times;</button>
             </div>
-            <div class="wellness-volume-group">
-                <span class="vol-icon">🔊</span>
-                <input type="range" id="wellness-volume-slider" min="0" max="100" value="40" aria-label="Ambient volume">
+
+            <!-- Scrollable Content Body -->
+            <div class="impact-modal-scroll">
+                
+                <!-- Hero Banner -->
+                <div class="impact-hero-banner">
+                    <span class="impact-hero-tag">🇮🇳 Pan-India Movement • 5,000+ Voices</span>
+                    <h2 class="impact-hero-title">WHERE NERVOUS TALKERS BECOME NATIONAL LEADERS.</h2>
+                    <p class="impact-hero-lead">
+                        InteractUp was born with a singular mission: to eradicate stage anxiety, dismantle transactional networking, and build a peer-led sanctuary where college students, young MBAs, and aspiring professionals discover the power of their voice.
+                    </p>
+                </div>
+
+                <!-- Proof of Impact Metrics -->
+                <h4 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 16px 0;">📊 Our Scale & Verifiable Impact</h4>
+                <div class="impact-metrics-grid">
+                    <div class="impact-metric-card">
+                        <div class="impact-metric-num">5,000+</div>
+                        <div class="impact-metric-label">Active Student Members</div>
+                        <div class="impact-metric-sub">Across 45+ premier institutions</div>
+                    </div>
+                    <div class="impact-metric-card">
+                        <div class="impact-metric-num">120+</div>
+                        <div class="impact-metric-label">National Showcases</div>
+                        <div class="impact-metric-sub">Impromptu & parliamentary formats</div>
+                    </div>
+                    <div class="impact-metric-card">
+                        <div class="impact-metric-num">45+</div>
+                        <div class="impact-metric-label">Campus Chapters</div>
+                        <div class="impact-metric-sub">Tier-1 B-schools to regional universities</div>
+                    </div>
+                    <div class="impact-metric-card">
+                        <div class="impact-metric-num">15,000+</div>
+                        <div class="impact-metric-label">Peer Connections</div>
+                        <div class="impact-metric-sub">Zero business-card transactional bias</div>
+                    </div>
+                    <div class="impact-metric-card">
+                        <div class="impact-metric-num">98%</div>
+                        <div class="impact-metric-label">Anxiety Reduction</div>
+                        <div class="impact-metric-sub">Reported within first 3 speaking cohorts</div>
+                    </div>
+                </div>
+
+                <!-- Four Core Pillars -->
+                <h4 style="font-size: 1.15rem; font-weight: 800; margin: 28px 0 16px 0;">🛡️ The Goodwill Foundations of InteractUp</h4>
+                <div class="impact-pillars-grid">
+                    <div class="impact-pillar-card">
+                        <div class="impact-pillar-icon">🎙️</div>
+                        <h5 class="impact-pillar-title">Fearless Impromptu Expression</h5>
+                        <p class="impact-pillar-desc">
+                            We throw away rehearsed scripts. Members practice spontaneous 2-minute table topics with instant, loving feedback, making fear on stage vanish forever.
+                        </p>
+                    </div>
+                    <div class="impact-pillar-card">
+                        <div class="impact-pillar-icon">🤝</div>
+                        <h5 class="impact-pillar-title">Non-Transactional Fellowship</h5>
+                        <p class="impact-pillar-desc">
+                            No corporate pretenses or resume bragging. First-year undergrads connect as genuine peers with top-tier MBA scholars and startup builders.
+                        </p>
+                    </div>
+                    <div class="impact-pillar-card">
+                        <div class="impact-pillar-icon">💼</div>
+                        <h5 class="impact-pillar-title">Placement & Corporate Edge</h5>
+                        <p class="impact-pillar-desc">
+                            Members master spontaneous case studies, unstructured group discussions, and high-pressure interview storytelling that wins dream placements.
+                        </p>
+                    </div>
+                    <div class="impact-pillar-card">
+                        <div class="impact-pillar-icon">🤍</div>
+                        <h5 class="impact-pillar-title">Mental Wellness & Sanctuary</h5>
+                        <p class="impact-pillar-desc">
+                            Academic burnout and social isolation are real. Our weekly curated wellness mixers offer an empathetic space to de-stress and be heard.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Hall of Fame & Landmark Milestones -->
+                <h4 style="font-size: 1.15rem; font-weight: 800; margin: 28px 0 16px 0;">🏆 Landmark Milestones & Hall of Fame</h4>
+                <div class="impact-hall-grid">
+                    <div class="impact-hall-card">
+                        <div style="font-size: 0.76rem; font-weight: 800; color: #f59e0b; text-transform: uppercase;">Flagship Event</div>
+                        <h5 style="margin: 6px 0 8px 0; font-size: 1.05rem;">National Inter-College Impromptu Debate Championship</h5>
+                        <p style="margin: 0; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5;">
+                            Over 1,200 delegates from across 35 campuses competed in spontaneous clash rounds, adjudicated by seasoned debate masters and corporate alumni.
+                        </p>
+                    </div>
+                    <div class="impact-hall-card">
+                        <div style="font-size: 0.76rem; font-weight: 800; color: #f59e0b; text-transform: uppercase;">Community Outreach</div>
+                        <h5 style="margin: 6px 0 8px 0; font-size: 1.05rem;">Tier-2 & Tier-3 Equal Expression Fellowship</h5>
+                        <p style="margin: 0; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5;">
+                            Sponsored 100% free speech coaching and English fluency cohorts for over 850 students from small-town colleges seeking equal placement footing.
+                        </p>
+                    </div>
+                    <div class="impact-hall-card">
+                        <div style="font-size: 0.76rem; font-weight: 800; color: #f59e0b; text-transform: uppercase;">Executive Mentorship</div>
+                        <h5 style="margin: 6px 0 8px 0; font-size: 1.05rem;">Corporate Leaders Fireside & Casing Conclave</h5>
+                        <p style="margin: 0; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5;">
+                            Partnered with industry directors and McKinsey/BCG alumni to deliver practical casing masterclasses and boardroom communication simulations.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Student Voices & Social Proof -->
+                <h4 style="font-size: 1.15rem; font-weight: 800; margin: 28px 0 16px 0;">💬 Voices of Student Transformation</h4>
+                <div class="impact-testimonials-grid">
+                    <div class="impact-quote-card">
+                        <em>"In my first week at B-school, I shook every time a professor called my name. Four weeks at InteractUp completely rewired my confidence. I ended up placing in top-bracket consulting."</em>
+                        <div class="impact-quote-author">
+                            <div style="font-size: 1.3rem;">🎓</div>
+                            <div>
+                                <strong style="font-size: 0.85rem; display: block;">Arjun S.</strong>
+                                <span class="impact-author-role">MBA Student, Class of 2026</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="impact-quote-card">
+                        <em>"Most college clubs are about ego and hierarchy. InteractUp is the complete opposite. It’s an authentic safe space where people genuinely cheer for your growth."</em>
+                        <div class="impact-quote-author">
+                            <div style="font-size: 1.3rem;">✨</div>
+                            <div>
+                                <strong style="font-size: 0.85rem; display: block;">Rhea K.</strong>
+                                <span class="impact-author-role">Undergraduate Leader, Delhi Chapter</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="impact-quote-card">
+                        <em>"The Connect Circles saved my mental health during placement season. Having a group of 5,000 supportive peers behind you makes you unstoppable."</em>
+                        <div class="impact-quote-author">
+                            <div style="font-size: 1.3rem;">🤍</div>
+                            <div>
+                                <strong style="font-size: 0.85rem; display: block;">Tanvi M.</strong>
+                                <span class="impact-author-role">Core Committee Member</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branding & Growth Call to Action Banner -->
+                <div class="impact-cta-banner">
+                    <h3 style="margin: 0 0 8px 0; font-size: 1.4rem;">Ready to Experience the Movement?</h3>
+                    <p style="margin: 0 auto 20px auto; max-width: 600px; font-size: 0.9rem; color: var(--text-secondary);">
+                        Join 5,000+ ambitious students across India. Participate in our next impromptu speaking challenge or bring an InteractUp chapter to your college.
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                        <a href="https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0" target="_blank" class="btn btn-primary" style="padding: 10px 22px; font-weight: 800; font-size: 0.9rem;">
+                            📲 Join WhatsApp Community
+                        </a>
+                        <a href="https://forms.gle/EJ5njy2RpcLyCZdo7" target="_blank" class="btn btn-secondary" style="padding: 10px 22px; font-weight: 800; font-size: 0.9rem;">
+                            🤝 Partner / Start a Chapter
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

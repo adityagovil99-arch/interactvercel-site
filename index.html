@@ -813,15 +813,15 @@
     <div class="modal-backdrop" id="team-login-modal">
         <div class="modal-card passcode-card">
             <div class="modal-header">
-                <h3>🔐 InteractUp Team Access</h3>
+                <h3>🔐 InteractUp Community Access</h3>
                 <button class="btn-close-modal" id="btn-close-team-login" aria-label="Close Modal">&times;</button>
             </div>
-            <p class="passcode-subtitle">Enter your assigned team passcode to unlock the internal community tools.</p>
+            <p class="passcode-subtitle">Enter your unique member password to access your portal, or enter master admin credentials.</p>
             <div class="passcode-form-group">
-                <input type="password" id="team-passcode-input" placeholder="Enter team passcode..." autocomplete="off">
+                <input type="password" id="team-passcode-input" placeholder="Enter your unique password..." autocomplete="off">
                 <button class="btn btn-primary" id="btn-validate-team-passcode">Unlock Portal</button>
             </div>
-            <div class="passcode-error-msg" id="team-passcode-error">Invalid passcode. Please verify and try again.</div>
+            <div class="passcode-error-msg" id="team-passcode-error">Invalid password. Please check with Master Admin.</div>
         </div>
     </div>
 
@@ -855,6 +855,127 @@
         </div>
     </div>
 
+    <!-- 5B. PERSONALIZED MEMBER PORTAL MODAL -->
+    <div class="modal-backdrop" id="member-portal-modal">
+        <div class="modal-card member-portal-card">
+            <!-- Header -->
+            <div class="member-portal-header">
+                <div class="member-profile-summary">
+                    <img id="member-portal-avatar" src="assets/images/logo.png" alt="Avatar" class="member-portal-avatar">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <h3 id="member-portal-name" style="margin: 0; font-size: 1.3rem;">Member Name</h3>
+                            <span id="member-portal-tenure-badge" class="member-tenure-badge">Tenure</span>
+                        </div>
+                        <div id="member-portal-role" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px;">Role</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-left: auto;">
+                    <div class="member-points-pill">
+                        <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Points</span>
+                        <strong id="member-portal-points-display" style="font-size: 1.15rem; color: #10b981;">0 pts</strong>
+                    </div>
+                    <button type="button" class="btn-portal-logout" id="btn-member-logout" title="Log out from member portal">🚪 Log Out</button>
+                    <button class="btn-close-modal" id="btn-close-member-portal" aria-label="Close Member Portal">&times;</button>
+                </div>
+            </div>
+
+            <!-- Collaboration Request Banners Container -->
+            <div id="member-invitations-container" style="display: none; margin-bottom: 16px;"></div>
+
+            <!-- Portal Tabs -->
+            <div class="portal-nav-tabs">
+                <button class="portal-tab-btn active" data-portal-tab="portal-tab-tasks">🎯 Claim Appreciation Tasks</button>
+                <button class="portal-tab-btn" data-portal-tab="portal-tab-ratings">⭐ Peer Appreciation & Ratings</button>
+                <button class="portal-tab-btn" data-portal-tab="portal-tab-activity">📜 My Claimed Tasks</button>
+            </div>
+
+            <!-- TAB 1: CLAIM APPRECIATION TASKS -->
+            <div class="portal-tab-content active" id="portal-tab-tasks">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h4 style="margin: 0;">🚀 Available Appreciation Tasks</h4>
+                        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 3px 0 0 0;">
+                            Select tasks to earn appreciation points. Once claimed, the task is marked green on your portal!
+                        </p>
+                    </div>
+                </div>
+                <div id="member-tasks-grid" class="member-tasks-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- TAB 2: PEER APPRECIATION & RATINGS -->
+            <div class="portal-tab-content" id="portal-tab-ratings">
+                <div class="portal-grid-two-col">
+                    <!-- Left: Rating Form -->
+                    <div class="portal-form-box">
+                        <h4 style="margin: 0 0 6px 0;">⭐ Rate a Teammate</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">
+                            Confidential peer review. Only the Master Admin can see this feedback.
+                        </p>
+                        <form id="member-rate-form" onsubmit="return false;">
+                            <div class="form-field">
+                                <label for="rate-target-member">Select Committee Member *</label>
+                                <select id="rate-target-member" required>
+                                    <!-- Populated dynamically with all committee members except self -->
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="rate-project-name">Project / Initiative Worked Together On *</label>
+                                <input type="text" id="rate-project-name" placeholder="e.g. Debate Showcase 2026, Wellness Mixer..." required>
+                            </div>
+                            <div class="form-field">
+                                <label>Star Rating (out of 5) *</label>
+                                <div class="star-rating-selector" id="star-rating-selector">
+                                    <span class="star-btn active" data-stars="1">★</span>
+                                    <span class="star-btn active" data-stars="2">★</span>
+                                    <span class="star-btn active" data-stars="3">★</span>
+                                    <span class="star-btn active" data-stars="4">★</span>
+                                    <span class="star-btn active" data-stars="5">★</span>
+                                    <span class="star-label" id="star-rating-label">5/5 - Outstanding Leadership</span>
+                                </div>
+                                <input type="hidden" id="rate-stars-input" value="5">
+                            </div>
+                            <div class="form-field">
+                                <label for="rate-description">Feedback & Description (Mandatory) *</label>
+                                <textarea id="rate-description" rows="4" placeholder="Detail how they contributed, specific strengths, work ethic, or leadership demonstrated..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-submit-peer-rating" style="width: 100%;">
+                                Submit Confidential Peer Review
+                            </button>
+                            <div id="peer-rating-feedback" style="display: none; margin-top: 10px; color: #10b981; font-weight: 800; font-size: 0.85rem; text-align: center;">
+                                ✓ Peer review submitted to Master Admin!
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Right: Submitted Ratings History -->
+                    <div class="portal-list-box">
+                        <h4 style="margin: 0 0 6px 0;">📜 Your Submitted Reviews</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">
+                            Keep track of teammates you have rated this term.
+                        </p>
+                        <div id="member-submitted-ratings-list" class="member-ratings-feed">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: MY ACTIVITY & CLAIMS -->
+            <div class="portal-tab-content" id="portal-tab-activity">
+                <h4 style="margin: 0 0 6px 0;">📋 Your Claimed Tasks & Status</h4>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">
+                    Review tasks you applied for and teammate collaboration status.
+                </p>
+                <div id="member-my-claims-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 6. MASTER ADMIN MANAGEMENT CONSOLE (Secret Dual-Password Entry) -->
     <div class="modal-backdrop" id="admin-master-modal">
         <div class="modal-card admin-master-card" id="admin-master-card-container">
@@ -882,6 +1003,8 @@
             <div class="admin-nav-tabs">
                 <button class="admin-tab-btn active" data-tab="tab-points">🏆 Leaderboard & Points</button>
                 <button class="admin-tab-btn" data-tab="tab-committee">🏛️ Tenures & Committee</button>
+                <button class="admin-tab-btn" data-tab="tab-tasks">🎯 Tasks & Claims</button>
+                <button class="admin-tab-btn" data-tab="tab-ratings">⭐ Member Ratings Feed</button>
                 <button class="admin-tab-btn" data-tab="tab-events">📅 Live Competitions</button>
                 <button class="admin-tab-btn" data-tab="tab-passwords">🔑 Passwords</button>
                 <button class="admin-tab-btn" data-tab="tab-export">💾 Save & Export</button>
@@ -956,6 +1079,10 @@
                                 <input type="text" id="admin-comm-name" placeholder="Member Name..." required>
                             </div>
                             <div class="form-field">
+                                <label for="admin-comm-passcode">Personal Member Password (Optional)</label>
+                                <input type="text" id="admin-comm-passcode" placeholder="e.g. megha2026 (defaults to firstname2026)">
+                            </div>
+                            <div class="form-field">
                                 <label for="admin-comm-desc">Description (2-3 lines, max 50 words)</label>
                                 <textarea id="admin-comm-desc" rows="3" placeholder="Brief portfolio highlight or contribution..." required></textarea>
                                 <span class="word-count-badge" id="admin-comm-word-badge"><span id="committee-desc-word-count">0</span> / 50 words max</span>
@@ -986,6 +1113,70 @@
                         <div class="admin-committee-list" id="admin-committee-roster-list">
                             <!-- Populated dynamically -->
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3B: APPRECIATION TASKS & CLAIMS MANAGER -->
+            <div class="admin-tab-content" id="tab-tasks">
+                <div class="admin-grid-layout">
+                    <!-- Left: Create Task Form -->
+                    <div class="admin-form-pane">
+                        <h4>➕ Create Appreciation Task</h4>
+                        <p class="admin-list-subtitle">Drop a task with appreciation points for committee members to claim.</p>
+                        <form id="admin-create-task-form" onsubmit="return false;">
+                            <div class="form-field">
+                                <label for="admin-task-title">Task Title *</label>
+                                <input type="text" id="admin-task-title" placeholder="e.g. Design Instagram Carousels for Summit..." required>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-task-points">Appreciation Points to Award *</label>
+                                <input type="number" id="admin-task-points" placeholder="e.g. 50" min="5" value="50" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-task-desc">Task Description & Deliverables *</label>
+                                <textarea id="admin-task-desc" rows="3" placeholder="Outline specific deliverables, expectations, and deadlines..." required></textarea>
+                            </div>
+                            <div class="form-field">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; text-transform: none;">
+                                    <input type="checkbox" id="admin-task-allow-team" style="width: 18px; height: 18px;" checked>
+                                    <span style="font-weight: 700; font-size: 0.9rem;">Allow Member to Invite a Teammate / Partner</span>
+                                </label>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                                    Uncheck if this task is strictly individual so members cannot request partners.
+                                </span>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-admin-create-task">Publish Task to Member Portals</button>
+                        </form>
+                    </div>
+
+                    <!-- Right: Active Tasks & Member Claims -->
+                    <div class="admin-list-pane">
+                        <h4>📋 Active Tasks & Member Claims</h4>
+                        <p class="admin-list-subtitle">Review who claimed each task, check partner statuses, allot, and award points.</p>
+                        <div id="admin-tasks-claims-list" style="max-height: 480px; overflow-y: auto;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3C: CONFIDENTIAL MEMBER RATINGS FEED -->
+            <div class="admin-tab-content" id="tab-ratings">
+                <div class="admin-ratings-pane" style="max-width: 900px; margin: 0 auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h4 style="margin: 0;">⭐ Confidential Peer Reviews & Feedback Feed</h4>
+                            <p class="admin-list-subtitle" style="margin: 4px 0 0 0;">
+                                Internal reviews submitted by committee members about each other. Private to Master Admin.
+                            </p>
+                        </div>
+                        <div id="admin-ratings-count-badge" style="background: var(--primary); color: #fff; font-weight: 800; font-size: 0.8rem; padding: 4px 12px; border-radius: 999px;">
+                            0 Reviews
+                        </div>
+                    </div>
+                    <div id="admin-ratings-feed-list" style="max-height: 520px; overflow-y: auto;">
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
             </div>

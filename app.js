@@ -268,6 +268,7 @@ const DEFAULT_TEAM_DATA = {
             "name": "Megha",
             "tenure": "Tenure 2026 - 2027",
             "desc": "President",
+            "passcode": "megha2026",
             "image": "data:image/jpeg;base64,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"
         }
     ],
@@ -299,6 +300,29 @@ const DEFAULT_TEAM_DATA = {
             "template": "casing",
             "icon": "📊"
         }
+    ],
+    "peerRatings": [],
+    "appreciationTasks": [
+        {
+            "id": "task-sample-1",
+            "title": "Design 5 Instagram Promo Posts for Impromptu Debate Showcase",
+            "points": 50,
+            "desc": "Create vibrant social media flyers highlighting speaker topics, registration link, and date.",
+            "allowTeam": true,
+            "status": "open",
+            "allottedTo": [],
+            "claims": []
+        },
+        {
+            "id": "task-sample-2",
+            "title": "Coordinate Speaker Timing & Feedback Forms",
+            "points": 40,
+            "desc": "Manage timer bell for the live speaking cohort and distribute attendee review links.",
+            "allowTeam": false,
+            "status": "open",
+            "allottedTo": [],
+            "claims": []
+        }
     ]
 };
 
@@ -307,19 +331,33 @@ let appTeamData = (() => {
         const saved = localStorage.getItem("interactup_team_portal_data");
         if (saved) {
             const parsed = JSON.parse(saved);
-            return {
+            const data = {
                 teamPasscode: parsed.teamPasscode || DEFAULT_TEAM_DATA.teamPasscode,
                 adminPasscode: parsed.adminPasscode || DEFAULT_TEAM_DATA.adminPasscode,
                 tenures: Array.isArray(parsed.tenures) && parsed.tenures.length > 0 ? parsed.tenures : DEFAULT_TEAM_DATA.tenures,
                 leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : DEFAULT_TEAM_DATA.leaderboard,
                 committeeMembers: Array.isArray(parsed.committeeMembers) ? parsed.committeeMembers : DEFAULT_TEAM_DATA.committeeMembers,
-                competitions: Array.isArray(parsed.competitions) && parsed.competitions.length > 0 ? parsed.competitions : DEFAULT_TEAM_DATA.competitions
+                competitions: Array.isArray(parsed.competitions) && parsed.competitions.length > 0 ? parsed.competitions : DEFAULT_TEAM_DATA.competitions,
+                peerRatings: Array.isArray(parsed.peerRatings) ? parsed.peerRatings : [],
+                appreciationTasks: Array.isArray(parsed.appreciationTasks) && parsed.appreciationTasks.length > 0 ? parsed.appreciationTasks : DEFAULT_TEAM_DATA.appreciationTasks
             };
+            if (Array.isArray(data.committeeMembers)) {
+                data.committeeMembers.forEach(m => {
+                    if (!m.passcode) m.passcode = m.name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026";
+                });
+            }
+            return data;
         }
     } catch (e) {
         console.error("Failed to parse saved team data", e);
     }
-    return JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA));
+    const fallback = JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA));
+    if (Array.isArray(fallback.committeeMembers)) {
+        fallback.committeeMembers.forEach(m => {
+            if (!m.passcode) m.passcode = m.name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026";
+        });
+    }
+    return fallback;
 })();
 
 // ==========================================================================
@@ -364,6 +402,22 @@ try {
                         appTeamData.competitions = cloud.competitions;
                         liveEvents = appTeamData.competitions;
                     }
+                    if (Array.isArray(cloud.peerRatings)) {
+                        appTeamData.peerRatings = cloud.peerRatings;
+                    }
+                    if (Array.isArray(cloud.appreciationTasks)) {
+                        appTeamData.appreciationTasks = cloud.appreciationTasks;
+                    }
+                    if (Array.isArray(appTeamData.committeeMembers)) {
+                        appTeamData.committeeMembers.forEach(m => {
+                            if (!m.passcode) m.passcode = m.name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026";
+                        });
+                    }
+                    if (typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) {
+                        const updatedSelf = appTeamData.committeeMembers.find(m => m.id === currentLoggedInMember.id);
+                        if (updatedSelf) currentLoggedInMember = updatedSelf;
+                        if (typeof renderMemberPortal === 'function') renderMemberPortal();
+                    }
                     try {
                         localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
                     } catch(e) {}
@@ -377,6 +431,8 @@ try {
                     if (typeof renderAdminTenureChips === 'function') renderAdminTenureChips();
                     if (typeof renderAdminCommitteeTenureDropdown === 'function') renderAdminCommitteeTenureDropdown();
                     if (typeof renderAdminCommitteeRosterList === 'function') renderAdminCommitteeRosterList();
+                    if (typeof renderAdminTasksList === 'function') renderAdminTasksList();
+                    if (typeof renderAdminRatingsFeed === 'function') renderAdminRatingsFeed();
                     if (typeof renderAdminEventsList === 'function') renderAdminEventsList();
                     if (typeof renderAdminExportCode === 'function') renderAdminExportCode();
                 }
@@ -603,6 +659,9 @@ function saveTeamData() {
     renderAdminTenureChips();
     renderAdminCommitteeTenureDropdown();
     renderAdminCommitteeRosterList();
+    if (typeof renderAdminTasksList === 'function') renderAdminTasksList();
+    if (typeof renderAdminRatingsFeed === 'function') renderAdminRatingsFeed();
+    if (typeof renderMemberPortal === 'function' && typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) renderMemberPortal();
     renderAdminExportCode();
 }
 
@@ -891,18 +950,39 @@ function renderAdminCommitteeRosterList() {
                 <span style="font-weight: 800; font-size: 0.82rem; color: var(--primary); min-width: 26px;">#${idx + 1}</span>
                 <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="admin-comm-item-img" onerror="this.src='assets/images/logo.png'">
                 <div class="admin-comm-item-info">
-                    <span class="admin-comm-item-name" style="font-weight: 800; font-size: 0.95rem;">${escapeHtml(m.name)}</span>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <span class="admin-comm-item-name" style="font-weight: 800; font-size: 0.95rem;">${escapeHtml(m.name)}</span>
+                        <span style="font-size: 0.72rem; background: rgba(37, 99, 235, 0.1); color: var(--primary); padding: 1px 8px; border-radius: 4px; font-weight: 700;">
+                            🔑 ${escapeHtml(m.passcode || 'Not set')}
+                        </span>
+                    </div>
                     <span class="admin-comm-item-tenure" style="font-size: 0.76rem; color: var(--text-muted);">${escapeHtml(m.tenure)}</span>
                     <p class="admin-comm-item-desc" style="font-size: 0.8rem; margin: 4px 0 0 0; color: var(--text-secondary);">${escapeHtml(m.desc)}</p>
                 </div>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
+                <button type="button" class="btn-order-move btn-edit-comm-passcode" data-id="${m.id}" title="Edit Member Password">🔑 Pass</button>
                 <button type="button" class="btn-order-move btn-comm-move-up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Earlier (Higher)">⬆️</button>
                 <button type="button" class="btn-order-move btn-comm-move-down" data-idx="${idx}" ${idx === members.length - 1 ? 'disabled' : ''} title="Move Later (Lower)">⬇️</button>
                 <button type="button" class="btn-order-delete btn-delete-row" data-id="${m.id}" title="Remove Member">🗑️</button>
             </div>
         </div>
     `).join("");
+    
+    list.querySelectorAll(".btn-edit-comm-passcode").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            const m = appTeamData.committeeMembers.find(x => x.id === id);
+            if (!m) return;
+            const currentPass = m.passcode || (m.name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026");
+            const newPass = prompt(`Set unique portal password for ${m.name}:`, currentPass);
+            if (newPass !== null && newPass.trim()) {
+                m.passcode = newPass.trim();
+                saveTeamData();
+                playClickSound();
+            }
+        });
+    });
     
     list.querySelectorAll(".btn-comm-move-up").forEach(btn => {
         btn.addEventListener("click", function() {
@@ -934,14 +1014,199 @@ function renderAdminCommitteeRosterList() {
     });
 }
 
-// 7. ADMIN: EXPORT CODE GENERATOR
+// 7. ADMIN: APPRECIATION TASKS & CLAIMS MANAGER
+function renderAdminTasksList() {
+    const container = document.getElementById("admin-tasks-claims-list");
+    if (!container) return;
+    
+    const tasks = Array.isArray(appTeamData.appreciationTasks) ? appTeamData.appreciationTasks : [];
+    if (tasks.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 28px 12px; color: var(--text-muted); font-size: 0.85rem;">No tasks created yet. Publish an appreciation task on the left!</div>`;
+        return;
+    }
+    
+    container.innerHTML = tasks.map(task => {
+        const claims = Array.isArray(task.claims) ? task.claims : [];
+        return `
+            <div class="admin-task-claim-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px;">
+                    <div>
+                        <strong style="font-size: 0.98rem; color: var(--text-primary);">${escapeHtml(task.title)}</strong>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px;">
+                            Bounty: <strong style="color: #10b981;">+${task.points} pts</strong> &bull; 
+                            Collaboration: <em>${task.allowTeam ? '🤝 Teammates Allowed' : '👤 Individual Only'}</em>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-order-delete btn-delete-task" data-id="${task.id}" title="Delete Task">🗑️</button>
+                </div>
+                <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 6px 0 12px 0;">${escapeHtml(task.desc)}</p>
+                
+                <div style="border-top: 1px dashed var(--border-light); padding-top: 10px;">
+                    <div style="font-size: 0.76rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">
+                        Member Claims (${claims.length}):
+                    </div>
+                    ${claims.length > 0 ? `
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${claims.map(c => `
+                                <div style="background: var(--bg-surface); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">
+                                            👤 ${escapeHtml(c.memberName)}
+                                            <span style="font-size: 0.74rem; font-weight: 500; color: var(--text-muted); margin-left: 6px;">(${escapeHtml(c.claimedAt || 'Recently')})</span>
+                                        </div>
+                                        ${c.teammateName ? `
+                                            <div style="margin-top: 4px; font-size: 0.78rem;">
+                                                Partner: <strong>${escapeHtml(c.teammateName)}</strong> &bull; 
+                                                ${c.teammateStatus === 'pending' ? '<span class="status-pill status-pill-pending">⏳ Partner Pending</span>' : ''}
+                                                ${c.teammateStatus === 'accepted' ? '<span class="status-pill status-pill-accepted">✓ Partner Accepted</span>' : ''}
+                                                ${c.teammateStatus === 'declined' ? '<span class="status-pill status-pill-declined">✕ Partner Declined</span>' : ''}
+                                            </div>
+                                        ` : '<div style="margin-top: 2px; font-size: 0.75rem; color: var(--text-muted);">Solo Applicant</div>'}
+                                    </div>
+                                    <div>
+                                        ${c.isAllotted ? `
+                                            <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 999px;">
+                                                ✓ Points Awarded
+                                            </span>
+                                        ` : `
+                                            <button type="button" class="btn btn-primary btn-sm btn-award-task-points" data-task-id="${task.id}" data-claim-id="${c.id}" style="font-size: 0.76rem; padding: 5px 12px;">
+                                                🏆 Allot & Award +${task.points} pts
+                                            </button>
+                                        `}
+                                    </div>
+                                </div>
+                            `).join("")}
+                        </div>
+                    ` : `
+                        <div style="font-size: 0.78rem; color: var(--text-muted); font-style: italic;">No members have claimed this task yet. It is visible on all member portals!</div>
+                    `}
+                </div>
+            </div>
+        `;
+    }).join("");
+    
+    // Wire delete task
+    container.querySelectorAll(".btn-delete-task").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            if (confirm("Delete this appreciation task?")) {
+                appTeamData.appreciationTasks = appTeamData.appreciationTasks.filter(t => t.id !== id);
+                saveTeamData();
+                playClickSound();
+            }
+        });
+    });
+    
+    // Wire award points
+    container.querySelectorAll(".btn-award-task-points").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const taskId = this.getAttribute("data-task-id");
+            const claimId = this.getAttribute("data-claim-id");
+            awardTaskPointsToClaim(taskId, claimId);
+        });
+    });
+}
+
+function awardTaskPointsToClaim(taskId, claimId) {
+    const task = (appTeamData.appreciationTasks || []).find(t => t.id === taskId);
+    if (!task || !Array.isArray(task.claims)) return;
+    
+    const claim = task.claims.find(c => c.id === claimId);
+    if (!claim) return;
+    
+    claim.isAllotted = true;
+    task.status = "allotted";
+    
+    function creditLeaderboard(name, pts) {
+        if (!name) return;
+        if (!Array.isArray(appTeamData.leaderboard)) appTeamData.leaderboard = [];
+        let item = appTeamData.leaderboard.find(l => l.name.trim().toLowerCase() === name.trim().toLowerCase());
+        if (item) {
+            item.points = (item.points || 0) + pts;
+        } else {
+            appTeamData.leaderboard.push({
+                id: "mem-" + Date.now() + "-" + Math.random().toString(36).substr(2, 4),
+                name: name.trim(),
+                points: pts
+            });
+        }
+    }
+    
+    creditLeaderboard(claim.memberName, task.points);
+    
+    let teammateMsg = "";
+    if (claim.teammateName && claim.teammateStatus === "accepted") {
+        creditLeaderboard(claim.teammateName, task.points);
+        teammateMsg = ` and ${claim.teammateName} (Teammate)`;
+    }
+    
+    saveTeamData();
+    playClickSound();
+    alert(`🎉 Success! Awarded +${task.points} appreciation points to ${claim.memberName}${teammateMsg} on the official Leaderboard!`);
+}
+
+// 8. ADMIN: CONFIDENTIAL MEMBER RATINGS FEED
+function renderAdminRatingsFeed() {
+    const container = document.getElementById("admin-ratings-feed-list");
+    const countBadge = document.getElementById("admin-ratings-count-badge");
+    if (!container) return;
+    
+    const ratings = Array.isArray(appTeamData.peerRatings) ? appTeamData.peerRatings : [];
+    if (countBadge) countBadge.textContent = `${ratings.length} Reviews`;
+    
+    if (ratings.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 36px 16px; color: var(--text-muted); font-size: 0.88rem;">No confidential peer reviews submitted by committee members yet. When members submit ratings on their portals, they will appear here privately!</div>`;
+        return;
+    }
+    
+    container.innerHTML = ratings.map(r => {
+        const ratingNum = Math.max(1, Math.min(5, parseInt(r.rating, 10) || 5));
+        const starsText = "★".repeat(ratingNum) + "☆".repeat(5 - ratingNum);
+        return `
+            <div class="rating-review-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                    <div>
+                        <div style="color: #f59e0b; font-size: 1.15rem; letter-spacing: 2px;">
+                            ${starsText}
+                            <span style="font-size: 0.85rem; font-weight: 800; color: var(--text-primary); margin-left: 6px;">${ratingNum}/5</span>
+                        </div>
+                        <div style="margin-top: 6px; font-size: 0.88rem;">
+                            Reviewer: <strong>${escapeHtml(r.fromMemberName)}</strong> &rarr; 
+                            Rated: <strong style="color: var(--primary);">${escapeHtml(r.toMemberName)}</strong>
+                        </div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px;">
+                            Project: <strong>${escapeHtml(r.project)}</strong> &bull; Submitted: ${escapeHtml(r.createdAt || 'Recent')}
+                        </div>
+                    </div>
+                    <button type="button" class="btn-order-delete btn-delete-rating" data-id="${r.id}" title="Delete Review">🗑️</button>
+                </div>
+                <div style="margin-top: 10px; padding: 10px 14px; background: var(--bg-surface); border-radius: 8px; border-left: 3.5px solid var(--primary); font-size: 0.84rem; line-height: 1.5; color: var(--text-primary);">
+                    "${escapeHtml(r.description)}"
+                </div>
+            </div>
+        `;
+    }).join("");
+    
+    container.querySelectorAll(".btn-delete-rating").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            if (confirm("Delete this confidential peer review?")) {
+                appTeamData.peerRatings = appTeamData.peerRatings.filter(r => r.id !== id);
+                saveTeamData();
+                playClickSound();
+            }
+        });
+    });
+}
+
+// 9. ADMIN: EXPORT CODE GENERATOR
 function renderAdminExportCode() {
     const textarea = document.getElementById("admin-export-textarea");
     if (!textarea) return;
     textarea.value = `const DEFAULT_TEAM_DATA = ${JSON.stringify(appTeamData, null, 4)};`;
 }
 
-// 8. MASTER SETUP CONTROLLER FOR MODALS & ACCESS
+// 10. MASTER SETUP CONTROLLER FOR MODALS & ACCESS
 let isAdminModeActive = false;
 
 function openAdminMasterConsole() {
@@ -958,6 +1223,8 @@ function openAdminMasterConsole() {
     renderAdminTenureChips();
     renderAdminCommitteeTenureDropdown();
     renderAdminCommitteeRosterList();
+    renderAdminTasksList();
+    renderAdminRatingsFeed();
     renderAdminEventsList();
     renderAdminExportCode();
     
@@ -1147,6 +1414,8 @@ function setupModalsController() {
     
     function validateTeamPasscode() {
         const val = (passcodeField.value || "").trim();
+        if (!val) return;
+        
         if (val === appTeamData.adminPasscode) {
             // ADMIN LOGIN
             passcodeError.style.display = "none";
@@ -1155,20 +1424,36 @@ function setupModalsController() {
             
             activateAdminMode();
             openAdminMasterConsole();
-        } else if (val === appTeamData.teamPasscode) {
-            // TEAM LEADERBOARD LOGIN
-            passcodeError.style.display = "none";
-            passcodeField.value = "";
-            if (teamLoginModal) teamLoginModal.classList.remove("active");
-            
-            renderLeaderboardTable();
-            if (teamLeaderboardModal) teamLeaderboardModal.classList.add("active");
-            playClickSound();
         } else {
-            passcodeError.style.display = "block";
-            passcodeError.style.animation = 'none';
-            passcodeError.offsetHeight;
-            passcodeError.style.animation = null;
+            // Check if member passcode matches any committee member
+            const matchedMember = (appTeamData.committeeMembers || []).find(m => 
+                m.passcode && m.passcode.toLowerCase() === val.toLowerCase()
+            );
+            
+            if (matchedMember) {
+                // PERSONALIZED MEMBER PORTAL LOGIN
+                passcodeError.style.display = "none";
+                passcodeField.value = "";
+                if (teamLoginModal) teamLoginModal.classList.remove("active");
+                openMemberPortal(matchedMember);
+                return;
+            }
+            
+            if (val === appTeamData.teamPasscode) {
+                // TEAM LEADERBOARD LOGIN
+                passcodeError.style.display = "none";
+                passcodeField.value = "";
+                if (teamLoginModal) teamLoginModal.classList.remove("active");
+                
+                renderLeaderboardTable();
+                if (teamLeaderboardModal) teamLeaderboardModal.classList.add("active");
+                playClickSound();
+            } else {
+                passcodeError.style.display = "block";
+                passcodeError.style.animation = 'none';
+                passcodeError.offsetHeight;
+                passcodeError.style.animation = null;
+            }
         }
     }
     
@@ -1292,17 +1577,23 @@ function setupModalsController() {
             const tenureSelect = document.getElementById("admin-comm-tenure-select");
             const nameInput = document.getElementById("admin-comm-name");
             const descInput = document.getElementById("admin-comm-desc");
+            const passcodeInput = document.getElementById("admin-comm-passcode");
             
             if (!nameInput.value.trim() || !descInput.value.trim()) {
                 alert("Please enter both the member name and description.");
                 return;
             }
             
+            const customPasscode = (passcodeInput && passcodeInput.value.trim()) ? 
+                passcodeInput.value.trim() : 
+                (nameInput.value.trim().toLowerCase().replace(/[^a-z0-9]/g, '') + "2026");
+            
             const newComm = {
                 id: "comm-" + Date.now(),
                 name: nameInput.value.trim(),
                 tenure: tenureSelect.value,
                 desc: descInput.value.trim(),
+                passcode: customPasscode,
                 image: adminCommPhotoData || "assets/images/logo.png"
             };
             
@@ -1311,6 +1602,7 @@ function setupModalsController() {
             
             nameInput.value = "";
             descInput.value = "";
+            if (passcodeInput) passcodeInput.value = "";
             if (commWordCount) commWordCount.textContent = "0";
             adminCommPhotoData = "";
             if (commPhotoPreview) commPhotoPreview.style.display = "none";
@@ -1475,12 +1767,517 @@ function setupModalsController() {
         });
     }
     
+    // Admin Create Appreciation Task Form
+    const btnCreateTask = document.getElementById("btn-admin-create-task");
+    if (btnCreateTask) {
+        btnCreateTask.addEventListener("click", () => {
+            const titleField = document.getElementById("admin-task-title");
+            const pointsField = document.getElementById("admin-task-points");
+            const descField = document.getElementById("admin-task-desc");
+            const allowTeamField = document.getElementById("admin-task-allow-team");
+            
+            if (!titleField || !pointsField || !descField) return;
+            if (!titleField.value.trim() || !descField.value.trim()) {
+                alert("Please provide both a task title and deliverables description.");
+                return;
+            }
+            
+            const newTask = {
+                id: "task-" + Date.now(),
+                title: titleField.value.trim(),
+                points: parseInt(pointsField.value, 10) || 50,
+                desc: descField.value.trim(),
+                allowTeam: allowTeamField ? allowTeamField.checked : true,
+                status: "open",
+                createdAt: new Date().toLocaleDateString(),
+                claims: []
+            };
+            
+            if (!Array.isArray(appTeamData.appreciationTasks)) appTeamData.appreciationTasks = [];
+            appTeamData.appreciationTasks.unshift(newTask);
+            saveTeamData();
+            
+            titleField.value = "";
+            descField.value = "";
+            pointsField.value = "50";
+            if (allowTeamField) allowTeamField.checked = true;
+            playClickSound();
+        });
+    }
+    
+    // Restore Member Session if active
+    const savedMemberId = sessionStorage.getItem("interactup_member_id");
+    if (savedMemberId) {
+        const foundMember = (appTeamData.committeeMembers || []).find(m => m.id === savedMemberId);
+        if (foundMember) {
+            currentLoggedInMember = foundMember;
+        }
+    }
+    
     // Initial Render of Core Committee & Leaderboard
     renderCoreCommitteeMainView();
     renderLeaderboardTable();
     
     window.addEventListener("hashchange", checkHashAccess);
     checkHashAccess();
+}
+
+// ==========================================================================
+// 👤 PERSONALIZED MEMBER PORTAL & PEER APPRECIATION ENGINE
+// ==========================================================================
+let currentLoggedInMember = null;
+
+function openMemberPortal(member) {
+    currentLoggedInMember = member;
+    sessionStorage.setItem("interactup_member_id", member.id);
+    
+    const portal = document.getElementById("member-portal-modal");
+    if (!portal) return;
+    
+    renderMemberPortal();
+    portal.classList.add("active");
+    playClickSound();
+}
+
+function closeMemberPortal() {
+    const portal = document.getElementById("member-portal-modal");
+    if (portal) portal.classList.remove("active");
+    currentLoggedInMember = null;
+    sessionStorage.removeItem("interactup_member_id");
+    playClickSound();
+}
+
+function renderMemberPortal() {
+    if (!currentLoggedInMember) return;
+    
+    // 1. Header Information
+    const avatar = document.getElementById("member-portal-avatar");
+    const nameEl = document.getElementById("member-portal-name");
+    const tenureBadge = document.getElementById("member-portal-tenure-badge");
+    const roleEl = document.getElementById("member-portal-role");
+    const pointsEl = document.getElementById("member-portal-points-display");
+    
+    if (avatar) avatar.src = currentLoggedInMember.image || "assets/images/logo.png";
+    if (nameEl) nameEl.textContent = currentLoggedInMember.name;
+    if (tenureBadge) tenureBadge.textContent = currentLoggedInMember.tenure;
+    if (roleEl) roleEl.textContent = currentLoggedInMember.desc;
+    
+    // Calculate points from leaderboard
+    let myPts = 0;
+    if (Array.isArray(appTeamData.leaderboard)) {
+        const leaderItem = appTeamData.leaderboard.find(l => l.name.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase());
+        if (leaderItem) myPts = leaderItem.points || 0;
+    }
+    if (pointsEl) pointsEl.textContent = `${myPts} pts`;
+    
+    // 2. Pending Teammate Invitations Banner
+    renderMemberInvitationsBanner();
+    
+    // 3. Tab 1: Available Appreciation Tasks
+    renderMemberAvailableTasks();
+    
+    // 4. Tab 2: Rate a Teammate Form & Submitted Reviews
+    renderMemberRatingsTab();
+    
+    // 5. Tab 3: My Claimed Tasks
+    renderMemberMyClaimsTab();
+}
+
+function renderMemberInvitationsBanner() {
+    const container = document.getElementById("member-invitations-container");
+    if (!container || !currentLoggedInMember) return;
+    
+    const pendingInvites = [];
+    (appTeamData.appreciationTasks || []).forEach(task => {
+        (task.claims || []).forEach(c => {
+            if (c.teammateId === currentLoggedInMember.id && c.teammateStatus === "pending") {
+                pendingInvites.push({ task, claim: c });
+            }
+        });
+    });
+    
+    if (pendingInvites.length === 0) {
+        container.style.display = "none";
+        container.innerHTML = "";
+        return;
+    }
+    
+    container.style.display = "block";
+    container.innerHTML = pendingInvites.map(item => `
+        <div class="invite-banner-card">
+            <div class="invite-banner-info">
+                <strong>🤝 Collaboration Invitation!</strong>
+                <span style="font-size: 0.84rem;"><strong>${escapeHtml(item.claim.memberName)}</strong> invited you to team up for <em>"${escapeHtml(item.task.title)}"</em> (+${item.task.points} pts bounty).</span>
+            </div>
+            <div class="invite-banner-actions">
+                <button type="button" class="btn-invite-accept" data-task-id="${item.task.id}" data-claim-id="${item.claim.id}">✓ Accept Collaboration</button>
+                <button type="button" class="btn-invite-decline" data-task-id="${item.task.id}" data-claim-id="${item.claim.id}">✕ Decline</button>
+            </div>
+        </div>
+    `).join("");
+    
+    container.querySelectorAll(".btn-invite-accept").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const tId = this.getAttribute("data-task-id");
+            const cId = this.getAttribute("data-claim-id");
+            respondToTeammateInvite(tId, cId, "accepted");
+        });
+    });
+    
+    container.querySelectorAll(".btn-invite-decline").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const tId = this.getAttribute("data-task-id");
+            const cId = this.getAttribute("data-claim-id");
+            respondToTeammateInvite(tId, cId, "declined");
+        });
+    });
+}
+
+function respondToTeammateInvite(taskId, claimId, responseStatus) {
+    const task = (appTeamData.appreciationTasks || []).find(t => t.id === taskId);
+    if (!task || !Array.isArray(task.claims)) return;
+    
+    const claim = task.claims.find(c => c.id === claimId);
+    if (!claim) return;
+    
+    claim.teammateStatus = responseStatus;
+    saveTeamData();
+    playClickSound();
+    renderMemberPortal();
+}
+
+function renderMemberAvailableTasks() {
+    const grid = document.getElementById("member-tasks-grid");
+    if (!grid || !currentLoggedInMember) return;
+    
+    const tasks = Array.isArray(appTeamData.appreciationTasks) ? appTeamData.appreciationTasks : [];
+    if (tasks.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 24px; color: var(--text-muted);">No appreciation tasks available right now. Check back soon!</div>`;
+        return;
+    }
+    
+    // Other committee members for teammate dropdown
+    const otherMembers = (appTeamData.committeeMembers || []).filter(m => m.id !== currentLoggedInMember.id);
+    
+    grid.innerHTML = tasks.map(task => {
+        const myClaim = (task.claims || []).find(c => c.memberId === currentLoggedInMember.id);
+        const teammateClaim = (task.claims || []).find(c => c.teammateId === currentLoggedInMember.id && c.teammateStatus === "accepted");
+        
+        if (myClaim) {
+            return `
+                <div class="member-task-card claimed">
+                    <div class="member-task-card-header">
+                        <h4 class="member-task-title">${escapeHtml(task.title)}</h4>
+                        <span class="member-task-points-badge">+${task.points} pts</span>
+                    </div>
+                    <p class="member-task-desc">${escapeHtml(task.desc)}</p>
+                    <div style="margin: 12px 0 10px 0;">
+                        <span class="claimed-badge">✓ Claimed by You</span>
+                        ${myClaim.teammateName ? `
+                            <div style="margin-top: 8px; font-size: 0.8rem;">
+                                Teammate: <strong>${escapeHtml(myClaim.teammateName)}</strong> &bull; 
+                                ${myClaim.teammateStatus === 'pending' ? '<span class="status-pill status-pill-pending">⏳ Partner Pending</span>' : ''}
+                                ${myClaim.teammateStatus === 'accepted' ? '<span class="status-pill status-pill-accepted">✓ Partner Accepted</span>' : ''}
+                                ${myClaim.teammateStatus === 'declined' ? '<span class="status-pill status-pill-declined">✕ Partner Declined</span>' : ''}
+                            </div>
+                        ` : ''}
+                        ${myClaim.isAllotted ? '<div style="margin-top: 6px; font-weight: 800; color: #10b981; font-size: 0.82rem;">🏆 Task Allotted & Points Awarded!</div>' : ''}
+                    </div>
+                    <button type="button" class="btn-claim-task" disabled>✓ Claimed (Locked)</button>
+                </div>
+            `;
+        }
+        
+        if (teammateClaim) {
+            return `
+                <div class="member-task-card claimed">
+                    <div class="member-task-card-header">
+                        <h4 class="member-task-title">${escapeHtml(task.title)}</h4>
+                        <span class="member-task-points-badge">+${task.points} pts</span>
+                    </div>
+                    <p class="member-task-desc">${escapeHtml(task.desc)}</p>
+                    <div style="margin: 12px 0 10px 0;">
+                        <span class="claimed-badge">✓ Teaming up with ${escapeHtml(teammateClaim.memberName)}</span>
+                        ${teammateClaim.isAllotted ? '<div style="margin-top: 6px; font-weight: 800; color: #10b981; font-size: 0.82rem;">🏆 Task Allotted & Points Awarded!</div>' : ''}
+                    </div>
+                    <button type="button" class="btn-claim-task" disabled>✓ Teammate Assigned (Locked)</button>
+                </div>
+            `;
+        }
+        
+        return `
+            <div class="member-task-card">
+                <div class="member-task-card-header">
+                    <h4 class="member-task-title">${escapeHtml(task.title)}</h4>
+                    <span class="member-task-points-badge">+${task.points} pts</span>
+                </div>
+                <p class="member-task-desc">${escapeHtml(task.desc)}</p>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-bottom: 12px;">
+                    ${task.allowTeam ? '🤝 Teammate Collaboration Allowed' : '👤 Individual Solo Task Only'}
+                </div>
+                ${task.allowTeam ? `
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 0.76rem; font-weight: 700; margin-bottom: 4px; color: var(--text-secondary);">
+                            Invite Teammate / Partner (Optional):
+                        </label>
+                        <select class="task-partner-select" data-task-id="${task.id}" style="width: 100%; font-size: 0.8rem; padding: 6px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-white); color: var(--text-primary);">
+                            <option value="">Work Solo (No partner)</option>
+                            ${otherMembers.map(m => `<option value="${m.id}">${escapeHtml(m.name)} (${escapeHtml(m.tenure)})</option>`).join("")}
+                        </select>
+                    </div>
+                ` : ''}
+                <button type="button" class="btn-claim-task" data-task-id="${task.id}">🎯 Claim Task (+${task.points} pts)</button>
+            </div>
+        `;
+    }).join("");
+    
+    // Wire Claim buttons
+    grid.querySelectorAll(".btn-claim-task:not([disabled])").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const taskId = this.getAttribute("data-task-id");
+            const selectEl = grid.querySelector(`.task-partner-select[data-task-id="${taskId}"]`);
+            const partnerId = selectEl ? selectEl.value : null;
+            claimAppreciationTask(taskId, partnerId);
+        });
+    });
+}
+
+function claimAppreciationTask(taskId, partnerId) {
+    if (!currentLoggedInMember) return;
+    const task = (appTeamData.appreciationTasks || []).find(t => t.id === taskId);
+    if (!task) return;
+    
+    if (!Array.isArray(task.claims)) task.claims = [];
+    if (task.claims.some(c => c.memberId === currentLoggedInMember.id)) {
+        alert("You have already claimed this task!");
+        return;
+    }
+    
+    let partnerObj = null;
+    if (partnerId) {
+        partnerObj = (appTeamData.committeeMembers || []).find(m => m.id === partnerId);
+    }
+    
+    const newClaim = {
+        id: "claim-" + Date.now(),
+        memberId: currentLoggedInMember.id,
+        memberName: currentLoggedInMember.name,
+        claimedAt: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }),
+        teammateId: partnerObj ? partnerObj.id : null,
+        teammateName: partnerObj ? partnerObj.name : null,
+        teammateStatus: partnerObj ? "pending" : "none",
+        isAllotted: false
+    };
+    
+    task.claims.push(newClaim);
+    saveTeamData();
+    playClickSound();
+    renderMemberPortal();
+}
+
+function renderMemberRatingsTab() {
+    if (!currentLoggedInMember) return;
+    
+    // Populate teammate dropdown
+    const select = document.getElementById("rate-target-member");
+    if (select) {
+        const others = (appTeamData.committeeMembers || []).filter(m => m.id !== currentLoggedInMember.id);
+        if (others.length === 0) {
+            select.innerHTML = `<option value="">No other members available</option>`;
+        } else {
+            select.innerHTML = `<option value="">-- Choose Committee Member --</option>` + 
+                others.map(m => `<option value="${m.id}">${escapeHtml(m.name)} (${escapeHtml(m.tenure)} - ${escapeHtml(m.desc)})</option>`).join("");
+        }
+    }
+    
+    // Submitted Reviews list for this member
+    const list = document.getElementById("member-submitted-ratings-list");
+    if (list) {
+        const mySubmitted = (appTeamData.peerRatings || []).filter(r => r.fromMemberId === currentLoggedInMember.id);
+        if (mySubmitted.length === 0) {
+            list.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.84rem;">You haven't submitted any peer reviews yet. Submit your first review on the left!</div>`;
+        } else {
+            list.innerHTML = mySubmitted.map(r => {
+                const ratingNum = Math.max(1, Math.min(5, parseInt(r.rating, 10) || 5));
+                const starsText = "★".repeat(ratingNum) + "☆".repeat(5 - ratingNum);
+                return `
+                    <div class="rating-review-card" style="margin-bottom: 12px;">
+                        <div style="color: #f59e0b; font-size: 1rem; letter-spacing: 2px;">
+                            ${starsText} <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-primary);">${ratingNum}/5</span>
+                        </div>
+                        <div style="margin-top: 4px; font-size: 0.84rem;">
+                            Rated: <strong style="color: var(--primary);">${escapeHtml(r.toMemberName)}</strong> &bull; 
+                            <span style="font-size: 0.76rem; color: var(--text-muted);">${escapeHtml(r.createdAt || 'Recent')}</span>
+                        </div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                            Project: <strong>${escapeHtml(r.project)}</strong>
+                        </div>
+                        <div style="margin-top: 6px; padding: 8px 12px; background: var(--bg-surface); border-radius: 6px; border-left: 3px solid var(--primary); font-size: 0.8rem; color: var(--text-primary);">
+                            "${escapeHtml(r.description)}"
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+    }
+}
+
+function renderMemberMyClaimsTab() {
+    const list = document.getElementById("member-my-claims-list");
+    if (!list || !currentLoggedInMember) return;
+    
+    const myTasks = [];
+    (appTeamData.appreciationTasks || []).forEach(t => {
+        const primary = (t.claims || []).find(c => c.memberId === currentLoggedInMember.id);
+        const partner = (t.claims || []).find(c => c.teammateId === currentLoggedInMember.id && c.teammateStatus === "accepted");
+        if (primary) myTasks.push({ task: t, claim: primary, role: "Primary Applicant" });
+        else if (partner) myTasks.push({ task: t, claim: partner, role: "Teammate / Partner" });
+    });
+    
+    if (myTasks.length === 0) {
+        list.innerHTML = `<div style="text-align: center; padding: 28px; color: var(--text-muted); font-size: 0.88rem;">You have not claimed any appreciation tasks yet. Visit the "Claim Appreciation Tasks" tab to get started!</div>`;
+        return;
+    }
+    
+    list.innerHTML = myTasks.map(item => `
+        <div class="admin-task-claim-card" style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                <div>
+                    <strong style="font-size: 0.95rem; color: var(--text-primary);">${escapeHtml(item.task.title)}</strong>
+                    <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px;">
+                        Role: <strong>${item.role}</strong> &bull; Bounty: <strong style="color: #10b981;">+${item.task.points} pts</strong>
+                    </div>
+                </div>
+                <div>
+                    ${item.claim.isAllotted ? `
+                        <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 999px;">
+                            ✓ Allotted & Points Awarded!
+                        </span>
+                    ` : `
+                        <span style="background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 999px;">
+                            ⏳ Claimed &bull; Under Admin Review
+                        </span>
+                    `}
+                </div>
+            </div>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 8px 0;">${escapeHtml(item.task.desc)}</p>
+            ${item.claim.teammateName ? `
+                <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+                    Teammate: <strong>${escapeHtml(item.claim.teammateName)}</strong> (${escapeHtml(item.claim.teammateStatus)})
+                </div>
+            ` : ''}
+        </div>
+    `).join("");
+}
+
+function initMemberPortal() {
+    // Portal Tabs switching
+    document.querySelectorAll(".portal-tab-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const targetId = this.getAttribute("data-portal-tab");
+            document.querySelectorAll(".portal-tab-btn").forEach(b => b.classList.remove("active"));
+            document.querySelectorAll(".portal-tab-content").forEach(c => c.classList.remove("active"));
+            this.classList.add("active");
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) targetEl.classList.add("active");
+            playClickSound();
+        });
+    });
+    
+    // Star Rating Click & Label Handlers
+    const starSelector = document.getElementById("star-rating-selector");
+    const starHiddenInput = document.getElementById("rate-stars-input");
+    const starLabel = document.getElementById("star-rating-label");
+    const starLabels = {
+        1: "1/5 - Needs Improvement",
+        2: "2/5 - Fair Contribution",
+        3: "3/5 - Good Team Player",
+        4: "4/5 - Excellent Impact",
+        5: "5/5 - Outstanding Leadership"
+    };
+    
+    function setStars(num) {
+        if (starHiddenInput) starHiddenInput.value = num;
+        if (starLabel) starLabel.textContent = starLabels[num] || `${num}/5`;
+        if (starSelector) {
+            starSelector.querySelectorAll(".star-btn").forEach(btn => {
+                const val = parseInt(btn.getAttribute("data-stars"), 10);
+                if (val <= num) btn.classList.add("active");
+                else btn.classList.remove("active");
+            });
+        }
+    }
+    
+    if (starSelector) {
+        starSelector.querySelectorAll(".star-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const num = parseInt(this.getAttribute("data-stars"), 10);
+                setStars(num);
+                playClickSound();
+            });
+        });
+    }
+    
+    // Submit Peer Rating Form
+    const rateForm = document.getElementById("member-rate-form");
+    if (rateForm) {
+        rateForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            if (!currentLoggedInMember) return;
+            
+            const targetSelect = document.getElementById("rate-target-member");
+            const projectInput = document.getElementById("rate-project-name");
+            const descInput = document.getElementById("rate-description");
+            const starsVal = parseInt(starHiddenInput ? starHiddenInput.value : "5", 10) || 5;
+            
+            if (!targetSelect.value) {
+                alert("Please select a committee member to rate.");
+                return;
+            }
+            if (!projectInput.value.trim() || !descInput.value.trim()) {
+                alert("Please fill in both the project name and your feedback description.");
+                return;
+            }
+            
+            const targetMember = (appTeamData.committeeMembers || []).find(m => m.id === targetSelect.value);
+            if (!targetMember) return;
+            
+            const newReview = {
+                id: "review-" + Date.now(),
+                fromMemberId: currentLoggedInMember.id,
+                fromMemberName: currentLoggedInMember.name,
+                toMemberId: targetMember.id,
+                toMemberName: targetMember.name,
+                project: projectInput.value.trim(),
+                rating: starsVal,
+                description: descInput.value.trim(),
+                createdAt: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })
+            };
+            
+            if (!Array.isArray(appTeamData.peerRatings)) appTeamData.peerRatings = [];
+            appTeamData.peerRatings.unshift(newReview);
+            saveTeamData();
+            playClickSound();
+            
+            projectInput.value = "";
+            descInput.value = "";
+            setStars(5);
+            
+            const feedback = document.getElementById("peer-rating-feedback");
+            if (feedback) {
+                feedback.style.display = "block";
+                setTimeout(() => { feedback.style.display = "none"; }, 4000);
+            }
+            renderMemberRatingsTab();
+        });
+    }
+    
+    // Close / Logout buttons
+    const btnClosePortal = document.getElementById("btn-close-member-portal");
+    if (btnClosePortal) btnClosePortal.addEventListener("click", closeMemberPortal);
+    
+    const btnLogout = document.getElementById("btn-member-logout");
+    if (btnLogout) btnLogout.addEventListener("click", closeMemberPortal);
 }
 
 function openTeamLoginPrompt() {
@@ -3404,6 +4201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     safeInit("initEventsEngine", initEventsEngine);
     safeInit("renderLiveEventsCarousel", renderLiveEventsCarousel);
     safeInit("setupModalsController", setupModalsController);
+    safeInit("initMemberPortal", initMemberPortal);
     
     // 3. Guarantee that the loader ALWAYS slides up to reveal the website
     const startupLoader = document.getElementById("startup-loader");

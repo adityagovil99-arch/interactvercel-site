@@ -4146,3 +4146,409 @@ body.theme-indigo .dashboard-viewport {
         text-align: center;
     }
 }
+
+/* ==========================================================================
+   PERSONALIZED MEMBER PORTAL, PEER RATINGS & TASK ALLOCATION
+   ========================================================================== */
+.member-portal-card {
+    width: 95vw !important;
+    max-width: 1240px !important;
+    height: 90vh !important;
+    max-height: 92vh !important;
+    display: flex;
+    flex-direction: column;
+    padding: 26px 34px;
+    border-radius: 20px;
+    background: var(--bg-white);
+    border: 2px solid var(--border-bold);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+}
+
+.member-portal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--border-light);
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.member-profile-summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.member-portal-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+    box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.member-tenure-badge {
+    background: var(--primary-glow);
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--primary);
+}
+
+.member-points-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    background: var(--bg-slate);
+    border: 1.5px solid var(--border-light);
+    padding: 4px 14px;
+    border-radius: 10px;
+}
+
+.btn-portal-logout {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 8px;
+    border: 1.5px solid rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+    color: #ef4444;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-portal-logout:hover {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.portal-nav-tabs {
+    display: flex;
+    gap: 10px;
+    border-bottom: 2px solid var(--border-light);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.portal-tab-btn {
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    border: 2px solid var(--border-bold);
+    background: var(--bg-slate);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.portal-tab-btn.active,
+.portal-tab-btn:hover {
+    background: var(--primary);
+    color: #ffffff;
+    box-shadow: 3px 3px 0 var(--border-bold);
+}
+
+.portal-tab-content {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.portal-tab-content.active {
+    display: block;
+}
+
+/* Tasks Grid */
+.member-tasks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    margin-top: 16px;
+}
+
+.member-task-card {
+    background: var(--bg-white);
+    border: 2px solid var(--border-light);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition-smooth);
+    position: relative;
+}
+
+.member-task-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+}
+
+.member-task-card.claimed {
+    background: rgba(16, 185, 129, 0.06);
+    border-color: #10b981 !important;
+}
+
+.task-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.task-points-badge {
+    background: #10b981;
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.task-team-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--bg-slate);
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+}
+
+.task-card-title {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+}
+
+.task-card-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.task-claim-action-box {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-light);
+}
+
+.task-teammate-select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    font-size: 0.82rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-bold);
+    background: var(--bg-slate);
+    color: var(--text-primary);
+}
+
+.btn-claim-task {
+    width: 100%;
+    padding: 10px;
+    font-weight: 800;
+    font-size: 0.88rem;
+    border-radius: 8px;
+    background: var(--primary);
+    color: #ffffff;
+    border: 2px solid var(--border-bold);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-claim-task:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 3px 3px 0 var(--border-bold);
+}
+
+.btn-claim-task:disabled {
+    background: #10b981;
+    border-color: #10b981;
+    color: #ffffff;
+    cursor: default;
+}
+
+/* Star Rating Selector */
+.star-rating-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.star-btn {
+    font-size: 1.8rem;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: transform 0.15s ease, color 0.15s ease;
+    user-select: none;
+}
+
+.star-btn.active,
+.star-btn.hover {
+    color: #f59e0b;
+    transform: scale(1.15);
+}
+
+.star-label {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-left: 8px;
+}
+
+.portal-grid-two-col {
+    display: grid;
+    grid-template-columns: 1.15fr 1.25fr;
+    gap: 28px;
+}
+
+.portal-form-box,
+.portal-list-box {
+    background: var(--bg-slate);
+    padding: 22px;
+    border-radius: 14px;
+    border: 1.5px solid var(--border-light);
+}
+
+.member-ratings-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 440px;
+    overflow-y: auto;
+}
+
+.rating-review-card {
+    background: var(--bg-white);
+    border: 1.5px solid var(--border-light);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: var(--transition-smooth);
+}
+
+.rating-review-card:hover {
+    border-color: var(--primary);
+}
+
+.rating-review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.review-stars {
+    color: #f59e0b;
+    font-size: 1rem;
+    letter-spacing: 2px;
+}
+
+.review-project-badge {
+    background: var(--primary-glow);
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.review-desc-text {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Invitation Banner */
+.invite-banner-card {
+    background: rgba(139, 92, 246, 0.08);
+    border: 2px dashed var(--primary);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+/* Admin Task Claims */
+.admin-task-claim-card {
+    background: var(--bg-white);
+    border: 1.5px solid var(--border-light);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.admin-claim-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin-top: 8px;
+    border-radius: 8px;
+    background: var(--bg-slate);
+    border: 1px solid var(--border-light);
+}
+
+.status-pill-pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #d97706;
+    font-weight: 800;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.status-pill-accepted {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    font-weight: 800;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.status-pill-declined {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    font-weight: 800;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+[data-theme="dark"] .member-portal-card,
+[data-theme="dark"] .member-task-card,
+[data-theme="dark"] .rating-review-card,
+[data-theme="dark"] .admin-task-claim-card {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .portal-form-box,
+[data-theme="dark"] .portal-list-box,
+[data-theme="dark"] .admin-claim-row {
+    background: #090e17 !important;
+    border-color: #1e293b !important;
+}

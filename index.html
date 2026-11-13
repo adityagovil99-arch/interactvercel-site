@@ -833,30 +833,67 @@
     <!-- 5. TEAM APPRECIATION POINTS LEADERBOARD MODAL (View-Only) -->
     <div class="modal-backdrop" id="team-leaderboard-modal">
         <div class="modal-card leaderboard-modal-card">
-            <div class="modal-header">
-                <h3>🏆 Team Appreciation Leaderboard</h3>
-                <button class="btn-close-modal" id="btn-close-team-leaderboard" aria-label="Close Modal">&times;</button>
-            </div>
-            <p class="modal-subtitle">Celebrating member ownership, consistency, and active contributions across InteractUp cohorts.</p>
             
-            <div class="leaderboard-search-box">
-                <input type="text" id="leaderboard-search-input" class="leaderboard-search-input" placeholder="🔍 Search member by name..." autocomplete="off">
+            <!-- Sticky Top Header Section (Never cut off) -->
+            <div class="leaderboard-modal-header-section">
+                <div class="modal-header" style="margin-bottom: 0;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.5rem; line-height: 1;">🏆</span>
+                        <div>
+                            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800;">Team Appreciation Leaderboard</h3>
+                            <p class="modal-subtitle" style="margin: 3px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">
+                                Celebrating member ownership, consistency, and active contributions across InteractUp cohorts.
+                            </p>
+                        </div>
+                    </div>
+                    <button class="btn-close-modal" id="btn-close-team-leaderboard" aria-label="Close Modal">&times;</button>
+                </div>
+
+                <div class="leaderboard-search-box" style="margin-bottom: 0;">
+                    <input type="text" id="leaderboard-search-input" class="leaderboard-search-input" placeholder="🔍 Search member by name..." autocomplete="off">
+                </div>
             </div>
 
-            <div class="leaderboard-table-container">
-                <table class="leaderboard-table">
-                    <thead>
-                        <tr>
-                            <th class="leaderboard-rank-col">Rank</th>
-                            <th class="leaderboard-name-col">Member Name</th>
-                            <th class="leaderboard-points-col">Appreciation Points</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboard-table-body">
-                        <!-- Loaded dynamically by JS -->
-                    </tbody>
-                </table>
+            <!-- Scrollable Body (Smooth scrolling with both table & logs bin) -->
+            <div class="leaderboard-modal-scrollable-body">
+                <div class="leaderboard-table-container">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th class="leaderboard-rank-col">Rank</th>
+                                <th class="leaderboard-name-col">Member Name</th>
+                                <th class="leaderboard-points-col">Appreciation Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-table-body">
+                            <!-- Loaded dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PUBLIC RECOGNITION & AUDIT LOGS BIN -->
+                <div class="leaderboard-logs-bin-container">
+                    <div class="logs-bin-header">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.3rem;">📜</span>
+                            <div>
+                                <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800;">Recognition &amp; Appreciation Logs Bin</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.78rem; color: var(--text-muted);">
+                                    Live public ledger of verified appreciation citations and earned contribution milestones across the community.
+                                </p>
+                            </div>
+                        </div>
+                        <span id="leaderboard-logs-count-badge" class="logs-bin-count-pill">0 Citations</span>
+                    </div>
+                    <div class="logs-bin-body" id="leaderboard-public-logs-bin">
+                        <!-- Populated dynamically by JS -->
+                    </div>
+                    <div class="logs-bin-footer-note">
+                        🔒 <strong>Confidentiality Notice:</strong> Individual accountability audit records (system demerits) are strictly confidential and visible only to respective members inside their personal profile.
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 
@@ -894,6 +931,7 @@
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-ratings">⭐ Peer Appreciation & Ratings</button>
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-activity">📜 My Claimed Tasks</button>
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-demerits">⚠️ Accountability & Demerits</button>
+                <button class="portal-tab-btn" data-portal-tab="portal-tab-logs">📜 Logs Bin & History</button>
             </div>
 
             <!-- TAB 1: CLAIM APPRECIATION TASKS -->
@@ -982,9 +1020,65 @@
 
             <!-- TAB 4: SYSTEM DEMERITS & ACCOUNTABILITY LOG -->
             <div class="portal-tab-content" id="portal-tab-demerits">
+                
+                <!-- Mandatory Accountability & Proportionality Policy Overview -->
+                <div class="accountability-policy-overview-card">
+                    <div class="policy-overview-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">⚖️</span>
+                            <div>
+                                <h4 style="margin: 0; font-size: 0.98rem; font-weight: 800; color: var(--text-primary);">Accountability Standing &amp; Demerit Proportionality Policy</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted);">Important guidelines on non-linear point depreciation, tiered penalty multipliers, mandatory daily trackers, and review protocols.</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-policy-detail-trigger" id="btn-open-accountability-policy">
+                            📖 View Detailed Guidelines
+                        </button>
+                    </div>
+
+                    <!-- Summary Rule Cards Grid -->
+                    <div class="policy-summary-cards-grid">
+                        <div class="policy-rule-card">
+                            <span class="policy-rule-icon">⚖️</span>
+                            <div class="policy-rule-content">
+                                <strong>Non-Linear Proportionality</strong>
+                                <p>Demerits are <em>not</em> 1:1 proportional to appreciation points. Depending on seriousness, 1 demerit may cause a 2x to 5x deduction impact.</p>
+                            </div>
+                        </div>
+                        <div class="policy-rule-card">
+                            <span class="policy-rule-icon">📈</span>
+                            <div class="policy-rule-content">
+                                <strong>Escalating Depreciation Tiers</strong>
+                                <p>Up to 10 negative pts: <strong>2x multiplier</strong>. Crossing 10 pts increases to <strong>3x</strong>. Crossing 15 pts accelerates to <strong>4x+ compounding impact</strong>.</p>
+                            </div>
+                        </div>
+                        <div class="policy-rule-card warning-tier">
+                            <span class="policy-rule-icon">🚨</span>
+                            <div class="policy-rule-content">
+                                <strong>32-Point Review Threshold</strong>
+                                <p>Accumulating <strong>32 or more demerits</strong> triggers an immediate administrative review and potential termination due to continuous non-disciplinary standing.</p>
+                            </div>
+                        </div>
+                        <div class="policy-rule-card">
+                            <span class="policy-rule-icon">📅</span>
+                            <div class="policy-rule-content">
+                                <strong>Mandatory Daily Tracker Updates</strong>
+                                <p>You must inform your lead daily even if output was zero. For 2–3 days absence, notify in advance; unannounced blank days incur automated negative markings.</p>
+                            </div>
+                        </div>
+                        <div class="policy-rule-card appeal-tier">
+                            <span class="policy-rule-icon">🤝</span>
+                            <div class="policy-rule-content">
+                                <strong>Right to Appeal &amp; Review</strong>
+                                <p>If you believe a negative point was incorrectly recorded, you can reach out directly and personally to Admin, your President, or Secretary to raise your concern.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="demerit-summary-box">
                     <div>
-                        <h4 style="margin: 0; color: #ef4444; font-size: 1.05rem;">⚠️ System Performance & Accountability Record</h4>
+                        <h4 style="margin: 0; color: #ef4444; font-size: 1.05rem;">⚠️ System Performance &amp; Accountability Record</h4>
                         <p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 0 0;">
                             Automated compliance engine audit log. Records operational demerits, procedural flags, and meeting accountability notices.
                         </p>
@@ -996,6 +1090,33 @@
                 </div>
                 <div id="member-demerits-list">
                     <!-- Populated dynamically with demerit notices -->
+                </div>
+            </div>
+
+            <!-- TAB 5: PERSONAL RECOGNITION & AUDIT LOGS BIN -->
+            <div class="portal-tab-content" id="portal-tab-logs">
+                <div class="personal-logs-summary-bar">
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800;">📜 Personal Recognition &amp; Audit Logs Bin</h4>
+                        <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">
+                            Chronological personal ledger recording official appreciation citations and automated system accountability entries.
+                        </p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <span id="member-logs-appr-total" class="logs-stat-pill green">+0 pts Earned</span>
+                        <span id="member-logs-demerit-total" class="logs-stat-pill red">-0 pts Demerits</span>
+                    </div>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="logs-filter-tabs">
+                    <button type="button" class="logs-filter-btn active" data-filter="all">All Activity (<span id="count-logs-all">0</span>)</button>
+                    <button type="button" class="logs-filter-btn" data-filter="appreciation">🌟 Appreciation Citations (<span id="count-logs-appr">0</span>)</button>
+                    <button type="button" class="logs-filter-btn" data-filter="demerits">⚠️ Accountability Demerits (<span id="count-logs-demerit">0</span>)</button>
+                </div>
+
+                <div id="member-personal-logs-container" class="personal-logs-stream">
+                    <!-- Loaded dynamically by JS -->
                 </div>
             </div>
         </div>
@@ -1079,6 +1200,34 @@
                                 ✓ System demerit recorded and deducted!
                             </div>
                         </form>
+
+                        <hr style="margin: 22px 0; border: none; border-top: 1.5px solid var(--border-light);">
+
+                        <h4>🌟 Award Appreciation Points &amp; Citation</h4>
+                        <p class="admin-list-subtitle">Credit appreciation points with a formal citation reason. Posted directly to the candidate's personal profile and published to the live Leaderboard Logs Bin.</p>
+                        <form id="admin-appreciation-form" onsubmit="return false;">
+                            <div class="form-field">
+                                <label for="admin-appreciation-member-select">Select Candidate / Member *</label>
+                                <select id="admin-appreciation-member-select" required>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-appreciation-points">Appreciation Points to Credit (e.g. 10, 25, 50) *</label>
+                                <input type="number" id="admin-appreciation-points" placeholder="e.g. 25" min="1" value="25" required>
+                                <span style="font-size: 0.72rem; color: var(--text-muted);">Enter positive points (e.g. 10, 25, 45, etc.)</span>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-appreciation-desc">Official Citation / Reason for Recognition *</label>
+                                <textarea id="admin-appreciation-desc" rows="3" placeholder="e.g. Exceptional leadership in organizing impromptu debates, mentoring juniors, outstanding reliability..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-admin-issue-appreciation" style="background: #10b981; border-color: #10b981; width: 100%;">
+                                🌟 Award Appreciation Points
+                            </button>
+                            <div id="admin-appreciation-feedback" style="display: none; color: #10b981; font-weight: 800; font-size: 0.82rem; margin-top: 8px; text-align: center;">
+                                ✓ Appreciation citation credited and published to Logs Bin!
+                            </div>
+                        </form>
                     </div>
 
                     <div class="admin-list-pane">
@@ -1118,6 +1267,29 @@
                                     </tr>
                                 </thead>
                                 <tbody id="admin-demerits-log-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr style="margin: 20px 0; border: none; border-top: 1.5px solid var(--border-light);">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="margin: 0; font-size: 0.98rem; color: #10b981;">🌟 Active Appreciation Citations Log</h4>
+                            <span id="admin-appreciations-count-badge" style="font-size: 0.72rem; background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 800; padding: 2px 8px; border-radius: 999px;">0 Citations</span>
+                        </div>
+                        <p class="admin-list-subtitle">Official appreciation citations credited across the team. Click Revoke if an award was entered incorrectly.</p>
+                        <div class="admin-table-scroll" style="max-height: 240px;">
+                            <table class="admin-mini-table">
+                                <thead>
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Awarded</th>
+                                        <th>Citation & Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-appreciations-log-tbody">
                                     <!-- Populated dynamically -->
                                 </tbody>
                             </table>
@@ -1404,157 +1576,8 @@
             </div>
 
             <!-- Scrollable Content Body -->
-            <div class="impact-modal-scroll">
-                
-                <!-- Hero Banner -->
-                <div class="impact-hero-banner">
-                    <span class="impact-hero-tag">🇮🇳 Pan-India Movement • 5,000+ Voices</span>
-                    <h2 class="impact-hero-title">WHERE NERVOUS TALKERS BECOME NATIONAL LEADERS.</h2>
-                    <p class="impact-hero-lead">
-                        InteractUp was born with a singular mission: to eradicate stage anxiety, dismantle transactional networking, and build a peer-led sanctuary where college students, young MBAs, and aspiring professionals discover the power of their voice.
-                    </p>
-                </div>
-
-                <!-- Proof of Impact Metrics -->
-                <h4 style="font-size: 1.15rem; font-weight: 800; margin: 0 0 16px 0;">📊 Our Scale & Verifiable Impact</h4>
-                <div class="impact-metrics-grid">
-                    <div class="impact-metric-card">
-                        <div class="impact-metric-num">5,000+</div>
-                        <div class="impact-metric-label">Active Student Members</div>
-                        <div class="impact-metric-sub">Across 45+ premier institutions</div>
-                    </div>
-                    <div class="impact-metric-card">
-                        <div class="impact-metric-num">120+</div>
-                        <div class="impact-metric-label">National Showcases</div>
-                        <div class="impact-metric-sub">Impromptu & parliamentary formats</div>
-                    </div>
-                    <div class="impact-metric-card">
-                        <div class="impact-metric-num">45+</div>
-                        <div class="impact-metric-label">Campus Chapters</div>
-                        <div class="impact-metric-sub">Tier-1 B-schools to regional universities</div>
-                    </div>
-                    <div class="impact-metric-card">
-                        <div class="impact-metric-num">15,000+</div>
-                        <div class="impact-metric-label">Peer Connections</div>
-                        <div class="impact-metric-sub">Zero business-card transactional bias</div>
-                    </div>
-                    <div class="impact-metric-card">
-                        <div class="impact-metric-num">98%</div>
-                        <div class="impact-metric-label">Anxiety Reduction</div>
-                        <div class="impact-metric-sub">Reported within first 3 speaking cohorts</div>
-                    </div>
-                </div>
-
-                <!-- Four Core Pillars -->
-                <h4 style="font-size: 1.15rem; font-weight: 800; margin: 28px 0 16px 0;">🛡️ The Goodwill Foundations of InteractUp</h4>
-                <div class="impact-pillars-grid">
-                    <div class="impact-pillar-card">
-                        <div class="impact-pillar-icon">🎙️</div>
-                        <h5 class="impact-pillar-title">Fearless Impromptu Expression</h5>
-                        <p class="impact-pillar-desc">
-                            We throw away rehearsed scripts. Members practice spontaneous 2-minute table topics with instant, loving feedback, making fear on stage vanish forever.
-                        </p>
-                    </div>
-                    <div class="impact-pillar-card">
-                        <div class="impact-pillar-icon">🤝</div>
-                        <h5 class="impact-pillar-title">Non-Transactional Fellowship</h5>
-                        <p class="impact-pillar-desc">
-                            No corporate pretenses or resume bragging. First-year undergrads connect as genuine peers with top-tier MBA scholars and startup builders.
-                        </p>
-                    </div>
-                    <div class="impact-pillar-card">
-                        <div class="impact-pillar-icon">💼</div>
-                        <h5 class="impact-pillar-title">Placement & Corporate Edge</h5>
-                        <p class="impact-pillar-desc">
-                            Members master spontaneous case studies, unstructured group discussions, and high-pressure interview storytelling that wins dream placements.
-                        </p>
-                    </div>
-                    <div class="impact-pillar-card">
-                        <div class="impact-pillar-icon">🤍</div>
-                        <h5 class="impact-pillar-title">Mental Wellness & Sanctuary</h5>
-                        <p class="impact-pillar-desc">
-                            Academic burnout and social isolation are real. Our weekly curated wellness mixers offer an empathetic space to de-stress and be heard.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Hall of Fame & Landmark Milestones -->
-                <h4 style="font-size: 1.15rem; font-weight: 800; margin: 28px 0 16px 0;">🏆 Landmark Milestones & Hall of Fame</h4>
-                <div class="impact-hall-grid">
-                    <div class="impact-hall-card">
-                        <div style="font-size: 0.76rem; font-weight: 800; color: #f59e0b; text-transform: uppercase;">Flagship Event</div>
-                        <h5 style="margin: 6px 0 8px 0; font-size: 1.05rem;">National Inter-College Impromptu Debate Championship</h5>
-                        <p style="margin: 0; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5;">
-                            Over 1,200 delegates from across 35 campuses competed in spontaneous clash rounds, adjudicated by seasoned debate masters and corporate alumni.
-                        </p>
-                    </div>
-                    <div class="impact-hall-card">
-                        <div style="font-size: 0.76rem; font-weight: 800; color: #f59e0b; text-transform: uppercase;">Community Outreach</div>
-                        <h5 style="margin: 6px 0 8px 0; font-size: 1.05rem;">Tier-2 & Tier-3 Equal Expression Fellowship</h5>
-                        <p style="margin: 0; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5;">
-                            Sponsored 100% free speech coaching and English fluency cohorts for over 850 students from small-town colleges seeking equal placement footing.
-                        </p>
-                    </div>
-                    <div class="impact-hall-card">
-                        <div style="font-size: 0.76rem; font-weight: 800; color: #f59e0b; text-transform: uppercase;">Executive Mentorship</div>
-                        <h5 style="margin: 6px 0 8px 0; font-size: 1.05rem;">Corporate Leaders Fireside & Casing Conclave</h5>
-                        <p style="margin: 0; font-size: 0.84rem; color: var(--text-secondary); line-height: 1.5;">
-                            Partnered with industry directors and McKinsey/BCG alumni to deliver practical casing masterclasses and boardroom communication simulations.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Student Voices & Social Proof -->
-                <h4 style="font-size: 1.15rem; font-weight: 800; margin: 28px 0 16px 0;">💬 Voices of Student Transformation</h4>
-                <div class="impact-testimonials-grid">
-                    <div class="impact-quote-card">
-                        <em>"In my first week at B-school, I shook every time a professor called my name. Four weeks at InteractUp completely rewired my confidence. I ended up placing in top-bracket consulting."</em>
-                        <div class="impact-quote-author">
-                            <div style="font-size: 1.3rem;">🎓</div>
-                            <div>
-                                <strong style="font-size: 0.85rem; display: block;">Arjun S.</strong>
-                                <span class="impact-author-role">MBA Student, Class of 2026</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="impact-quote-card">
-                        <em>"Most college clubs are about ego and hierarchy. InteractUp is the complete opposite. It’s an authentic safe space where people genuinely cheer for your growth."</em>
-                        <div class="impact-quote-author">
-                            <div style="font-size: 1.3rem;">✨</div>
-                            <div>
-                                <strong style="font-size: 0.85rem; display: block;">Rhea K.</strong>
-                                <span class="impact-author-role">Undergraduate Leader, Delhi Chapter</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="impact-quote-card">
-                        <em>"The Connect Circles saved my mental health during placement season. Having a group of 5,000 supportive peers behind you makes you unstoppable."</em>
-                        <div class="impact-quote-author">
-                            <div style="font-size: 1.3rem;">🤍</div>
-                            <div>
-                                <strong style="font-size: 0.85rem; display: block;">Tanvi M.</strong>
-                                <span class="impact-author-role">Core Committee Member</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Branding & Growth Call to Action Banner -->
-                <div class="impact-cta-banner">
-                    <h3 style="margin: 0 0 8px 0; font-size: 1.4rem;">Ready to Experience the Movement?</h3>
-                    <p style="margin: 0 auto 20px auto; max-width: 600px; font-size: 0.9rem; color: var(--text-secondary);">
-                        Join 5,000+ ambitious students across India. Participate in our next impromptu speaking challenge or bring an InteractUp chapter to your college.
-                    </p>
-                    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                        <a href="https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0" target="_blank" class="btn btn-primary" style="padding: 10px 22px; font-weight: 800; font-size: 0.9rem;">
-                            📲 Join WhatsApp Community
-                        </a>
-                        <a href="https://forms.gle/EJ5njy2RpcLyCZdo7" target="_blank" class="btn btn-secondary" style="padding: 10px 22px; font-weight: 800; font-size: 0.9rem;">
-                            🤝 Partner / Start a Chapter
-                        </a>
-                    </div>
-                </div>
-
+            <div class="impact-modal-scroll" id="impact-modal-scroll-body">
+                <!-- Content injected by JavaScript -->
             </div>
         </div>
     </div>
@@ -1590,6 +1613,153 @@
         <button type="button" class="btn-dock-action btn-dock-logout" id="btn-dock-logout" title="Log out from Admin Mode">
             🚪 Log Out
         </button>
+    </div>
+
+    <!-- ACCOUNTABILITY POLICY & PROPORTIONALITY GUIDELINES MODAL -->
+    <div class="modal-backdrop" id="accountability-policy-modal">
+        <div class="modal-card accountability-policy-card">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.4rem;">⚖️</span>
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.2rem;">Accountability Standing &amp; Proportionality Policy</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 0.78rem; color: var(--text-muted);">Standardized Governance Framework for Community Standing, Demerit Depreciation &amp; Disciplinary Protocols</p>
+                    </div>
+                </div>
+                <button class="btn-close-modal" id="btn-close-accountability-policy" aria-label="Close Policy Modal">&times;</button>
+            </div>
+
+            <div class="policy-modal-scroll">
+                
+                <!-- Section 1: Non-Linear Proportionality -->
+                <div class="policy-section-block">
+                    <div class="policy-section-header">
+                        <span class="policy-section-badge">Principle 1</span>
+                        <h4>Non-Linear Demerit Proportionality</h4>
+                    </div>
+                    <p>
+                        Demerit points are <strong>not directly 1:1 proportional to appreciation points</strong>. Earning 100 appreciation points and subsequently receiving 5 demerit points does <em>not</em> result in a simple net score of 95 points.
+                    </p>
+                    <p>
+                        Instead, demerit points carry <strong>variable proportionality based on the operational importance and seriousness of the assigned responsibility</strong>. For critical assignments or high-impact commitments, 1 demerit point may correspond to a deduction of <strong>up to 5 appreciation points</strong>.
+                    </p>
+                </div>
+
+                <!-- Section 2: Progressive Multipliers Matrix -->
+                <div class="policy-section-block">
+                    <div class="policy-section-header">
+                        <span class="policy-section-badge">Principle 2</span>
+                        <h4>Progressive Multiplier Tiers</h4>
+                    </div>
+                    <p>
+                        As negative points accumulate, the system automatically escalates the depreciation frequency across distinct penalty tiers:
+                    </p>
+                    
+                    <div class="policy-matrix-table-wrap">
+                        <table class="policy-matrix-table">
+                            <thead>
+                                <tr>
+                                    <th>Penalty Tier</th>
+                                    <th>Cumulative Negative Points</th>
+                                    <th>Depreciation Multiplier</th>
+                                    <th>Net Deductive Impact</th>
+                                    <th>Standing Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Tier 1 (Base)</strong></td>
+                                    <td>1 to 10 points</td>
+                                    <td><span class="matrix-multiplier-badge blue">2x Multiplier</span></td>
+                                    <td>1 demerit reduces 2 appreciation points</td>
+                                    <td><span class="matrix-status-badge good">Normal Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tier 2 (Elevated)</strong></td>
+                                    <td>11 to 15 points</td>
+                                    <td><span class="matrix-multiplier-badge amber">3x Multiplier</span></td>
+                                    <td>1 demerit reduces 3 appreciation points</td>
+                                    <td><span class="matrix-status-badge warning">Advisory Watch</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tier 3 (Critical)</strong></td>
+                                    <td>16 to 31 points</td>
+                                    <td><span class="matrix-multiplier-badge red">4x+ Multiplier</span></td>
+                                    <td>1 demerit reduces 4+ appreciation points (accelerated)</td>
+                                    <td><span class="matrix-status-badge critical">Strict Probation</span></td>
+                                </tr>
+                                <tr class="termination-row">
+                                    <td><strong>Tier 4 (Actionable)</strong></td>
+                                    <td><strong>32+ points</strong></td>
+                                    <td><span class="matrix-multiplier-badge dark">Disciplinary Review</span></td>
+                                    <td>Full standing suspension</td>
+                                    <td><span class="matrix-status-badge danger">Subject to Termination</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 3: 32-Point Review & Disciplinary Termination -->
+                <div class="policy-section-block warning-callout">
+                    <div class="policy-section-header">
+                        <span class="policy-section-badge danger">Principle 3</span>
+                        <h4 style="color: #ef4444;">32-Point Disciplinary Review &amp; Potential Termination</h4>
+                    </div>
+                    <p>
+                        Any member who accumulates a cumulative total of <strong>32 or more negative points</strong> is immediately placed under <strong>Administrative Conduct Review</strong>.
+                    </p>
+                    <p>
+                        Continuous accumulation of non-disciplinary points reflects repeated unfulfilled responsibilities or unaddressed procedural violations, and may lead to <strong>formal termination and revocation of community privileges, badges, and committee tenure</strong>.
+                    </p>
+                </div>
+
+                <!-- Section 4: Mandatory Daily Tracker & Advance Leave Protocol -->
+                <div class="policy-section-block">
+                    <div class="policy-section-header">
+                        <span class="policy-section-badge">Principle 4</span>
+                        <h4>Mandatory Daily Tracker Reporting &amp; Advance Leave Protocol</h4>
+                    </div>
+                    <p>
+                        Active visibility is foundational to peer leadership. <strong>Daily tracker updates are strictly mandatory for all active team members:</strong>
+                    </p>
+                    <ul class="policy-checklist">
+                        <li>
+                            <strong>Daily Lead Briefing:</strong> You must inform your assigned team lead of your activities for that day — <em>even if you had zero output on that specific day</em>. Transparent communication is always respected.
+                        </li>
+                        <li>
+                            <strong>Advance Notice for Unavailability:</strong> If you anticipate being unavailable or taking leave for <strong>2 to 3 consecutive days</strong>, you are required to inform your team lead in advance so the tracker can be officially updated with an excused mark.
+                        </li>
+                        <li>
+                            <strong>Automated Negative Marking:</strong> If your tracker entry remains blank or unreported for any working day without verified prior notice, an <strong>automated system-generated negative marking</strong> is registered against your accountability record.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Section 5: Grievance Redressal & Right to Appeal -->
+                <div class="policy-section-block">
+                    <div class="policy-section-header">
+                        <span class="policy-section-badge green">Principle 5</span>
+                        <h4>Grievance Redressal &amp; Direct Personal Appeal</h4>
+                    </div>
+                    <p>
+                        InteractUp maintains a 100% fair, transparent, and empathetic community culture. <strong>You always have the right of appeal:</strong>
+                    </p>
+                    <p>
+                        If you believe any system demerit point was assigned in error, due to a technical glitch, or without proper context, <strong>you can directly and personally reach out to the Admin, your President, or Secretary</strong>.
+                    </p>
+                    <p>
+                        Your concern will be evaluated objectively during executive audit sessions, and if verified, the negative point will be formally revoked and all depreciated points restored to your profile immediately.
+                    </p>
+                </div>
+
+            </div>
+            <div class="modal-footer" style="padding: 12px 24px; border-top: 1px solid var(--border-light); display: flex; justify-content: flex-end;">
+                <button type="button" class="btn btn-primary" id="btn-close-accountability-policy-footer" style="padding: 8px 20px;">
+                    Understood &amp; Acknowledge
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->

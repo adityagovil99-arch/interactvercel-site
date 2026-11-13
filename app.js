@@ -303,6 +303,24 @@ const DEFAULT_TEAM_DATA = {
     ],
     "peerRatings": [],
     "demerits": [],
+    "appreciations": [
+        {
+            "id": "appr-sample-1",
+            "memberId": "comm-1794259452724",
+            "memberName": "Megha",
+            "points": 25,
+            "reason": "Outstanding initiative leading the National Impromptu Debate Series and mentoring regional chapters.",
+            "issuedAt": "Nov 10, 2026"
+        },
+        {
+            "id": "appr-sample-2",
+            "memberId": "mem-sample-2",
+            "memberName": "Arjun S.",
+            "points": 15,
+            "reason": "Exemplary facilitation of peer speaking practice and high-energy workshop support.",
+            "issuedAt": "Nov 12, 2026"
+        }
+    ],
     "appreciationTasks": [
         {
             "id": "task-sample-1",
@@ -324,7 +342,39 @@ const DEFAULT_TEAM_DATA = {
             "allottedTo": [],
             "claims": []
         }
-    ]
+    ],
+    "impactContent": {
+        "heroTag": "🇮🇳 Pan-India Movement • 5,000+ Voices",
+        "heroTitle": "WHERE NERVOUS TALKERS BECOME NATIONAL LEADERS.",
+        "heroLead": "InteractUp was born with a singular mission: to eradicate stage anxiety, dismantle transactional networking, and build a peer-led sanctuary where college students, young MBAs, and aspiring professionals discover the power of their voice.",
+        "metrics": [
+            { "id": "m1", "num": "5,000+", "label": "Active Student Members", "sub": "Across 45+ premier institutions" },
+            { "id": "m2", "num": "120+", "label": "National Showcases", "sub": "Impromptu & parliamentary formats" },
+            { "id": "m3", "num": "45+", "label": "Campus Chapters", "sub": "Tier-1 B-schools to regional universities" },
+            { "id": "m4", "num": "15,000+", "label": "Peer Connections", "sub": "Zero business-card transactional bias" },
+            { "id": "m5", "num": "98%", "label": "Anxiety Reduction", "sub": "Reported within first 3 speaking cohorts" }
+        ],
+        "pillars": [
+            { "id": "p1", "icon": "🎙️", "title": "Fearless Impromptu Expression", "desc": "We throw away rehearsed scripts. Members practice spontaneous 2-minute table topics with instant, loving feedback, making fear on stage vanish forever." },
+            { "id": "p2", "icon": "🤝", "title": "Non-Transactional Fellowship", "desc": "No corporate pretenses or resume bragging. First-year undergrads connect as genuine peers with top-tier MBA scholars and startup builders." },
+            { "id": "p3", "icon": "💼", "title": "Placement & Corporate Edge", "desc": "Members master spontaneous case studies, unstructured group discussions, and high-pressure interview storytelling that wins dream placements." },
+            { "id": "p4", "icon": "🤍", "title": "Mental Wellness & Sanctuary", "desc": "Academic burnout and social isolation are real. Our weekly curated wellness mixers offer an empathetic space to de-stress and be heard." }
+        ],
+        "hallOfFame": [
+            { "id": "h1", "tag": "Flagship Event", "title": "National Inter-College Impromptu Debate Championship", "desc": "Over 1,200 delegates from across 35 campuses competed in spontaneous clash rounds, adjudicated by seasoned debate masters and corporate alumni." },
+            { "id": "h2", "tag": "Community Outreach", "title": "Tier-2 & Tier-3 Equal Expression Fellowship", "desc": "Sponsored 100% free speech coaching and English fluency cohorts for over 850 students from small-town colleges seeking equal placement footing." },
+            { "id": "h3", "tag": "Executive Mentorship", "title": "Corporate Leaders Fireside & Casing Conclave", "desc": "Partnered with industry directors and McKinsey/BCG alumni to deliver practical casing masterclasses and boardroom communication simulations." }
+        ],
+        "testimonials": [
+            { "id": "t1", "emoji": "🎓", "quote": "In my first week at B-school, I shook every time a professor called my name. Four weeks at InteractUp completely rewired my confidence. I ended up placing in top-bracket consulting.", "name": "Arjun S.", "role": "MBA Student, Class of 2026" },
+            { "id": "t2", "emoji": "✨", "quote": "Most college clubs are about ego and hierarchy. InteractUp is the complete opposite. It is an authentic safe space where people genuinely cheer for your growth.", "name": "Rhea K.", "role": "Undergraduate Leader, Delhi Chapter" },
+            { "id": "t3", "emoji": "🤍", "quote": "The Connect Circles saved my mental health during placement season. Having a group of 5,000 supportive peers behind you makes you unstoppable.", "name": "Tanvi M.", "role": "Core Committee Member" }
+        ],
+        "ctaHeading": "Ready to Experience the Movement?",
+        "ctaBody": "Join 5,000+ ambitious students across India. Participate in our next impromptu speaking challenge or bring an InteractUp chapter to your college.",
+        "ctaWhatsappUrl": "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0",
+        "ctaPartnerUrl": "https://forms.gle/EJ5njy2RpcLyCZdo7"
+    }
 };
 
 let appTeamData = (() => {
@@ -341,7 +391,9 @@ let appTeamData = (() => {
                 competitions: Array.isArray(parsed.competitions) && parsed.competitions.length > 0 ? parsed.competitions : DEFAULT_TEAM_DATA.competitions,
                 peerRatings: Array.isArray(parsed.peerRatings) ? parsed.peerRatings : [],
                 demerits: Array.isArray(parsed.demerits) ? parsed.demerits : [],
-                appreciationTasks: Array.isArray(parsed.appreciationTasks) && parsed.appreciationTasks.length > 0 ? parsed.appreciationTasks : DEFAULT_TEAM_DATA.appreciationTasks
+                appreciations: Array.isArray(parsed.appreciations) ? parsed.appreciations : (DEFAULT_TEAM_DATA.appreciations || []),
+                appreciationTasks: Array.isArray(parsed.appreciationTasks) && parsed.appreciationTasks.length > 0 ? parsed.appreciationTasks : DEFAULT_TEAM_DATA.appreciationTasks,
+                impactContent: (parsed.impactContent && typeof parsed.impactContent === 'object') ? parsed.impactContent : DEFAULT_TEAM_DATA.impactContent
             };
             if (Array.isArray(data.committeeMembers)) {
                 data.committeeMembers.forEach(m => {
@@ -410,8 +462,14 @@ try {
                     if (Array.isArray(cloud.demerits)) {
                         appTeamData.demerits = cloud.demerits;
                     }
+                    if (Array.isArray(cloud.appreciations)) {
+                        appTeamData.appreciations = cloud.appreciations;
+                    }
                     if (Array.isArray(cloud.appreciationTasks)) {
                         appTeamData.appreciationTasks = cloud.appreciationTasks;
+                    }
+                    if (cloud.impactContent && typeof cloud.impactContent === 'object') {
+                        appTeamData.impactContent = cloud.impactContent;
                     }
                     if (Array.isArray(appTeamData.committeeMembers)) {
                         appTeamData.committeeMembers.forEach(m => {
@@ -435,6 +493,10 @@ try {
                     if (typeof renderAdminLeaderboardList === 'function') renderAdminLeaderboardList();
                     if (typeof renderAdminDemeritDropdown === 'function') renderAdminDemeritDropdown();
                     if (typeof renderAdminDemeritsList === 'function') renderAdminDemeritsList();
+                    if (typeof renderAdminAppreciationDropdown === 'function') renderAdminAppreciationDropdown();
+                    if (typeof renderAdminAppreciationsList === 'function') renderAdminAppreciationsList();
+                    if (typeof renderPublicLeaderboardLogsBin === 'function') renderPublicLeaderboardLogsBin();
+                    if (typeof renderMemberLogsBinTab === 'function') renderMemberLogsBinTab();
                     if (typeof renderAdminTenureChips === 'function') renderAdminTenureChips();
                     if (typeof renderAdminCommitteeTenureDropdown === 'function') renderAdminCommitteeTenureDropdown();
                     if (typeof renderAdminCommitteeRosterList === 'function') renderAdminCommitteeRosterList();
@@ -442,6 +504,7 @@ try {
                     if (typeof renderAdminRatingsFeed === 'function') renderAdminRatingsFeed();
                     if (typeof renderAdminEventsList === 'function') renderAdminEventsList();
                     if (typeof renderAdminExportCode === 'function') renderAdminExportCode();
+                    if (typeof renderImpactShowcase === 'function') renderImpactShowcase();
                 }
             } else if (!isFirestoreSeeded) {
                 isFirestoreSeeded = true;
@@ -820,6 +883,7 @@ function moveCommitteeMemberOrder(tenure, fromIdx, toIdx) {
 // 2. RENDER VIEW-ONLY TEAM LEADERBOARD
 function renderLeaderboardTable(filterText = "") {
     const tbody = document.getElementById("leaderboard-table-body");
+    if (typeof renderPublicLeaderboardLogsBin === 'function') renderPublicLeaderboardLogsBin();
     if (!tbody) return;
     
     const sorted = [...appTeamData.leaderboard].sort((a, b) => (b.points || 0) - (a.points || 0));
@@ -1036,6 +1100,89 @@ function revokeAdminDemerit(demeritId) {
         appTeamData.demerits = appTeamData.demerits.filter(x => x.id !== demeritId);
         saveTeamData();
         playClickSound();
+    }
+}
+
+// 3C. ADMIN: APPRECIATION POINTS CITATIONS DROPDOWN & LOG
+function renderAdminAppreciationDropdown() {
+    const select = document.getElementById("admin-appreciation-member-select");
+    if (!select) return;
+    
+    const memberMap = new Map();
+    (appTeamData.committeeMembers || []).forEach(m => {
+        memberMap.set(m.name.trim().toLowerCase(), { id: m.id, name: m.name, sub: m.tenure + " (" + m.desc + ")" });
+    });
+    (appTeamData.leaderboard || []).forEach(l => {
+        const key = l.name.trim().toLowerCase();
+        if (!memberMap.has(key)) {
+            memberMap.set(key, { id: l.id, name: l.name, sub: "Leaderboard Roster" });
+        }
+    });
+    
+    const members = Array.from(memberMap.values());
+    if (members.length === 0) {
+        select.innerHTML = `<option value="">No members available</option>`;
+        return;
+    }
+    
+    select.innerHTML = `<option value="">-- Choose Candidate / Member --</option>` + 
+        members.map(m => `<option value="${m.id}" data-name="${escapeHtml(m.name)}">${escapeHtml(m.name)} — ${escapeHtml(m.sub)}</option>`).join("");
+}
+
+function renderAdminAppreciationsList() {
+    const tbody = document.getElementById("admin-appreciations-log-tbody");
+    const countBadge = document.getElementById("admin-appreciations-count-badge");
+    if (!tbody) return;
+    
+    const appreciations = Array.isArray(appTeamData.appreciations) ? appTeamData.appreciations : [];
+    if (countBadge) countBadge.textContent = `${appreciations.length} Citations`;
+    
+    if (appreciations.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 18px; color: var(--text-muted); font-size: 0.84rem;">No appreciation citations issued yet. Use the form on the left to award recognition!</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = appreciations.map(a => `
+        <tr>
+            <td style="font-weight: 700; font-size: 0.85rem;">${escapeHtml(a.memberName)}</td>
+            <td><span class="demerit-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3);">+${a.points} pts</span></td>
+            <td>
+                <div style="font-size: 0.8rem; color: var(--text-primary); max-width: 240px; word-break: break-word;">${escapeHtml(a.reason)}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">${escapeHtml(a.issuedAt || "Recent")}</div>
+            </td>
+            <td>
+                <button type="button" class="btn-revoke-appreciation" data-id="${a.id}" title="Revoke Citation & Deduct Points" style="padding: 3px 8px; font-size: 0.72rem; font-weight: 700; border-radius: 6px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); cursor: pointer;">
+                    Revoke
+                </button>
+            </td>
+        </tr>
+    `).join("");
+    
+    tbody.querySelectorAll(".btn-revoke-appreciation").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            revokeAdminAppreciation(id);
+        });
+    });
+}
+
+function revokeAdminAppreciation(apprId) {
+    const a = (appTeamData.appreciations || []).find(x => x.id === apprId);
+    if (!a) return;
+    
+    if (confirm(`Revoke this appreciation citation (+${a.points} pts) for ${a.memberName}? Points will be deducted from their total.`)) {
+        const deduct = Math.abs(a.points || 0);
+        const leaderMem = (appTeamData.leaderboard || []).find(l => l.name.trim().toLowerCase() === a.memberName.trim().toLowerCase());
+        if (leaderMem) {
+            leaderMem.points = Math.max(0, (leaderMem.points || 0) - deduct);
+        }
+        
+        appTeamData.appreciations = appTeamData.appreciations.filter(x => x.id !== apprId);
+        saveTeamData();
+        playClickSound();
+        if (typeof renderAdminAppreciationsList === 'function') renderAdminAppreciationsList();
+        if (typeof renderPublicLeaderboardLogsBin === 'function') renderPublicLeaderboardLogsBin();
+        if (typeof renderMemberLogsBinTab === 'function') renderMemberLogsBinTab();
     }
 }
 
@@ -1415,6 +1562,8 @@ function openAdminMasterConsole() {
     renderAdminLeaderboardList();
     renderAdminDemeritDropdown();
     renderAdminDemeritsList();
+    renderAdminAppreciationDropdown();
+    renderAdminAppreciationsList();
     renderAdminTenureChips();
     renderAdminCommitteeTenureDropdown();
     renderAdminCommitteeRosterList();
@@ -1443,6 +1592,7 @@ function activateAdminMode() {
     }
     
     renderCoreCommitteeMainView();
+    if (typeof renderImpactShowcase === 'function') renderImpactShowcase();
 }
 
 function deactivateAdminMode() {
@@ -1464,6 +1614,7 @@ function deactivateAdminMode() {
     if (adminMasterModal) adminMasterModal.classList.remove("active");
     
     renderCoreCommitteeMainView();
+    if (typeof renderImpactShowcase === 'function') renderImpactShowcase();
     playClickSound();
 }
 
@@ -1569,6 +1720,10 @@ function setupModalsController() {
     function openTeamLoginPrompt() {
         if (isAdminModeActive) {
             openAdminMasterConsole();
+            return;
+        }
+        if (currentLoggedInMember) {
+            openMemberPortal(currentLoggedInMember);
             return;
         }
         if (teamLoginModal) {
@@ -2068,6 +2223,101 @@ function setupModalsController() {
         });
     }
 
+    // Award Appreciation Points Form Submission
+    const btnIssueAppreciation = document.getElementById("btn-admin-issue-appreciation");
+    const formIssueAppreciation = document.getElementById("admin-appreciation-form");
+    if (btnIssueAppreciation && formIssueAppreciation) {
+        formIssueAppreciation.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const memberSelect = document.getElementById("admin-appreciation-member-select");
+            const pointsInput = document.getElementById("admin-appreciation-points");
+            const descInput = document.getElementById("admin-appreciation-desc");
+            const feedback = document.getElementById("admin-appreciation-feedback");
+
+            if (!memberSelect || !memberSelect.value) {
+                alert("Please select a candidate / member to award appreciation points to.");
+                return;
+            }
+
+            let pts = parseInt(pointsInput ? pointsInput.value : "25", 10);
+            if (isNaN(pts) || pts <= 0) pts = 25;
+
+            const reason = descInput ? descInput.value.trim() : "";
+            if (!reason) {
+                alert("Please provide the citation / reason for this appreciation award.");
+                return;
+            }
+
+            const selectedOpt = memberSelect.options[memberSelect.selectedIndex];
+            const memberName = selectedOpt ? selectedOpt.getAttribute("data-name") || selectedOpt.text.split(" — ")[0] : memberSelect.value;
+            const memberId = memberSelect.value;
+
+            const newAppr = {
+                id: "appr-" + Date.now(),
+                memberId: memberId,
+                memberName: memberName.trim(),
+                points: pts,
+                reason: reason,
+                issuedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            };
+
+            if (!Array.isArray(appTeamData.appreciations)) appTeamData.appreciations = [];
+            appTeamData.appreciations.unshift(newAppr);
+
+            // Add points to member in leaderboard
+            if (Array.isArray(appTeamData.leaderboard)) {
+                let leaderMem = appTeamData.leaderboard.find(l => l.name.trim().toLowerCase() === memberName.trim().toLowerCase());
+                if (!leaderMem) {
+                    leaderMem = {
+                        id: "mem-" + Date.now(),
+                        name: memberName.trim(),
+                        points: 50
+                    };
+                    appTeamData.leaderboard.push(leaderMem);
+                }
+                leaderMem.points = (leaderMem.points || 0) + pts;
+            }
+
+            saveTeamData();
+            playClickSound();
+
+            if (descInput) descInput.value = "";
+            if (pointsInput) pointsInput.value = "25";
+
+            if (feedback) {
+                feedback.style.display = "block";
+                setTimeout(() => { feedback.style.display = "none"; }, 3500);
+            }
+
+            if (typeof renderAdminAppreciationsList === 'function') renderAdminAppreciationsList();
+            if (typeof renderAdminLeaderboardList === 'function') renderAdminLeaderboardList();
+            if (typeof renderLeaderboardTable === 'function') renderLeaderboardTable();
+            if (typeof renderPublicLeaderboardLogsBin === 'function') renderPublicLeaderboardLogsBin();
+            if (typeof renderMemberPortal === 'function' && typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) {
+                renderMemberPortal();
+            }
+        });
+    }
+
+    // Accountability Policy Modal Handlers
+    const policyModal = document.getElementById("accountability-policy-modal");
+    const btnOpenPolicy = document.getElementById("btn-open-accountability-policy");
+    const btnClosePolicy = document.getElementById("btn-close-accountability-policy");
+    const btnClosePolicyFooter = document.getElementById("btn-close-accountability-policy-footer");
+
+    function openAccountabilityPolicy() {
+        if (policyModal) policyModal.classList.add("active");
+        playClickSound();
+    }
+    function closeAccountabilityPolicy() {
+        if (policyModal) policyModal.classList.remove("active");
+        playClickSound();
+    }
+
+    if (btnOpenPolicy) btnOpenPolicy.addEventListener("click", openAccountabilityPolicy);
+    if (btnClosePolicy) btnClosePolicy.addEventListener("click", closeAccountabilityPolicy);
+    if (btnClosePolicyFooter) btnClosePolicyFooter.addEventListener("click", closeAccountabilityPolicy);
+
     // Impact & Brand Showcase Modal Handlers
     const impactModal = document.getElementById("impact-showcase-modal");
     const btnOpenImpactHeader = document.getElementById("btn-open-impact-showcase-btn");
@@ -2076,6 +2326,7 @@ function setupModalsController() {
     
     function openImpactShowcase() {
         if (impactModal) impactModal.classList.add("active");
+        renderImpactShowcase();
         playClickSound();
     }
     
@@ -2106,6 +2357,12 @@ function setupModalsController() {
         const foundMember = (appTeamData.committeeMembers || []).find(m => m.id === savedMemberId);
         if (foundMember) {
             currentLoggedInMember = foundMember;
+            const btnTeam = document.getElementById("btn-team-login-trigger");
+            if (btnTeam && !isAdminModeActive) {
+                const label = btnTeam.querySelector(".nav-label");
+                if (label) label.textContent = `👤 ${foundMember.name}`;
+                btnTeam.style.borderColor = "#10b981";
+            }
         }
     }
     
@@ -2126,6 +2383,13 @@ function openMemberPortal(member) {
     currentLoggedInMember = member;
     sessionStorage.setItem("interactup_member_id", member.id);
     
+    const btnTeam = document.getElementById("btn-team-login-trigger");
+    if (btnTeam && !isAdminModeActive) {
+        const label = btnTeam.querySelector(".nav-label");
+        if (label) label.textContent = `👤 ${member.name}`;
+        btnTeam.style.borderColor = "#10b981";
+    }
+    
     const portal = document.getElementById("member-portal-modal");
     if (!portal) return;
     
@@ -2139,6 +2403,13 @@ function closeMemberPortal() {
     if (portal) portal.classList.remove("active");
     currentLoggedInMember = null;
     sessionStorage.removeItem("interactup_member_id");
+    
+    const btnTeam = document.getElementById("btn-team-login-trigger");
+    if (btnTeam && !isAdminModeActive) {
+        const label = btnTeam.querySelector(".nav-label");
+        if (label) label.textContent = "Team Login";
+        btnTeam.style.borderColor = "";
+    }
     playClickSound();
 }
 
@@ -2193,6 +2464,9 @@ function renderMemberPortal() {
     
     // 6. Tab 4: System Performance & Demerits Log
     renderMemberDemeritsTab(myDemerits, totalDemeritPts);
+    
+    // 7. Tab 5: Personal Recognition & Accountability Logs Bin
+    renderMemberLogsBinTab();
 }
 
 function renderMemberInvitationsBanner() {
@@ -2482,6 +2756,172 @@ function renderMemberMyClaimsTab() {
     `).join("");
 }
 
+
+// ==========================================================================
+// 📜 PUBLIC RECOGNITION & APPRECIATION LOGS BIN (TEAM LEADERBOARD)
+// ==========================================================================
+function renderPublicLeaderboardLogsBin() {
+    const container = document.getElementById("leaderboard-public-logs-bin");
+    const badge = document.getElementById("leaderboard-logs-count-badge");
+    if (!container) return;
+
+    const appreciations = Array.isArray(appTeamData.appreciations) ? appTeamData.appreciations : [];
+    if (badge) badge.textContent = `${appreciations.length} Citations`;
+
+    if (appreciations.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 24px 16px; color: var(--text-muted); font-size: 0.84rem;">
+                🌟 No appreciation citations recorded yet. Earn recognition by completing tasks and contributing to the community!
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = appreciations.map(a => `
+        <div class="log-citation-card">
+            <div class="log-citation-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.1rem;">🌟</span>
+                    <span class="log-citation-member">${escapeHtml(a.memberName)}</span>
+                </div>
+                <span class="log-citation-points">+${a.points} pts</span>
+            </div>
+            <div class="log-citation-quote">
+                "${escapeHtml(a.reason)}"
+            </div>
+            <div class="log-citation-meta">
+                <span>Awarded on: <strong>${escapeHtml(a.issuedAt || "Recent")}</strong></span>
+                <span style="color: #10b981; font-weight: 700;">Verified Community Citation</span>
+            </div>
+        </div>
+    `).join("");
+}
+window.renderPublicLeaderboardLogsBin = renderPublicLeaderboardLogsBin;
+
+// ==========================================================================
+// 📜 PERSONAL RECOGNITION & AUDIT LOGS BIN (MEMBER PORTAL)
+// ==========================================================================
+let currentLogsFilter = "all";
+
+function renderMemberLogsBinTab() {
+    const container = document.getElementById("member-personal-logs-container");
+    const apprTotalBadge = document.getElementById("member-logs-appr-total");
+    const demeritTotalBadge = document.getElementById("member-logs-demerit-total");
+    const countAll = document.getElementById("count-logs-all");
+    const countAppr = document.getElementById("count-logs-appr");
+    const countDemerit = document.getElementById("count-logs-demerit");
+
+    if (!container || !currentLoggedInMember) return;
+
+    // Filter citations for this member
+    const myAppreciations = (appTeamData.appreciations || []).filter(a =>
+        (a.memberId && a.memberId === currentLoggedInMember.id) ||
+        (a.memberName && a.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
+    );
+
+    // Filter demerits for this member
+    const myDemerits = (appTeamData.demerits || []).filter(d =>
+        (d.memberId && d.memberId === currentLoggedInMember.id) ||
+        (d.memberName && d.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
+    );
+
+    const totalApprPts = myAppreciations.reduce((acc, a) => acc + (a.points || 0), 0);
+    const totalDemeritPts = myDemerits.reduce((acc, d) => acc + (d.points || 0), 0);
+
+    if (apprTotalBadge) apprTotalBadge.textContent = `+${totalApprPts} pts Earned`;
+    if (demeritTotalBadge) demeritTotalBadge.textContent = `${totalDemeritPts} pts Demerits`;
+
+    if (countAll) countAll.textContent = myAppreciations.length + myDemerits.length;
+    if (countAppr) countAppr.textContent = myAppreciations.length;
+    if (countDemerit) countDemerit.textContent = myDemerits.length;
+
+    // Combine into unified activity feed
+    let unified = [];
+    myAppreciations.forEach(a => {
+        unified.push({
+            id: a.id,
+            type: "appreciation",
+            points: a.points,
+            reason: a.reason,
+            issuedAt: a.issuedAt || "Recent",
+            title: "🌟 Official Appreciation Citation",
+            raw: a
+        });
+    });
+    myDemerits.forEach(d => {
+        unified.push({
+            id: d.id,
+            type: "demerit",
+            points: d.points,
+            reason: d.reason,
+            issuedAt: d.issuedAt || "Recent",
+            title: `⚙️ System Compliance Audit Record (#${d.id.slice(-6).toUpperCase()})`,
+            raw: d
+        });
+    });
+
+    // Sort by id descending
+    unified.sort((x, y) => String(y.id).localeCompare(String(x.id)));
+
+    // Apply active filter
+    let filtered = unified;
+    if (currentLogsFilter === "appreciation") {
+        filtered = unified.filter(item => item.type === "appreciation");
+    } else if (currentLogsFilter === "demerits") {
+        filtered = unified.filter(item => item.type === "demerit");
+    }
+
+    // Wire filter buttons
+    document.querySelectorAll(".logs-filter-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-filter") === currentLogsFilter);
+        btn.onclick = function() {
+            currentLogsFilter = this.getAttribute("data-filter");
+            renderMemberLogsBinTab();
+            playClickSound();
+        };
+    });
+
+    if (filtered.length === 0) {
+        let emptyMsg = "No activity logs recorded yet.";
+        if (currentLogsFilter === "appreciation") emptyMsg = "No appreciation citations recorded yet.";
+        if (currentLogsFilter === "demerits") emptyMsg = "Clean record! No system accountability notices on file.";
+
+        container.innerHTML = `
+            <div style="text-align: center; padding: 36px 20px; background: var(--bg-surface); border-radius: 12px; border: 1px dashed var(--border-light);">
+                <div style="font-size: 2rem; margin-bottom: 8px;">${currentLogsFilter === 'demerits' ? '🛡️' : '📜'}</div>
+                <strong style="display: block; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 4px;">${emptyMsg}</strong>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Entries appear here automatically as activities, recognitions, and audits occur.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = filtered.map(item => {
+        const isAppr = item.type === "appreciation";
+        return `
+            <div class="personal-log-card ${isAppr ? 'appreciation' : 'demerit'}">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+                    <div>
+                        <span class="log-type-tag ${isAppr ? 'green' : 'red'}">${isAppr ? '🌟 Official Citation' : '⚙️ Automated System Notice'}</span>
+                        <strong style="display: block; font-size: 0.94rem; margin-top: 3px; color: var(--text-primary);">${escapeHtml(item.title)}</strong>
+                    </div>
+                    <div>
+                        <span class="logs-stat-pill ${isAppr ? 'green' : 'red'}">${isAppr ? '+' : ''}${item.points} pts</span>
+                    </div>
+                </div>
+                <div style="margin: 8px 0; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5; background: rgba(0,0,0,0.03); padding: 10px 12px; border-radius: 8px; border-left: 3px solid ${isAppr ? '#10b981' : '#ef4444'};">
+                    ${escapeHtml(item.reason)}
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+                    <span>Recorded on: <strong>${escapeHtml(item.issuedAt)}</strong></span>
+                    <span>Classification: <strong style="color: ${isAppr ? '#10b981' : '#ef4444'};">${isAppr ? 'Merit Recognition' : 'System Demerit'}</strong></span>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+window.renderMemberLogsBinTab = renderMemberLogsBinTab;
+
 function renderMemberDemeritsTab(myDemerits, totalDemeritPts) {
     const list = document.getElementById("member-demerits-list");
     const badge = document.getElementById("member-total-demerits-badge");
@@ -2536,6 +2976,288 @@ function renderMemberDemeritsTab(myDemerits, totalDemeritPts) {
     `).join("");
 }
 
+
+// ==========================================================================
+// 🌟 IMPACT & BRAND SHOWCASE - DYNAMIC RENDER + ADMIN INLINE EDITING
+// ==========================================================================
+function renderImpactShowcase() {
+    const body = document.getElementById("impact-modal-scroll-body");
+    if (!body) return;
+    const ic = appTeamData.impactContent || DEFAULT_TEAM_DATA.impactContent;
+    const isAdmin = isAdminModeActive;
+
+    function esc(s) { return escapeHtml(String(s || '')); }
+
+    body.innerHTML = `
+        <!-- Hero Banner -->
+        <div class="impact-hero-banner">
+            ${isAdmin ? `<div class="impact-admin-edit-bar">
+                <button type="button" class="btn-impact-edit" id="btn-edit-impact-hero">✏️ Edit Hero Text</button>
+            </div>` : ''}
+            <span class="impact-hero-tag">${esc(ic.heroTag)}</span>
+            <h2 class="impact-hero-title">${esc(ic.heroTitle)}</h2>
+            <p class="impact-hero-lead">${esc(ic.heroLead)}</p>
+            ${isAdmin ? `<div id="form-edit-impact-hero" class="impact-inline-edit-form" style="display:none;">
+                <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);">Hero Tag Line</label>
+                <input type="text" id="ieh-tag" value="${esc(ic.heroTag)}">
+                <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);">Hero Title</label>
+                <input type="text" id="ieh-title" value="${esc(ic.heroTitle)}">
+                <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);">Lead Paragraph</label>
+                <textarea id="ieh-lead">${esc(ic.heroLead)}</textarea>
+                <button type="button" class="impact-inline-save-btn" id="btn-save-impact-hero">💾 Save Hero</button>
+            </div>` : ''}
+        </div>
+
+        <!-- Proof of Impact Metrics -->
+        <h4 style="font-size:1.15rem;font-weight:800;margin:0 0 16px 0;">📊 Our Scale &amp; Verifiable Impact</h4>
+        <div class="impact-metrics-grid">
+            ${(ic.metrics || []).map(m => `
+                <div class="impact-metric-card impact-card-wrap" data-metric-id="${esc(m.id)}">
+                    ${isAdmin ? `<button type="button" class="btn-impact-delete btn-delete-metric" data-id="${esc(m.id)}" title="Remove metric">✕</button>` : ''}
+                    <div class="impact-metric-num" contenteditable="${isAdmin}" data-field="num" data-metric-id="${esc(m.id)}">${esc(m.num)}</div>
+                    <div class="impact-metric-label" contenteditable="${isAdmin}" data-field="label" data-metric-id="${esc(m.id)}">${esc(m.label)}</div>
+                    <div class="impact-metric-sub" contenteditable="${isAdmin}" data-field="sub" data-metric-id="${esc(m.id)}">${esc(m.sub)}</div>
+                </div>
+            `).join('')}
+        </div>
+        ${isAdmin ? `<div style="text-align:center;margin:8px 0 20px;">
+            <button type="button" class="btn-impact-add" id="btn-add-metric">➕ Add Metric</button>
+        </div>` : ''}
+
+        <!-- Core Pillars -->
+        <h4 style="font-size:1.15rem;font-weight:800;margin:28px 0 16px 0;">🛡️ The Goodwill Foundations of InteractUp</h4>
+        <div class="impact-pillars-grid">
+            ${(ic.pillars || []).map(p => `
+                <div class="impact-pillar-card impact-card-wrap" data-pillar-id="${esc(p.id)}">
+                    ${isAdmin ? `<button type="button" class="btn-impact-delete btn-delete-pillar" data-id="${esc(p.id)}" title="Remove pillar">✕</button>` : ''}
+                    <div class="impact-pillar-icon" contenteditable="${isAdmin}" data-field="icon" data-pillar-id="${esc(p.id)}">${esc(p.icon)}</div>
+                    <h5 class="impact-pillar-title" contenteditable="${isAdmin}" data-field="title" data-pillar-id="${esc(p.id)}">${esc(p.title)}</h5>
+                    <p class="impact-pillar-desc" contenteditable="${isAdmin}" data-field="desc" data-pillar-id="${esc(p.id)}">${esc(p.desc)}</p>
+                </div>
+            `).join('')}
+        </div>
+        ${isAdmin ? `<div style="text-align:center;margin:8px 0 20px;">
+            <button type="button" class="btn-impact-add" id="btn-add-pillar">➕ Add Pillar</button>
+        </div>` : ''}
+
+        <!-- Hall of Fame -->
+        <h4 style="font-size:1.15rem;font-weight:800;margin:28px 0 16px 0;">🏆 Landmark Milestones &amp; Hall of Fame</h4>
+        <div class="impact-hall-grid">
+            ${(ic.hallOfFame || []).map(h => `
+                <div class="impact-hall-card impact-card-wrap" data-hall-id="${esc(h.id)}">
+                    ${isAdmin ? `<button type="button" class="btn-impact-delete btn-delete-hall" data-id="${esc(h.id)}" title="Remove milestone">✕</button>` : ''}
+                    <div style="font-size:0.76rem;font-weight:800;color:#f59e0b;text-transform:uppercase;" contenteditable="${isAdmin}" data-field="tag" data-hall-id="${esc(h.id)}">${esc(h.tag)}</div>
+                    <h5 style="margin:6px 0 8px 0;font-size:1.05rem;" contenteditable="${isAdmin}" data-field="title" data-hall-id="${esc(h.id)}">${esc(h.title)}</h5>
+                    <p style="margin:0;font-size:0.84rem;color:var(--text-secondary);line-height:1.5;" contenteditable="${isAdmin}" data-field="desc" data-hall-id="${esc(h.id)}">${esc(h.desc)}</p>
+                </div>
+            `).join('')}
+        </div>
+        ${isAdmin ? `<div style="text-align:center;margin:8px 0 20px;">
+            <button type="button" class="btn-impact-add" id="btn-add-hall">➕ Add Milestone</button>
+        </div>` : ''}
+
+        <!-- Student Testimonials -->
+        <h4 style="font-size:1.15rem;font-weight:800;margin:28px 0 16px 0;">💬 Voices of Student Transformation</h4>
+        <div class="impact-testimonials-grid">
+            ${(ic.testimonials || []).map(t => `
+                <div class="impact-quote-card impact-card-wrap" data-test-id="${esc(t.id)}">
+                    ${isAdmin ? `<button type="button" class="btn-impact-delete btn-delete-testimonial" data-id="${esc(t.id)}" title="Remove testimonial">✕</button>` : ''}
+                    <em style="display:block;margin-bottom:12px;line-height:1.55;font-size:0.9rem;" contenteditable="${isAdmin}" data-field="quote" data-test-id="${esc(t.id)}">"${esc(t.quote)}"</em>
+                    <div class="impact-quote-author">
+                        <div style="font-size:1.3rem;" contenteditable="${isAdmin}" data-field="emoji" data-test-id="${esc(t.id)}">${esc(t.emoji)}</div>
+                        <div>
+                            <strong style="font-size:0.85rem;display:block;" contenteditable="${isAdmin}" data-field="name" data-test-id="${esc(t.id)}">${esc(t.name)}</strong>
+                            <span class="impact-author-role" contenteditable="${isAdmin}" data-field="role" data-test-id="${esc(t.id)}">${esc(t.role)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        ${isAdmin ? `<div style="text-align:center;margin:8px 0 20px;">
+            <button type="button" class="btn-impact-add" id="btn-add-testimonial">➕ Add Testimonial</button>
+        </div>` : ''}
+
+        <!-- CTA Banner -->
+        <div class="impact-cta-banner">
+            ${isAdmin ? `<div class="impact-admin-edit-bar" style="margin-bottom:12px;">
+                <button type="button" class="btn-impact-edit" id="btn-edit-impact-cta">✏️ Edit CTA Section</button>
+            </div>` : ''}
+            <h3 style="margin:0 0 8px 0;font-size:1.4rem;">${esc(ic.ctaHeading)}</h3>
+            <p style="margin:0 auto 20px auto;max-width:600px;font-size:0.9rem;color:var(--text-secondary);">${esc(ic.ctaBody)}</p>
+            <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+                <a href="${esc(ic.ctaWhatsappUrl)}" target="_blank" class="btn btn-primary" style="padding:10px 22px;font-weight:800;font-size:0.9rem;">📲 Join WhatsApp Community</a>
+                <a href="${esc(ic.ctaPartnerUrl)}" target="_blank" class="btn btn-secondary" style="padding:10px 22px;font-weight:800;font-size:0.9rem;">🤝 Partner / Start a Chapter</a>
+            </div>
+            ${isAdmin ? `<div id="form-edit-impact-cta" class="impact-inline-edit-form" style="display:none;margin-top:16px;">
+                <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);">CTA Heading</label>
+                <input type="text" id="icta-heading" value="${esc(ic.ctaHeading)}">
+                <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);">CTA Body Text</label>
+                <textarea id="icta-body">${esc(ic.ctaBody)}</textarea>
+                <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);">WhatsApp Community URL</label>
+                <input type="url" id="icta-wa" value="${esc(ic.ctaWhatsappUrl)}">
+                <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);">Partner / Chapter URL</label>
+                <input type="url" id="icta-partner" value="${esc(ic.ctaPartnerUrl)}">
+                <button type="button" class="impact-inline-save-btn" id="btn-save-impact-cta">💾 Save CTA</button>
+            </div>` : ''}
+        </div>
+
+        ${isAdmin ? `<div style="text-align:center;margin:16px 0;padding:12px;background:rgba(239,68,68,0.06);border-radius:10px;border:1px dashed rgba(239,68,68,0.3);">
+            <span style="font-size:0.78rem;color:var(--text-muted);">🛡️ <strong>Admin Mode:</strong> Click on any text to edit it directly. Use ✕ buttons to remove items. Click 💾 to save text boxes, or just blur a field — contenteditable fields auto-save on focus-out.</span>
+        </div>` : ''}
+    `;
+
+    if (!isAdmin) return;
+
+    // --- Wire Hero toggle ---
+    const btnEditHero = body.querySelector('#btn-edit-impact-hero');
+    const formHero = body.querySelector('#form-edit-impact-hero');
+    if (btnEditHero && formHero) {
+        btnEditHero.addEventListener('click', () => {
+            formHero.style.display = formHero.style.display === 'none' ? 'flex' : 'none';
+        });
+    }
+    body.querySelector('#btn-save-impact-hero')?.addEventListener('click', () => {
+        if (!appTeamData.impactContent) appTeamData.impactContent = {};
+        const tagEl = document.getElementById('ieh-tag');
+        const titleEl = document.getElementById('ieh-title');
+        const leadEl = document.getElementById('ieh-lead');
+        if (tagEl) appTeamData.impactContent.heroTag = tagEl.value.trim();
+        if (titleEl) appTeamData.impactContent.heroTitle = titleEl.value.trim();
+        if (leadEl) appTeamData.impactContent.heroLead = leadEl.value.trim();
+        saveTeamData();
+        playClickSound();
+        renderImpactShowcase();
+    });
+
+    // --- Wire CTA toggle ---
+    const btnEditCTA = body.querySelector('#btn-edit-impact-cta');
+    const formCTA = body.querySelector('#form-edit-impact-cta');
+    if (btnEditCTA && formCTA) {
+        btnEditCTA.addEventListener('click', () => {
+            formCTA.style.display = formCTA.style.display === 'none' ? 'flex' : 'none';
+        });
+    }
+    body.querySelector('#btn-save-impact-cta')?.addEventListener('click', () => {
+        if (!appTeamData.impactContent) appTeamData.impactContent = {};
+        const hEl = document.getElementById('icta-heading');
+        const bEl = document.getElementById('icta-body');
+        const waEl = document.getElementById('icta-wa');
+        const pEl = document.getElementById('icta-partner');
+        if (hEl) appTeamData.impactContent.ctaHeading = hEl.value.trim();
+        if (bEl) appTeamData.impactContent.ctaBody = bEl.value.trim();
+        if (waEl) appTeamData.impactContent.ctaWhatsappUrl = waEl.value.trim();
+        if (pEl) appTeamData.impactContent.ctaPartnerUrl = pEl.value.trim();
+        saveTeamData();
+        playClickSound();
+        renderImpactShowcase();
+    });
+
+    // --- Wire contenteditable blur-to-save: Metrics ---
+    body.querySelectorAll('[contenteditable="true"][data-metric-id]').forEach(el => {
+        el.addEventListener('blur', () => {
+            if (!appTeamData.impactContent) appTeamData.impactContent = {};
+            if (!Array.isArray(appTeamData.impactContent.metrics)) appTeamData.impactContent.metrics = [];
+            const id = el.getAttribute('data-metric-id');
+            const field = el.getAttribute('data-field');
+            const metric = appTeamData.impactContent.metrics.find(m => m.id === id);
+            if (metric) { metric[field] = el.textContent.trim(); saveTeamData(); }
+        });
+    });
+
+    // --- Wire contenteditable blur-to-save: Pillars ---
+    body.querySelectorAll('[contenteditable="true"][data-pillar-id]').forEach(el => {
+        el.addEventListener('blur', () => {
+            if (!appTeamData.impactContent) appTeamData.impactContent = {};
+            if (!Array.isArray(appTeamData.impactContent.pillars)) appTeamData.impactContent.pillars = [];
+            const id = el.getAttribute('data-pillar-id');
+            const field = el.getAttribute('data-field');
+            const pillar = appTeamData.impactContent.pillars.find(p => p.id === id);
+            if (pillar) { pillar[field] = el.textContent.trim(); saveTeamData(); }
+        });
+    });
+
+    // --- Wire contenteditable blur-to-save: Hall of Fame ---
+    body.querySelectorAll('[contenteditable="true"][data-hall-id]').forEach(el => {
+        el.addEventListener('blur', () => {
+            if (!appTeamData.impactContent) appTeamData.impactContent = {};
+            if (!Array.isArray(appTeamData.impactContent.hallOfFame)) appTeamData.impactContent.hallOfFame = [];
+            const id = el.getAttribute('data-hall-id');
+            const field = el.getAttribute('data-field');
+            const hall = appTeamData.impactContent.hallOfFame.find(h => h.id === id);
+            if (hall) { hall[field] = el.textContent.trim(); saveTeamData(); }
+        });
+    });
+
+    // --- Wire contenteditable blur-to-save: Testimonials ---
+    body.querySelectorAll('[contenteditable="true"][data-test-id]').forEach(el => {
+        el.addEventListener('blur', () => {
+            if (!appTeamData.impactContent) appTeamData.impactContent = {};
+            if (!Array.isArray(appTeamData.impactContent.testimonials)) appTeamData.impactContent.testimonials = [];
+            const id = el.getAttribute('data-test-id');
+            const field = el.getAttribute('data-field');
+            const test = appTeamData.impactContent.testimonials.find(t => t.id === id);
+            if (test) { test[field] = el.textContent.trim(); saveTeamData(); }
+        });
+    });
+
+    // --- Wire Delete buttons ---
+    body.querySelectorAll('.btn-delete-metric').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!appTeamData.impactContent) return;
+            appTeamData.impactContent.metrics = (appTeamData.impactContent.metrics || []).filter(m => m.id !== btn.getAttribute('data-id'));
+            saveTeamData(); renderImpactShowcase();
+        });
+    });
+    body.querySelectorAll('.btn-delete-pillar').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!appTeamData.impactContent) return;
+            appTeamData.impactContent.pillars = (appTeamData.impactContent.pillars || []).filter(p => p.id !== btn.getAttribute('data-id'));
+            saveTeamData(); renderImpactShowcase();
+        });
+    });
+    body.querySelectorAll('.btn-delete-hall').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!appTeamData.impactContent) return;
+            appTeamData.impactContent.hallOfFame = (appTeamData.impactContent.hallOfFame || []).filter(h => h.id !== btn.getAttribute('data-id'));
+            saveTeamData(); renderImpactShowcase();
+        });
+    });
+    body.querySelectorAll('.btn-delete-testimonial').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!appTeamData.impactContent) return;
+            appTeamData.impactContent.testimonials = (appTeamData.impactContent.testimonials || []).filter(t => t.id !== btn.getAttribute('data-id'));
+            saveTeamData(); renderImpactShowcase();
+        });
+    });
+
+    // --- Wire Add buttons ---
+    body.querySelector('#btn-add-metric')?.addEventListener('click', () => {
+        if (!appTeamData.impactContent) appTeamData.impactContent = {};
+        if (!Array.isArray(appTeamData.impactContent.metrics)) appTeamData.impactContent.metrics = [];
+        appTeamData.impactContent.metrics.push({ id: 'metric-' + Date.now(), num: 'NEW', label: 'New Metric', sub: 'Sub-label here' });
+        saveTeamData(); renderImpactShowcase();
+    });
+    body.querySelector('#btn-add-pillar')?.addEventListener('click', () => {
+        if (!appTeamData.impactContent) appTeamData.impactContent = {};
+        if (!Array.isArray(appTeamData.impactContent.pillars)) appTeamData.impactContent.pillars = [];
+        appTeamData.impactContent.pillars.push({ id: 'pillar-' + Date.now(), icon: '⭐', title: 'New Pillar', desc: 'Describe this pillar...' });
+        saveTeamData(); renderImpactShowcase();
+    });
+    body.querySelector('#btn-add-hall')?.addEventListener('click', () => {
+        if (!appTeamData.impactContent) appTeamData.impactContent = {};
+        if (!Array.isArray(appTeamData.impactContent.hallOfFame)) appTeamData.impactContent.hallOfFame = [];
+        appTeamData.impactContent.hallOfFame.push({ id: 'hall-' + Date.now(), tag: 'Achievement', title: 'New Milestone', desc: 'Describe the milestone...' });
+        saveTeamData(); renderImpactShowcase();
+    });
+    body.querySelector('#btn-add-testimonial')?.addEventListener('click', () => {
+        if (!appTeamData.impactContent) appTeamData.impactContent = {};
+        if (!Array.isArray(appTeamData.impactContent.testimonials)) appTeamData.impactContent.testimonials = [];
+        appTeamData.impactContent.testimonials.push({ id: 'test-' + Date.now(), emoji: '💬', quote: 'New testimonial quote here.', name: 'Member Name', role: 'Role & Chapter' });
+        saveTeamData(); renderImpactShowcase();
+    });
+}
+window.renderImpactShowcase = renderImpactShowcase;
+
 function initMemberPortal() {
     // Portal Tabs switching
     document.querySelectorAll(".portal-tab-btn").forEach(btn => {
@@ -2546,6 +3268,9 @@ function initMemberPortal() {
             this.classList.add("active");
             const targetEl = document.getElementById(targetId);
             if (targetEl) targetEl.classList.add("active");
+            if (targetId === "portal-tab-logs" && typeof renderMemberLogsBinTab === 'function') {
+                renderMemberLogsBinTab();
+            }
             playClickSound();
         });
     });

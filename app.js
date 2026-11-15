@@ -4087,6 +4087,341 @@ const genZTopics = [
     "How modern theatre and script-reading help builders overcome speaking anxiety"
 ];
 
+// Advanced Semantic Coherence & Anti-Parroting Knowledge Engine
+const STOP_WORDS_SET = new Set([
+    "why", "how", "should", "the", "and", "for", "with", "than", "this", "that", "you", "your", 
+    "what", "less", "more", "into", "next", "under", "been", "from", "most", "over", "are", 
+    "can", "our", "all", "is", "a", "an", "in", "to", "of", "on", "by", "at", "my", "his", "her",
+    "their", "its", "it", "we", "they", "i", "me", "us", "them", "he", "she", "was", "were", 
+    "be", "being", "have", "has", "had", "do", "does", "did", "but", "so", "if", "or", "as",
+    "because", "very", "just", "now", "then", "there", "here", "also", "too", "any", "some",
+    "would", "could", "will", "shall", "about", "above", "below", "between", "both", "each", "few"
+]);
+
+const UNIVERSAL_COMMUNICATION_CONCEPTS = [
+    "speak", "speaking", "speech", "talk", "talking", "express", "expression", "expressing",
+    "communicate", "communication", "communicating", "interpersonal", "confidence", "confident",
+    "fear", "anxiety", "nervous", "nervousness", "articulate", "articulation", "voice", "vocal",
+    "message", "audience", "conversation", "conversations", "practice", "practicing", "skill", "skills",
+    "learn", "learning", "improve", "improving", "improvement", "art", "heart", "mindset", "connect",
+    "connection", "relationship", "relationships", "impact", "perspective", "perspectives", "idea", "ideas",
+    "share", "sharing", "presentation", "presenting", "pitch", "pitching", "influence", "presence"
+];
+
+const COMPREHENSIVE_TOPIC_KNOWLEDGE = {
+    "pizza": {
+        domainTerms: [
+            "customer", "market", "product", "taste", "flavor", "sweet", "savory", "topping", "decision", 
+            "polarizing", "risk", "bold", "choice", "divide", "brand", "controversial", "consumer", "opinion", 
+            "stand", "differentiate", "segment", "loyalty", "preference", "pineapple", "crust", "strategy", 
+            "casing", "consulting", "marketing", "audience", "debate", "positioning", "target"
+        ],
+        alienKeywords: ["cricket", "football", "gym", "workout", "hospital", "doctor"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "dont know", "don't know", "makes no sense", "is not related", "are not related"]
+    },
+    "grandmother": {
+        domainTerms: [
+            "explain", "family", "elder", "social media", "internet", "profile", "post", "posts", "career", 
+            "job", "opportunity", "reputation", "community", "resume", "company", "recruit", "network", 
+            "networking", "modern", "workplace", "story", "trust", "generation", "grandma", "relatives", 
+            "values", "word of mouth", "digital", "platform", "online", "professional"
+        ],
+        alienKeywords: ["cooking", "cook", "recipe", "kitchen", "bake", "baking", "eat", "eating", "delicious", "tasty", "resort", "hotel"],
+        allowedAnalogyPhrases: ["like", "metaphor", "analogy", "as if", "recipe for success", "secret sauce"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "dont know", "don't know", "makes no sense", "is not related", "are not related"]
+    },
+    "university": {
+        domainTerms: [
+            "practical", "skills", "real world", "job", "career", "learning", "theory", "knowledge", 
+            "employment", "industry", "experience", "replace", "curriculum", "traditional", "value", 
+            "worth", "waste", "future", "degree", "degrees", "college", "portfolio", "showcase", "hire", 
+            "hiring", "talent", "proof of work", "projects", "practicality"
+        ],
+        alienKeywords: ["cooking", "recipe", "kitchen", "fashion", "makeup"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "makes no sense", "is not related"]
+    },
+    "wellness lounge": {
+        domainTerms: [
+            "authentic", "people", "bonds", "mental", "support", "vulnerable", "genuine", "friend", 
+            "friendship", "relationship", "talk", "community", "human", "heart", "safe", "pressure", 
+            "judgment", "conversations", "networking", "transactional", "business cards", "burnout", 
+            "stress", "empathy", "wellbeing", "listen", "listening", "unwind", "belonging"
+        ],
+        alienKeywords: ["cryptocurrency", "blockchain", "bitcoin", "trading", "stocks"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "makes no sense", "is not related"]
+    },
+    "stage fear": {
+        domainTerms: [
+            "audience", "voice", "hands", "shaking", "nervous", "anxiety", "butterflies", "mic", 
+            "breathe", "breathing", "words", "confidence", "fluent", "practice", "overcome", "scared", 
+            "terrified", "shyness", "courage", "mind", "adrenaline", "stage", "freeze", "freezing", 
+            "panic", "preparation", "exposure", "comfort zone", "spotlight"
+        ],
+        alienKeywords: ["cooking", "recipe", "crypto", "coding", "software"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "makes no sense", "is not related"]
+    },
+    "viral": {
+        domainTerms: [
+            "growth", "members", "engagement", "algorithm", "content", "reach", "platform", "online", 
+            "retention", "scale", "community", "moderation", "events", "discord", "whatsapp", "culture", 
+            "gen-z", "student", "campus", "ambassador", "word of mouth", "hype", "network effect", "funnel"
+        ],
+        alienKeywords: ["hospital", "surgery", "medicine", "doctor"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "makes no sense", "is not related"]
+    },
+    "soft skills": {
+        domainTerms: [
+            "empathy", "communication", "listening", "leadership", "eq", "interpersonal", "teamwork", 
+            "feelings", "human", "negotiation", "collaboration", "workplace", "career", "success", 
+            "future", "artificial intelligence", "ai", "moat", "automation", "robots", "uniquely human", 
+            "adaptability", "critical thinking", "persuasion"
+        ],
+        alienKeywords: ["cooking", "football", "cricket", "gaming"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "makes no sense", "is not related"]
+    },
+    "co-create": {
+        domainTerms: [
+            "founder", "company", "problem", "solution", "product", "market", "customer", "build", 
+            "money", "revenue", "partner", "team", "app", "service", "solve", "venture", "industry", 
+            "prototype", "mvp", "ideation", "startup", "brainstorm", "complimentary", "execution", "pitch"
+        ],
+        alienKeywords: ["cooking", "cricket", "astrology", "horoscope"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "makes no sense", "is not related"]
+    },
+    "ca/mba": {
+        domainTerms: [
+            "corporate", "career", "human", "authentic", "connections", "network", "friend", "support", 
+            "pressure", "exams", "placement", "internship", "business cards", "mental", "wellness", 
+            "peers", "finance", "consulting", "hustle", "burnout", "rat race", "sanity", "circle", "balance"
+        ],
+        alienKeywords: ["cooking", "cricket", "football", "gaming"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "makes no sense", "is not related"]
+    },
+    "theatre": {
+        domainTerms: [
+            "acting", "drama", "voice", "projection", "role", "character", "rehearse", "rehearsal", 
+            "stage", "presence", "body language", "expression", "express", "script", "fear", "vocal", 
+            "performer", "speak", "speaking", "speech", "talk", "interpersonal", "skills", "skill", 
+            "anxiety", "builder", "builders", "confidence", "art", "heart", "dialogue", "improv", 
+            "impromptu", "audience", "inculcate", "empathy", "storytelling", "overcome"
+        ],
+        alienKeywords: ["crypto", "coding", "finance", "accounting"],
+        disconnectPhrases: ["not related", "no sense", "unrelated", "nothing to do", "makes no sense", "is not related"]
+    }
+};
+
+const ABSURD_PATTERNS = [
+    { pattern: /\beat\s+(linkedin|software|internet|crypto|ai|algorithm|cloud|corporate|pitch|branding|website|network)\b/i, label: "consuming abstract digital entity" },
+    { pattern: /\b(eat|eating|ate|chew|chewing)\s+(linkedin|technology|facebook|twitter|instagram|reddit|google)\b/i, label: "eating technology" },
+    { pattern: /\b(i\s+love\s+you|marry\s+me|kiss\s+me|love\s+you)\b/i, label: "inappropriate non-sequitur expression of romance" },
+    { pattern: /\b(sauce\s+is\s+masterclass|masterclass\s+is\s+sauce|pizza\s+is\s+corporate)\b/i, label: "absurd circular equating" },
+    { pattern: /\b(bla\s+bla|blah\s+blah|yada\s+yada|gibberish|nonsense)\b/i, label: "filler babble" }
+];
+
+function analyzeSpeechCoherence(speechText, activeTopic) {
+    if (!speechText || speechText.trim().length === 0) {
+        return { isCoherent: false, reason: "SILENCE", detail: "No speech detected.", score: 0 };
+    }
+
+    const lowerSpeech = speechText.toLowerCase();
+    const cleanSpeech = lowerSpeech.replace(/[^\w\s]/g, ' ');
+    const speechWords = cleanSpeech.split(/\s+/).filter(w => w.length > 0);
+    const wordCount = speechWords.length;
+
+    // Identify topic key
+    let knowledge = null;
+    for (const [key, data] of Object.entries(COMPREHENSIVE_TOPIC_KNOWLEDGE)) {
+        if (activeTopic.toLowerCase().includes(key)) {
+            knowledge = data;
+            break;
+        }
+    }
+
+    // Isolate prompt title content words
+    const titleContentWords = activeTopic.toLowerCase().replace(/[^\w\s]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 2 && !STOP_WORDS_SET.has(w));
+
+    // Parroting analysis
+    let titleMatches = 0;
+    const nonTitleContentWords = [];
+    speechWords.forEach(w => {
+        if (titleContentWords.includes(w)) {
+            titleMatches++;
+        } else if (!STOP_WORDS_SET.has(w) && w.length > 2) {
+            nonTitleContentWords.push(w);
+        }
+    });
+    const parrotRatio = wordCount > 0 ? (titleMatches / wordCount) : 0;
+    const uniqueNonTitle = new Set(nonTitleContentWords).size;
+
+    // 1. Direct Absurdity / Nonsense Pattern Check
+    for (const item of ABSURD_PATTERNS) {
+        if (item.pattern.test(lowerSpeech)) {
+            const matched = lowerSpeech.match(item.pattern)[0];
+            return {
+                isCoherent: false,
+                reason: "ABSURD_STATEMENT",
+                title: "⚠️ ILLOGICAL / NONSENSICAL STATEMENT",
+                detail: `Your speech contained an illogical or absurd statement ('${matched}'). Impromptu speaking evaluates genuine reasoning and realistic examples, not nonsensical juxtapositions.`,
+                score: 0
+            };
+        }
+    }
+
+    // 2. Disconnect phrases check ("not related", "no sense", etc.)
+    const universalDisconnect = ["not related", "no sense", "unrelated", "nothing to do", "dont know", "don't know", "is not related", "are not related", "makes no sense"];
+    for (const phrase of universalDisconnect) {
+        if (lowerSpeech.includes(phrase)) {
+            return {
+                isCoherent: false,
+                reason: "DISCONNECT_EXPRESSED",
+                title: "⚠️ CONFLICT DETECTED: 'NOT RELATED'",
+                detail: `You stated that the concepts are '${phrase}', rather than developing an argument that connects them. An impromptu speaker must build a persuasive bridge between the prompt ideas.`,
+                score: 0
+            };
+        }
+    }
+
+    // 3. Parroting without substance check
+    if (parrotRatio > 0.45 && uniqueNonTitle < 3) {
+        return {
+            isCoherent: false,
+            reason: "PARROTING_WITHOUT_SUBSTANCE",
+            title: "⚠️ SURFACE PARROTING DETECTED (NO ARGUMENT)",
+            detail: `You repeated prompt keywords (${titleContentWords.slice(0, 4).map(w => `"${w}"`).join(', ')}), but did not provide any substantive reasoning, arguments, or domain insights. Merely echoing the topic does not earn speech points.`,
+            score: 0
+        };
+    }
+
+    // 4. Match Topic Domain Terms + Universal Communication Concepts
+    const matchedDomain = new Set();
+    const matchedCommunication = new Set();
+    const matchedTitle = new Set();
+
+    titleContentWords.forEach(tw => {
+        if (speechWords.includes(tw)) matchedTitle.add(tw);
+    });
+
+    if (knowledge && knowledge.domainTerms) {
+        knowledge.domainTerms.forEach(term => {
+            if (term.includes(' ') && lowerSpeech.includes(term)) {
+                matchedDomain.add(term);
+                return;
+            }
+            const found = speechWords.some(w => {
+                if (w === term) return true;
+                if (w.length >= 4 && term.length >= 4) {
+                    const root = term.substring(0, 4);
+                    if (w.startsWith(root) || term.startsWith(w.substring(0, 4))) return true;
+                }
+                return false;
+            });
+            if (found) matchedDomain.add(term);
+        });
+    }
+
+    UNIVERSAL_COMMUNICATION_CONCEPTS.forEach(term => {
+        const found = speechWords.some(w => {
+            if (w === term) return true;
+            if (w.length >= 4 && term.length >= 4) {
+                const root = term.substring(0, 4);
+                if (w.startsWith(root) || term.startsWith(w.substring(0, 4))) return true;
+            }
+            return false;
+        });
+        if (found) matchedCommunication.add(term);
+    });
+
+    const totalSubstantiveMatches = new Set([...matchedDomain, ...matchedCommunication, ...matchedTitle]);
+    const substantiveCount = totalSubstantiveMatches.size;
+
+    // 5. Alien Domain Incongruity Check
+    if (knowledge && knowledge.alienKeywords) {
+        const foundAlien = knowledge.alienKeywords.filter(k => lowerSpeech.includes(k));
+        const allowedAnalogy = (knowledge.allowedAnalogyPhrases || []).some(p => lowerSpeech.includes(p));
+        if (foundAlien.length >= 2 && !allowedAnalogy) {
+            return {
+                isCoherent: false,
+                reason: "OFF_DOMAIN_INTRUSION",
+                title: "⚠️ IRRELEVANT TOPIC DIVERSION",
+                detail: `Your speech drifted into unrelated concepts (${foundAlien.slice(0, 3).map(w => `'${w}'`).join(', ')}) without establishing a metaphorical link to the prompt topic.`,
+                score: 0
+            };
+        }
+    }
+
+    // 6. Halves / Temporal Drift Check
+    const contentWords = speechWords.filter(w => !STOP_WORDS_SET.has(w) && w.length > 2);
+    if (contentWords.length >= 8) {
+        const mid = Math.floor(contentWords.length / 2);
+        const firstHalfContent = contentWords.slice(0, mid);
+        const secondHalfContent = contentWords.slice(mid);
+
+        const isWordRelevant = (w) => {
+            return totalSubstantiveMatches.has(w) || 
+                   Array.from(totalSubstantiveMatches).some(m => m.length >= 4 && (w.startsWith(m.substring(0, 4)) || m.startsWith(w.substring(0, 4))));
+        };
+
+        const firstHalfMatches = firstHalfContent.filter(isWordRelevant).length;
+        const secondHalfMatches = secondHalfContent.filter(isWordRelevant).length;
+
+        if (firstHalfMatches >= 2 && secondHalfMatches === 0 && secondHalfContent.length >= 4) {
+            return {
+                isCoherent: false,
+                reason: "SECOND_HALF_DRIFT",
+                title: "⚠️ PARTIAL DRIFT: SECOND HALF DERAILED",
+                detail: `You started with relevant concepts in the first half, but your speech trailed off into completely unrelated territory in the second half (${secondHalfContent.slice(0, 4).map(w => `'${w}'`).join(', ')}). Impromptu speaking requires sustaining your point through to the conclusion.`,
+                score: 0
+            };
+        }
+    }
+
+    // 7. Circular repetition check
+    let circularRepeats = 0;
+    for (let i = 0; i < speechWords.length - 2; i++) {
+        const trigram = speechWords[i] + " " + speechWords[i+1] + " " + speechWords[i+2];
+        const restOfSpeech = speechWords.slice(i + 3).join(" ");
+        if (restOfSpeech.includes(trigram)) {
+            circularRepeats++;
+        }
+    }
+    if (circularRepeats >= 2 && substantiveCount < 2) {
+        return {
+            isCoherent: false,
+            reason: "CIRCULAR_NONSENSE",
+            title: "⚠️ CIRCULAR GIBBERISH DETECTED",
+            detail: "Your speech contained repetitive circular loops without developing real progression or insights.",
+            score: 0
+        };
+    }
+
+    // 8. Completely Off-Topic Check
+    const hasTopicAnchor = matchedDomain.size >= 1 || matchedTitle.size >= 1;
+    const hasSufficientSubstance = (hasTopicAnchor && (matchedCommunication.size >= 1 || matchedDomain.size >= 2)) || substantiveCount >= 3;
+
+    if (!hasSufficientSubstance) {
+        return {
+            isCoherent: false,
+            reason: "OFF_TOPIC",
+            title: "⚠️ OFF-TOPIC SPEECH DETECTED",
+            detail: `Your speech did not address the core subject matter of the assigned topic: "${activeTopic}". Please talk about the prompt to receive marks.`,
+            score: 0
+        };
+    }
+
+    // 9. Valid on-topic speech!
+    const coherenceScore = Math.min(100, Math.round(65 + (substantiveCount * 5)));
+    const sampleTerms = Array.from(totalSubstantiveMatches).slice(0, 5).join(', ');
+    return {
+        isCoherent: true,
+        reason: "COHERENT_ON_TOPIC",
+        title: "100% (On-Topic)",
+        detail: `Great elaboration! You addressed the prompt with ${substantiveCount} substantive concepts (${sampleTerms}).`,
+        score: coherenceScore
+    };
+}
+
 function initMicroSpeakerBooth() {
     const btnAction = document.getElementById("btn-booth-action");
     const btnReset = document.getElementById("btn-booth-reset");
@@ -4098,14 +4433,28 @@ function initMicroSpeakerBooth() {
     const waveCanvas = document.getElementById("booth-wave-canvas");
     const waveCtx = waveCanvas ? waveCanvas.getContext("2d") : null;
     const scorecard = document.getElementById("booth-scorecard");
+    const liveStreamBox = document.getElementById("booth-live-stream-box");
+    const liveStreamText = document.getElementById("booth-live-stream-text");
+    const transcriptCard = document.getElementById("score-transcript-card");
+    const transcriptBody = document.getElementById("score-transcript-body");
     
     if (!btnAction) return;
     
     let isRecording = false;
     let secondsLeft = 30;
+    let currentChallengeTopic = "";
     
     let dataArray = null;
     let bufferLength = 0;
+
+    // Speech-to-Text & Real Acoustic Tracking
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+    let recognition = null;
+    let recognizedTranscript = "";
+    let interimTranscript = "";
+    let audibleFramesCount = 0;
+    let totalFramesSampled = 0;
+    let peakRms = 0;
     
     function drawWave() {
         if (!waveCanvas || !waveCtx) return;
@@ -4123,8 +4472,11 @@ function initMicroSpeakerBooth() {
             
             const sliceWidth = w / bufferLength;
             let x = 0;
+            let sumSquares = 0;
             
             for (let i = 0; i < bufferLength; i++) {
+                const normalized = (dataArray[i] - 128) / 128.0;
+                sumSquares += normalized * normalized;
                 const v = dataArray[i] / 128.0;
                 const y = v * h / 2;
                 if (i === 0) waveCtx.moveTo(x, y);
@@ -4133,6 +4485,14 @@ function initMicroSpeakerBooth() {
             }
             waveCtx.lineTo(w, h / 2);
             waveCtx.stroke();
+
+            // Real acoustic decibel calculation for silence detection
+            const rms = Math.sqrt(sumSquares / bufferLength);
+            totalFramesSampled++;
+            if (rms > 0.035) { // audible threshold above baseline mic noise
+                audibleFramesCount++;
+                peakRms = Math.max(peakRms, rms);
+            }
         } else {
             waveCtx.strokeStyle = "rgba(91, 33, 182, 0.4)";
             waveCtx.beginPath();
@@ -4171,7 +4531,13 @@ function initMicroSpeakerBooth() {
     function startBoothChallenge() {
         isRecording = true;
         secondsLeft = 30;
-        btnAction.innerText = "Stop & View Score";
+        recognizedTranscript = "";
+        interimTranscript = "";
+        audibleFramesCount = 0;
+        totalFramesSampled = 0;
+        peakRms = 0;
+
+        btnAction.innerText = "Stop & View Real Score";
         btnAction.classList.remove("btn-primary");
         btnAction.classList.add("btn-accent");
         
@@ -4181,8 +4547,14 @@ function initMicroSpeakerBooth() {
         if (timerDisplay) timerDisplay.innerText = "30s";
         
         const randTopic = genZTopics[Math.floor(Math.random() * genZTopics.length)];
+        currentChallengeTopic = randTopic;
         if (topicText) topicText.innerText = randTopic;
+
+        // Show live transcript box
+        if (liveStreamBox) liveStreamBox.style.display = "block";
+        if (liveStreamText) liveStreamText.innerText = "Listening for your voice... Start speaking on your topic!";
         
+        // 1. Setup Microphone & Audio Analyzer
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
                 speakerBoothStream = stream;
@@ -4198,6 +4570,49 @@ function initMicroSpeakerBooth() {
             .catch(() => {
                 speakerBoothAnalyser = null;
             });
+
+        // 2. Setup Real-Time Web Speech Recognition Engine
+        if (SpeechRecognition) {
+            try {
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = "en-US";
+                
+                recognition.onresult = (event) => {
+                    interimTranscript = "";
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            recognizedTranscript += event.results[i][0].transcript + " ";
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
+                    }
+                    const liveWords = (recognizedTranscript + " " + interimTranscript).trim();
+                    if (liveStreamText && liveWords.length > 0) {
+                        liveStreamText.innerText = `"${liveWords}"`;
+                    }
+                };
+
+                recognition.onerror = (err) => {
+                    console.warn("Speech recognition notice:", err.error);
+                };
+
+                recognition.onend = () => {
+                    if (isRecording) {
+                        try { recognition.start(); } catch(e) {}
+                    }
+                };
+
+                recognition.start();
+            } catch(e) {
+                console.warn("Could not start SpeechRecognition:", e);
+            }
+        } else {
+            if (liveStreamText) {
+                liveStreamText.innerText = "🎙️ Microphone active! (Speech-to-text not available in this browser; measuring vocal energy & timing).";
+            }
+        }
             
         speakerBoothTimer = setInterval(() => {
             secondsLeft--;
@@ -4211,6 +4626,12 @@ function initMicroSpeakerBooth() {
     function stopBoothChallenge(early = false) {
         clearInterval(speakerBoothTimer);
         isRecording = false;
+
+        // Stop Speech Recognition
+        if (recognition) {
+            try { recognition.stop(); } catch(e) {}
+            recognition = null;
+        }
         
         if (recIndicator) recIndicator.classList.remove("active");
         if (eqBars) eqBars.classList.remove("active");
@@ -4224,22 +4645,156 @@ function initMicroSpeakerBooth() {
             speakerBoothAudioCtx.close();
             speakerBoothAudioCtx = null;
         }
-        
-        const scoreFluency = Math.floor(Math.random() * 8) + 89;
-        const scoreFillers = Math.floor(Math.random() * 3) + 1;
-        
-        document.getElementById("score-fluency").innerText = `${scoreFluency}%`;
-        document.getElementById("score-fillers").innerText = scoreFillers;
-        
-        const feedbackTemplates = [
-            "Outstanding confidence! Your tone has an extremely warm presence. Focus on placing brief 1-second pauses before major topic shifts to maximize your authority.",
-            "Incredible fluency and rhythm! You spoke with fantastic clarity. Try to completely cut out filler words by taking deep, silent breaths during transitions.",
-            "Excellent impromptu casing! You structured your ideas perfectly under pressure. Join Mrs. Shukla's weekly chapter to refine your micro-body gestures!"
-        ];
-        document.getElementById("score-feedback").innerText = feedbackTemplates[Math.floor(Math.random() * feedbackTemplates.length)];
+
+        const elapsedSec = Math.max(2, 30 - secondsLeft);
+        const fullSpeech = (recognizedTranscript + " " + interimTranscript).trim();
+        const words = fullSpeech.length > 0 ? fullSpeech.split(/\s+/).filter(w => w.length > 0) : [];
+        const wordCount = words.length;
+
+        // Calculate acoustic energy ratio
+        const voiceRatio = totalFramesSampled > 0 ? (audibleFramesCount / totalFramesSampled) : 0;
+        const isSilent = (wordCount === 0 && voiceRatio < 0.06);
+
+        const fluencyEl = document.getElementById("score-fluency");
+        const relevanceEl = document.getElementById("score-relevance");
+        const wpmEl = document.getElementById("score-wpm");
+        const fillersEl = document.getElementById("score-fillers");
+        const feedbackEl = document.getElementById("score-feedback");
+
+        // CASE 1: USER DID NOT SPEAK / SILENCE DETECTED
+        if (isSilent || wordCount === 0) {
+            if (fluencyEl) fluencyEl.innerText = "0%";
+            if (relevanceEl) relevanceEl.innerHTML = '<span style="color: #ef4444;">0% (Silent)</span>';
+            if (wpmEl) wpmEl.innerText = "0 WPM";
+            if (fillersEl) fillersEl.innerText = "0";
+
+            if (transcriptCard) transcriptCard.style.display = "block";
+            if (transcriptBody) transcriptBody.innerText = "(No audible words detected. Microphone remained quiet.)";
+
+            if (feedbackEl) {
+                feedbackEl.innerHTML = `<span style="color: #ef4444; font-weight: 800; font-size: 0.95rem;">⚠️ NO SPEECH DETECTED (0%)</span><br><br>We couldn't hear you speak! Your microphone was quiet or muted for the duration of the challenge.<br>Please ensure your microphone is unmuted and speak clearly into your device. Click <strong>Try Again</strong> to practice!`;
+            }
+            playChimeMelody([330, 293, 261]);
+            if (scorecard) scorecard.classList.add("active");
+            return;
+        }
+
+        // CASE 2: SPEECH WAS TOO BRIEF (< 5 words)
+        if (wordCount < 5) {
+            const briefWpm = Math.round((wordCount / elapsedSec) * 60);
+            if (fluencyEl) fluencyEl.innerText = "15%";
+            if (relevanceEl) relevanceEl.innerHTML = '<span style="color: #f59e0b;">Incomplete</span>';
+            if (wpmEl) wpmEl.innerText = `${briefWpm} WPM`;
+            if (fillersEl) fillersEl.innerText = "0";
+
+            if (transcriptCard) transcriptCard.style.display = "block";
+            if (transcriptBody) transcriptBody.innerText = `"${fullSpeech}"`;
+
+            if (feedbackEl) {
+                feedbackEl.innerHTML = `<span style="color: #f59e0b; font-weight: 800; font-size: 0.95rem;">⚠️ SPEECH TOO BRIEF (${wordCount} words)</span><br><br>You only spoke a few words! A 30-second impromptu speech needs at least 25–40 words to properly assess fluency, pacing, and vocabulary. Click <strong>Try Again</strong> and speak continuously on your topic!`;
+            }
+            playChimeMelody([330, 293, 261]);
+            if (scorecard) scorecard.classList.add("active");
+            return;
+        }
+
+        // 3. SEMANTIC COHERENCE & ANTI-PARROTING CHECK
+        const coherenceResult = analyzeSpeechCoherence(fullSpeech, currentChallengeTopic);
+
+        // Calculate WPM & Filler Words
+        const wpm = Math.round((wordCount / elapsedSec) * 60);
+        const fillerRegex = /\b(um|uh|uhm|er|like|you know|actually|basically|literally|sort of|kind of|i mean|so|right|you see)\b/gi;
+        const fillerMatches = fullSpeech.match(fillerRegex) || [];
+        const fillerCount = fillerMatches.length;
+
+        const fillerCountsMap = {};
+        fillerMatches.forEach(f => {
+            const lower = f.toLowerCase();
+            fillerCountsMap[lower] = (fillerCountsMap[lower] || 0) + 1;
+        });
+        const fillerSummary = Object.entries(fillerCountsMap)
+            .map(([k, v]) => `"${k}" (${v}x)`)
+            .join(', ');
+
+        // CASE 3: INCOHERENT, PARROTING, OR OFF-TOPIC SPEECH DETECTED (0% SCORE)
+        if (!coherenceResult.isCoherent) {
+            if (fluencyEl) fluencyEl.innerText = "0%";
+            if (relevanceEl) relevanceEl.innerHTML = `<span style="color: #ef4444; font-weight: 900;">0% (${coherenceResult.reason.replace(/_/g, ' ')})</span>`;
+            if (wpmEl) wpmEl.innerText = `${wpm} WPM`;
+            if (fillersEl) fillersEl.innerText = fillerCount;
+
+            if (transcriptCard) transcriptCard.style.display = "block";
+            if (transcriptBody) transcriptBody.innerText = `"${fullSpeech}"`;
+
+            if (feedbackEl) {
+                feedbackEl.innerHTML = `<div style="background: rgba(239, 68, 68, 0.08); border: 2px solid #ef4444; border-radius: 8px; padding: 14px; text-align: left;">
+                    <div style="color: #ef4444; font-weight: 900; font-size: 0.95rem; margin-bottom: 6px;">
+                        ${coherenceResult.title}
+                    </div>
+                    <div style="font-size: 0.84rem; color: var(--text-primary); line-height: 1.5;">
+                        ${coherenceResult.detail}<br><br>
+                        <strong>Captured Transcript (${wordCount} words):</strong> <em>"${fullSpeech}"</em><br><br>
+                        👉 <em>To earn fluency marks and streak achievements, you must present genuine reasoning, arguments, or real-world examples. Click <strong>Try Again</strong> and speak authentically on the topic!</em>
+                    </div>
+                </div>`;
+            }
+
+            playChimeMelody([349, 311, 261]);
+            if (scorecard) scorecard.classList.add("active");
+            return;
+        }
+
+        // CASE 4: RELEVANT, ON-TOPIC SPEECH EVALUATED!
+        let baseScore = 75;
+
+        // Pace rating (Ideal conversational speed: 115 - 155 WPM)
+        if (wpm >= 115 && wpm <= 155) {
+            baseScore += 18;
+        } else if ((wpm >= 95 && wpm < 115) || (wpm > 155 && wpm <= 175)) {
+            baseScore += 8;
+        } else if (wpm < 80) {
+            baseScore -= 14;
+        } else if (wpm > 180) {
+            baseScore -= 14;
+        }
+
+        // Word volume stamina
+        if (wordCount >= 30) baseScore += 7;
+        else if (wordCount < 12) baseScore -= 12;
+
+        // Filler deductions
+        if (fillerCount === 0) baseScore += 5;
+        else if (fillerCount <= 2) baseScore -= 4;
+        else if (fillerCount <= 4) baseScore -= 10;
+        else baseScore -= Math.min(22, fillerCount * 3);
+
+        const finalFluency = Math.min(98, Math.max(25, baseScore));
+
+        // Update Scorecard
+        if (fluencyEl) fluencyEl.innerText = `${finalFluency}%`;
+        if (relevanceEl) relevanceEl.innerHTML = '<span style="color: #10b981; font-weight: 900;">100% (On-Topic)</span>';
+        if (wpmEl) wpmEl.innerText = `${wpm} WPM`;
+        if (fillersEl) fillersEl.innerText = fillerCount;
+
+        // Display Captured Transcript
+        if (transcriptCard) transcriptCard.style.display = "block";
+        if (transcriptBody) transcriptBody.innerText = `"${fullSpeech}"`;
+
+        // Contextual Feedback
+        let feedbackHtml = "";
+        if (finalFluency >= 88) {
+            feedbackHtml = `🔥 <strong>Outstanding Delivery!</strong> You spoke <strong>${wordCount} words</strong> on topic at an optimal conversational pace (<strong>${wpm} WPM</strong>) with <strong>${fillerCount === 0 ? 'zero filler words' : `only ${fillerCount} filler word(s)`}</strong>. Your articulation is clear and commanding. Join Mrs. Shukla's weekly chapter to test this under stage spotlight!`;
+        } else if (wpm > 165) {
+            feedbackHtml = `⚡ <strong>High-Energy Delivery (${wpm} WPM):</strong> You delivered <strong>${wordCount} on-topic words</strong> with great enthusiasm, but you are speaking slightly too fast. Try pacing yourself to ~130 WPM so key arguments sink in.${fillerCount > 0 ? `<br><br>💡 <em>Detected ${fillerCount} filler word(s): ${fillerSummary}. Replace these with a 1-second silent pause.</em>` : ''}`;
+        } else if (wpm < 95) {
+            feedbackHtml = `🎙️ <strong>Deliberate & Thoughtful (${wpm} WPM):</strong> You spoke <strong>${wordCount} on-topic words</strong>. While relevant, your delivery was hesitant with prolonged pauses. Practice continuous flow of thought without trailing off.${fillerCount > 0 ? `<br><br>💡 <em>Detected ${fillerCount} filler word(s): ${fillerSummary}.</em>` : ''}`;
+        } else {
+            feedbackHtml = `👏 <strong>Solid Impromptu Attempt!</strong> You delivered <strong>${wordCount} on-topic words</strong> in ${elapsedSec}s (<strong>${wpm} WPM</strong>). ${fillerCount > 0 ? `We caught ${fillerCount} filler word(s) (${fillerSummary})—practice replacing filler vocal crutches with silent breathing pauses to sound more authoritative.` : 'Fantastic discipline cutting out filler words!'}`;
+        }
+
+        if (feedbackEl) feedbackEl.innerHTML = feedbackHtml;
         
         playChimeMelody([440, 554, 659, 880]);
-        
         if (scorecard) scorecard.classList.add("active");
     }
     
@@ -4250,21 +4805,12 @@ function initMicroSpeakerBooth() {
         if (statusText) statusText.innerText = "Microphone Ready";
         if (timerDisplay) timerDisplay.innerText = "30s";
         if (topicText) topicText.innerText = "Click \"Start Recording\" to generate challenge topic...";
+        if (liveStreamBox) liveStreamBox.style.display = "none";
+        if (liveStreamText) liveStreamText.innerText = "Listening for your voice... Start speaking on your topic!";
+        if (transcriptCard) transcriptCard.style.display = "none";
         isRecording = false;
     }
 }
-
-// ==========================================================================
-// 🤝 FEATURE 2: CO-ED STUDENT LIVE PEER MATCHING DIRECTORY ENGINE
-// ==========================================================================
-const coEdPeers = [
-    { name: "Aarav Sharma", role: "CA Finalist", desc: "Crushed stage anxiety inside Shweta's weekly batches. Upskilling casing strategies.", tags: ["CA Fin", "Impromptu", "Fluency"], avatar: "👦" },
-    { name: "Riya Kapoor", role: "MBA Finance Student", desc: "Found deep human support in Connect Circle chapters. Seeking organic case buddies.", tags: ["MBA Fin", "Wellness", "Casing"], avatar: "👧" },
-    { name: "Kunal Mehra", role: "B.Tech Builder & Founder", desc: "Co-creating a micro-SaaS inside the Startup Check-ins. Exchanging brand Prompts.", tags: ["Tech", "Startup", "LinkedIn"], avatar: "👦" },
-    { name: "Neha Joshi", role: "Creative Arts Director", desc: "Scriptwriting for the Theatre chapter to practice vocal projection and stage presence.", tags: ["Arts", "Theatre", "Confidence"], avatar: "👧" },
-    { name: "Siddharth Verma", role: "MBA Marketing Candidate", desc: "Building personal branding algorithms. Exchanging LinkedIn amplification referral Prompts.", tags: ["MBA Mkt", "Branding", "Strategy"], avatar: "👦" },
-    { name: "Ananya Sen", role: "Psychology & Wellness Lead", desc: "Hosting weekly judgment-free Connect Circles. Strangers become deep family.", tags: ["Welfare", "Wellness", "DMs"], avatar: "👧" }
-];
 
 function initCoEdPeerDirectory() {
     const peersContainer = document.getElementById("live-peers-grid-container");

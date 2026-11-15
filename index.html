@@ -424,6 +424,10 @@
                                         <canvas id="booth-wave-canvas"></canvas>
                                         <div class="timer-overlay" id="booth-timer">30s</div>
                                     </div>
+                                    <div class="booth-live-stream-box" id="booth-live-stream-box" style="display: none;">
+                                        <div class="live-stream-badge">🎙️ LIVE SPEECH TRANSCRIPTION:</div>
+                                        <div class="live-stream-text" id="booth-live-stream-text">Listening for your speech... Start talking on your topic!</div>
+                                    </div>
                                     <div class="equalizer-bars" id="booth-eq-bars">
                                         <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                                     </div>
@@ -438,16 +442,28 @@
                                         <h3>YOUR UP-SKILLING DIAGNOSTIC</h3>
                                         <div class="score-grid">
                                             <div class="score-box">
-                                                <div class="score-val text-gradient" id="score-fluency">92%</div>
+                                                <div class="score-val text-gradient" id="score-fluency">--</div>
                                                 <div class="score-label">Fluency Score</div>
                                             </div>
                                             <div class="score-box">
-                                                <div class="score-val" id="score-fillers">2</div>
+                                                <div class="score-val" id="score-relevance">--</div>
+                                                <div class="score-label">Topic Relevance</div>
+                                            </div>
+                                            <div class="score-box">
+                                                <div class="score-val text-gradient" id="score-wpm">--</div>
+                                                <div class="score-label">Pace (WPM)</div>
+                                            </div>
+                                            <div class="score-box">
+                                                <div class="score-val" id="score-fillers">--</div>
                                                 <div class="score-label">Filler Words</div>
                                             </div>
                                         </div>
+                                        <div class="scorecard-transcript-card" id="score-transcript-card" style="display: none;">
+                                            <div class="scorecard-transcript-title">Captured Speech:</div>
+                                            <div class="scorecard-transcript-body" id="score-transcript-body"></div>
+                                        </div>
                                         <div class="scorecard-feedback" id="score-feedback">
-                                            "Excellent confidence! Your tone was extremely engaging. Try placing 1-second pauses before major assertions to boost authority."
+                                            Ready to evaluate your impromptu delivery.
                                         </div>
                                         <div class="scorecard-actions">
                                             <a href="https://chat.whatsapp.com/DP8whg5bU2RAB50nalQCEU?mode=ac_t" target="_blank" class="btn btn-secondary btn-sm">Share on WhatsApp</a>

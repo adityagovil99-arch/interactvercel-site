@@ -1026,7 +1026,11 @@ function renderAdminLeaderboardList() {
 // 3B. ADMIN: DEMERITS (NEGATIVE POINTS) DROPDOWN & LOG
 function renderAdminDemeritDropdown() {
     const select = document.getElementById("admin-demerit-member-select");
-    if (!select) return;
+    const checklist = document.getElementById("admin-demerit-members-checklist");
+    const countBadge = document.getElementById("admin-demerit-selected-count");
+    const searchInput = document.getElementById("admin-demerit-member-search");
+    const btnSelectAll = document.getElementById("btn-demerit-select-all");
+    const btnDeselectAll = document.getElementById("btn-demerit-deselect-all");
     
     const memberMap = new Map();
     (appTeamData.committeeMembers || []).forEach(m => {
@@ -1040,13 +1044,95 @@ function renderAdminDemeritDropdown() {
     });
     
     const members = Array.from(memberMap.values());
-    if (members.length === 0) {
-        select.innerHTML = `<option value="">No members available</option>`;
-        return;
+    
+    // Populate fallback select
+    if (select) {
+        if (members.length === 0) {
+            select.innerHTML = `<option value="">No members available</option>`;
+        } else {
+            select.innerHTML = members.map(m => `<option value="${m.id}" data-name="${escapeHtml(m.name)}">${escapeHtml(m.name)} — ${escapeHtml(m.sub)}</option>`).join("");
+        }
     }
     
-    select.innerHTML = `<option value="">-- Choose Member --</option>` + 
-        members.map(m => `<option value="${m.id}" data-name="${escapeHtml(m.name)}">${escapeHtml(m.name)} — ${escapeHtml(m.sub)}</option>`).join("");
+    // Populate multi-member checklist
+    if (checklist) {
+        if (members.length === 0) {
+            checklist.innerHTML = `<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 0.82rem;">No members available. Add members in the leaderboard panel.</div>`;
+            return;
+        }
+        
+        checklist.innerHTML = members.map(m => `
+            <label class="demerit-member-card" for="demerit-chk-${m.id}" data-name="${escapeHtml(m.name.toLowerCase())}">
+                <input type="checkbox" class="demerit-chk-input" id="demerit-chk-${m.id}" value="${m.id}" data-name="${escapeHtml(m.name)}">
+                <div class="demerit-member-info">
+                    <strong>${escapeHtml(m.name)}</strong>
+                    <span>${escapeHtml(m.sub)}</span>
+                </div>
+            </label>
+        `).join("");
+        
+        // Update selection count helper
+        function updateSelectedCount() {
+            const checked = checklist.querySelectorAll(".demerit-chk-input:checked");
+            if (countBadge) countBadge.textContent = `${checked.length} selected`;
+            
+            checklist.querySelectorAll(".demerit-member-card").forEach(card => {
+                const chk = card.querySelector(".demerit-chk-input");
+                if (chk && chk.checked) {
+                    card.classList.add("selected");
+                } else {
+                    card.classList.remove("selected");
+                }
+            });
+        }
+        
+        checklist.querySelectorAll(".demerit-chk-input").forEach(chk => {
+            chk.addEventListener("change", updateSelectedCount);
+        });
+        
+        // Live search filter
+        if (searchInput && !searchInput.dataset.bound) {
+            searchInput.dataset.bound = "true";
+            searchInput.addEventListener("input", function() {
+                const query = this.value.trim().toLowerCase();
+                checklist.querySelectorAll(".demerit-member-card").forEach(card => {
+                    const name = card.getAttribute("data-name") || "";
+                    if (!query || name.includes(query)) {
+                        card.style.display = "flex";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            });
+        }
+        
+        // Select All button
+        if (btnSelectAll && !btnSelectAll.dataset.bound) {
+            btnSelectAll.dataset.bound = "true";
+            btnSelectAll.addEventListener("click", () => {
+                checklist.querySelectorAll(".demerit-member-card").forEach(card => {
+                    if (card.style.display !== "none") {
+                        const chk = card.querySelector(".demerit-chk-input");
+                        if (chk) chk.checked = true;
+                    }
+                });
+                updateSelectedCount();
+            });
+        }
+        
+        // Deselect All button
+        if (btnDeselectAll && !btnDeselectAll.dataset.bound) {
+            btnDeselectAll.dataset.bound = "true";
+            btnDeselectAll.addEventListener("click", () => {
+                checklist.querySelectorAll(".demerit-chk-input").forEach(chk => {
+                    chk.checked = false;
+                });
+                updateSelectedCount();
+            });
+        }
+        
+        updateSelectedCount();
+    }
 }
 
 function renderAdminDemeritsList() {
@@ -1090,16 +1176,16 @@ function revokeAdminDemerit(demeritId) {
     const d = (appTeamData.demerits || []).find(x => x.id === demeritId);
     if (!d) return;
     
-    if (confirm(`Revoke this system demerit (${d.points} pts) for ${d.memberName}? Points will be refunded.`)) {
-        const refund = Math.abs(d.points || 0);
-        const leaderMem = (appTeamData.leaderboard || []).find(l => l.name.trim().toLowerCase() === d.memberName.trim().toLowerCase());
-        if (leaderMem) {
-            leaderMem.points = (leaderMem.points || 0) + refund;
-        }
-        
+    if (confirm(`Revoke this system demerit (${d.points} pts) for ${d.memberName}? This will remove the demerit notice from their portal record.`)) {
+        // Demerits are independent - no appreciation point refund needed
         appTeamData.demerits = appTeamData.demerits.filter(x => x.id !== demeritId);
         saveTeamData();
         playClickSound();
+        renderAdminDemeritsList();
+        
+        if (typeof renderMemberPortal === 'function' && typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) {
+            renderMemberPortal();
+        }
     }
 }
 
@@ -2155,24 +2241,45 @@ function setupModalsController() {
         });
     }
     
-    // Admin Issue System Demerit (Negative Points)
+    // Admin Issue System Demerit (Negative Points to Multiple Members, NO Appreciation Point Deduction)
     const btnIssueDemerit = document.getElementById("btn-admin-issue-demerit");
     if (btnIssueDemerit) {
         btnIssueDemerit.addEventListener("click", (e) => {
             e.preventDefault();
-            const memberSelect = document.getElementById("admin-demerit-member-select");
             const pointsInput = document.getElementById("admin-demerit-points");
             const descInput = document.getElementById("admin-demerit-desc");
             const feedback = document.getElementById("admin-demerit-feedback");
             
-            if (!memberSelect || !memberSelect.value) {
-                alert("Please select a member to issue the system demerit to.");
+            // Gather selected members from checklist (or fallback select)
+            let selectedMembers = [];
+            const checkedBoxes = document.querySelectorAll("#admin-demerit-members-checklist .demerit-chk-input:checked");
+            if (checkedBoxes.length > 0) {
+                checkedBoxes.forEach(chk => {
+                    selectedMembers.push({
+                        id: chk.value,
+                        name: (chk.getAttribute("data-name") || "Member").trim()
+                    });
+                });
+            } else {
+                const memberSelect = document.getElementById("admin-demerit-member-select");
+                if (memberSelect && memberSelect.value) {
+                    const selectedOpt = memberSelect.options[memberSelect.selectedIndex];
+                    const memberName = selectedOpt ? selectedOpt.getAttribute("data-name") || selectedOpt.text.split(" — ")[0] : memberSelect.value;
+                    selectedMembers.push({
+                        id: memberSelect.value,
+                        name: memberName.trim()
+                    });
+                }
+            }
+            
+            if (selectedMembers.length === 0) {
+                alert("Please select at least one member to issue the system demerit to.");
                 return;
             }
             
             let pts = parseInt(pointsInput ? pointsInput.value : "-1", 10);
             if (isNaN(pts) || pts === 0) pts = -1;
-            if (pts > 0) pts = -pts; // Guarantee negative penalty
+            if (pts > 0) pts = -pts; // Guarantee negative value
             
             const reason = descInput ? descInput.value.trim() : "";
             if (!reason) {
@@ -2180,45 +2287,52 @@ function setupModalsController() {
                 return;
             }
             
-            const selectedOpt = memberSelect.options[memberSelect.selectedIndex];
-            const memberName = selectedOpt ? selectedOpt.getAttribute("data-name") || selectedOpt.text.split(" — ")[0] : memberSelect.value;
-            const memberId = memberSelect.value;
-            
-            const newDemerit = {
-                id: "demerit-" + Date.now(),
-                memberId: memberId,
-                memberName: memberName.trim(),
-                points: pts,
-                reason: reason,
-                issuedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-            };
-            
             if (!Array.isArray(appTeamData.demerits)) appTeamData.demerits = [];
-            appTeamData.demerits.unshift(newDemerit);
+            const nowFormatted = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             
-            // Deduct points from member in leaderboard
-            if (Array.isArray(appTeamData.leaderboard)) {
-                let leaderMem = appTeamData.leaderboard.find(l => l.name.trim().toLowerCase() === memberName.trim().toLowerCase());
-                if (!leaderMem) {
-                    leaderMem = {
-                        id: "mem-" + Date.now(),
-                        name: memberName.trim(),
-                        points: 50
-                    };
-                    appTeamData.leaderboard.push(leaderMem);
-                }
-                leaderMem.points = (leaderMem.points || 0) + pts; // pts is negative
-            }
+            // Issue individual demerits to all selected members
+            // NOTE: Demerits are strictly independent - do NOT deduct from leaderboard appreciation points!
+            selectedMembers.forEach((m, idx) => {
+                const newDemerit = {
+                    id: "demerit-" + Date.now() + "-" + idx + "-" + Math.random().toString(36).substr(2, 4),
+                    memberId: m.id,
+                    memberName: m.name,
+                    points: pts,
+                    reason: reason,
+                    issuedAt: nowFormatted
+                };
+                appTeamData.demerits.unshift(newDemerit);
+            });
             
             saveTeamData();
             playClickSound();
             
-            if (descInput) descInput.value = "";
-            if (pointsInput) pointsInput.value = "-2";
+            // Refresh logs and dropdowns
+            renderAdminDemeritsList();
             
+            // If any affected member is currently viewing their personal portal, refresh their portal
+            if (typeof renderMemberPortal === 'function' && typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) {
+                renderMemberPortal();
+            }
+            
+            if (descInput) descInput.value = "";
+            if (pointsInput) pointsInput.value = "-1";
+            
+            // Uncheck all member checkboxes
+            document.querySelectorAll("#admin-demerit-members-checklist .demerit-chk-input").forEach(chk => {
+                chk.checked = false;
+            });
+            document.querySelectorAll("#admin-demerit-members-checklist .demerit-member-card").forEach(c => {
+                c.classList.remove("selected");
+            });
+            const countBadge = document.getElementById("admin-demerit-selected-count");
+            if (countBadge) countBadge.textContent = "0 selected";
+            
+            const namesList = selectedMembers.map(m => m.name).join(", ");
             if (feedback) {
+                feedback.innerHTML = `✓ Demerit (${pts} pts) issued to ${selectedMembers.length} member(s): ${escapeHtml(namesList)}. Recorded in respective personal portals without altering appreciation points!`;
                 feedback.style.display = "block";
-                setTimeout(() => { feedback.style.display = "none"; }, 3500);
+                setTimeout(() => { feedback.style.display = "none"; }, 5000);
             }
         });
     }
@@ -2443,11 +2557,12 @@ function renderMemberPortal() {
     const totalDemeritPts = myDemerits.reduce((acc, d) => acc + (d.points || 0), 0);
 
     if (pointsEl) {
-        if (totalDemeritPts < 0) {
-            pointsEl.innerHTML = `${myPts} pts <span style="font-size: 0.72rem; color: #ef4444; font-weight: 700; margin-left: 6px;">(${totalDemeritPts} demerits)</span>`;
-        } else {
-            pointsEl.textContent = `${myPts} pts`;
-        }
+        pointsEl.textContent = `${myPts} pts`;
+    }
+    const demeritsDisplayEl = document.getElementById("member-portal-demerits-display");
+    if (demeritsDisplayEl) {
+        demeritsDisplayEl.textContent = `${totalDemeritPts} pts`;
+        demeritsDisplayEl.style.color = (totalDemeritPts < 0 ? "#ef4444" : "#10b981");
     }
     
     // 2. Pending Teammate Invitations Banner

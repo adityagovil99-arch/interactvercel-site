@@ -966,9 +966,13 @@
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px; margin-left: auto;">
-                    <div class="member-points-pill">
-                        <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Points</span>
-                        <strong id="member-portal-points-display" style="font-size: 1.15rem; color: #10b981;">0 pts</strong>
+                    <div class="member-points-pill" style="border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08);">
+                        <span style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: #10b981;">🌟 Appreciation</span>
+                        <strong id="member-portal-points-display" style="font-size: 1.1rem; color: #10b981;">0 pts</strong>
+                    </div>
+                    <div class="member-points-pill" id="member-portal-demerit-pill" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08);">
+                        <span style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: #ef4444;">⚠️ Demerits</span>
+                        <strong id="member-portal-demerits-display" style="font-size: 1.1rem; color: #ef4444;">0 pts</strong>
                     </div>
                     <button type="button" class="btn-portal-logout" id="btn-member-logout" title="Log out from member portal">🚪 Log Out</button>
                     <button class="btn-close-modal" id="btn-close-member-portal" aria-label="Close Member Portal">&times;</button>
@@ -1095,7 +1099,7 @@
                             <span class="policy-rule-icon">⚖️</span>
                             <div class="policy-rule-content">
                                 <strong>Non-Linear Proportionality</strong>
-                                <p>Demerits are <em>not</em> 1:1 proportional to appreciation points. Depending on seriousness, 1 demerit may cause a 2x to 5x deduction impact.</p>
+                                <p>Demerit points are tracked independently and are not deducted from appreciation points. Appreciation points measure your positive contributions and achievements, while demerit points record task compliance and accountability.</p>
                             </div>
                         </div>
                         <div class="policy-rule-card">
@@ -1229,31 +1233,41 @@
                         <hr style="margin: 22px 0; border: none; border-top: 1.5px solid var(--border-light);">
 
                         <h4>⚠️ Assign System Demerit Points (Negative Points)</h4>
-                        <p class="admin-list-subtitle">Issue negative points to any member with an explanation. Visible to the member as an automated system audit notice (never mentions admin).</p>
+                        <p class="admin-list-subtitle">Issue negative points to one or multiple members for the same cause. Demerit points are tracked independently and do not deduct appreciation points. Each member will see their individual -1 notice in their portal.</p>
                         <form id="admin-demerit-form" onsubmit="return false;">
                             <div class="form-field">
-                                <label for="admin-demerit-member-select">Select Member *</label>
-                                <select id="admin-demerit-member-select" required>
-                                    <!-- Populated dynamically -->
+                                <div class="demerit-selection-header">
+                                    <label style="margin: 0; font-weight: 800;">Select Members * (Click to choose multiple)</label>
+                                    <div class="demerit-batch-actions">
+                                        <button type="button" class="btn-batch-select" id="btn-demerit-select-all">Select All</button>
+                                        <button type="button" class="btn-batch-select" id="btn-demerit-deselect-all">Clear</button>
+                                        <span id="admin-demerit-selected-count" style="font-weight: 800; color: #ef4444;">0 selected</span>
+                                    </div>
+                                </div>
+                                <input type="text" id="admin-demerit-member-search" class="demerit-search-input" placeholder="🔍 Search member name...">
+                                <div id="admin-demerit-members-checklist" class="demerit-members-grid">
+                                    <!-- Populated dynamically with member checkboxes -->
+                                </div>
+                                <select id="admin-demerit-member-select" multiple style="display: none;">
+                                    <!-- Fallback select -->
                                 </select>
                             </div>
                             <div class="form-field">
                                 <label for="admin-demerit-points">Demerit Points (e.g. -1, -2, -6) *</label>
-                                <input type="number" id="admin-demerit-points" placeholder="e.g. -2" max="-1" value="-2" required>
-                                <span style="font-size: 0.72rem; color: var(--text-muted);">Enter negative integer (e.g. -1, -2, -6, etc.)</span>
+                                <input type="number" id="admin-demerit-points" placeholder="e.g. -1" max="-1" value="-1" required>
+                                <span style="font-size: 0.72rem; color: var(--text-muted);">Enter negative integer (e.g. -1, -2). Each selected member receives this demerit separately.</span>
                             </div>
                             <div class="form-field">
-                                <label for="admin-demerit-desc">System Notice Reason / Infraction *</label>
-                                <textarea id="admin-demerit-desc" rows="3" placeholder="e.g. Unannounced absence from mandatory coordination sync, delayed task handoff..." required></textarea>
+                                <label for="admin-demerit-desc">System Notice Reason / Cause / Infraction *</label>
+                                <textarea id="admin-demerit-desc" rows="3" placeholder="e.g. Assigned task not completed: Weekly deliverable missed, unannounced absence from sync..." required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary" id="btn-admin-issue-demerit" style="background: #ef4444; border-color: #ef4444; width: 100%;">
-                                ⚡ Issue System Demerit
+                                ⚡ Issue System Demerit to Selected Members
                             </button>
                             <div id="admin-demerit-feedback" style="display: none; color: #10b981; font-weight: 800; font-size: 0.82rem; margin-top: 8px; text-align: center;">
-                                ✓ System demerit recorded and deducted!
+                                ✓ System demerit recorded and delivered to members' portals!
                             </div>
                         </form>
-
                         <hr style="margin: 22px 0; border: none; border-top: 1.5px solid var(--border-light);">
 
                         <h4>🌟 Award Appreciation Points &amp; Citation</h4>

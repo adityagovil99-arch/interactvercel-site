@@ -303,6 +303,8 @@ const DEFAULT_TEAM_DATA = {
     ],
     "peerRatings": [],
     "demerits": [],
+    "warnings": [],
+    "offerLetterRequests": [],
     "appreciations": [
         {
             "id": "appr-sample-1",
@@ -374,6 +376,16 @@ const DEFAULT_TEAM_DATA = {
         "ctaBody": "Join 5,000+ ambitious students across India. Participate in our next impromptu speaking challenge or bring an InteractUp chapter to your college.",
         "ctaWhatsappUrl": "https://chat.whatsapp.com/HrgxdxPQEn9DAlp4PFH6d0",
         "ctaPartnerUrl": "https://forms.gle/EJ5njy2RpcLyCZdo7"
+    },
+    "vaultContent": {
+        "heroTitle": "Career Vault & Tenure Endowments",
+        "heroSubtitle": "Official credential repository, institutional assets, board profit-shares, and post-tenure career honors. As you deliver impact, earn appreciation, and maintain high accountability, each executive milestone unlocks automatically.",
+        "offerSubtitle": "Authenticated appointment letter on formal InteractUp corporate stationery certifying your tenure, executive role, and community credentials.",
+        "completionSubtitle": "Formal institutional accreditation awarded upon successful conclusion of your official executive tenure with verifiable verification code.",
+        "lorSubtitle": "Bespoke executive reference letter signed by Founders & Board of Directors for university admissions, venture grants, and leadership roles. Authored strictly based on your performance, initiative, and appreciation standing during tenure.",
+        "alumniSubtitle": "Lifetime VIP access to our closed executive alumni directory, senior corporate mentors, venture capital syndicates, and private alumni mixers worldwide.",
+        "boardSubtitle": "Receive annual financial distributions for 20 years post-tenure from the Sovereign Board Fund. Payout allocation is calculated based on net appreciation points, leadership tenure, and zero-infraction standing.",
+        "moreSubtitle": "Classified institutional benefits, founder grants, speaker fellowships, and private global roundtables will be unsealed as milestones are conquered."
     }
 };
 
@@ -391,9 +403,12 @@ let appTeamData = (() => {
                 competitions: Array.isArray(parsed.competitions) && parsed.competitions.length > 0 ? parsed.competitions : DEFAULT_TEAM_DATA.competitions,
                 peerRatings: Array.isArray(parsed.peerRatings) ? parsed.peerRatings : [],
                 demerits: Array.isArray(parsed.demerits) ? parsed.demerits : [],
+                warnings: Array.isArray(parsed.warnings) ? parsed.warnings : [],
+                offerLetterRequests: Array.isArray(parsed.offerLetterRequests) ? parsed.offerLetterRequests : [],
                 appreciations: Array.isArray(parsed.appreciations) ? parsed.appreciations : (DEFAULT_TEAM_DATA.appreciations || []),
                 appreciationTasks: Array.isArray(parsed.appreciationTasks) && parsed.appreciationTasks.length > 0 ? parsed.appreciationTasks : DEFAULT_TEAM_DATA.appreciationTasks,
-                impactContent: (parsed.impactContent && typeof parsed.impactContent === 'object') ? parsed.impactContent : DEFAULT_TEAM_DATA.impactContent
+                impactContent: (parsed.impactContent && typeof parsed.impactContent === 'object') ? parsed.impactContent : DEFAULT_TEAM_DATA.impactContent,
+                vaultContent: (parsed.vaultContent && typeof parsed.vaultContent === 'object') ? parsed.vaultContent : JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA.vaultContent))
             };
             if (Array.isArray(data.committeeMembers)) {
                 data.committeeMembers.forEach(m => {
@@ -462,6 +477,12 @@ try {
                     if (Array.isArray(cloud.demerits)) {
                         appTeamData.demerits = cloud.demerits;
                     }
+                    if (Array.isArray(cloud.warnings)) {
+                        appTeamData.warnings = cloud.warnings;
+                    }
+                    if (Array.isArray(cloud.offerLetterRequests)) {
+                        appTeamData.offerLetterRequests = cloud.offerLetterRequests;
+                    }
                     if (Array.isArray(cloud.appreciations)) {
                         appTeamData.appreciations = cloud.appreciations;
                     }
@@ -470,6 +491,11 @@ try {
                     }
                     if (cloud.impactContent && typeof cloud.impactContent === 'object') {
                         appTeamData.impactContent = cloud.impactContent;
+                    }
+                    if (cloud.vaultContent && typeof cloud.vaultContent === 'object') {
+                        appTeamData.vaultContent = cloud.vaultContent;
+                        if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
+                        if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
                     }
                     if (Array.isArray(appTeamData.committeeMembers)) {
                         appTeamData.committeeMembers.forEach(m => {
@@ -493,6 +519,11 @@ try {
                     if (typeof renderAdminLeaderboardList === 'function') renderAdminLeaderboardList();
                     if (typeof renderAdminDemeritDropdown === 'function') renderAdminDemeritDropdown();
                     if (typeof renderAdminDemeritsList === 'function') renderAdminDemeritsList();
+                    if (typeof renderAdminWarningDropdown === 'function') renderAdminWarningDropdown();
+                    if (typeof renderAdminWarningsList === 'function') renderAdminWarningsList();
+                    if (typeof renderAdminOfferLetterRequestsList === 'function') renderAdminOfferLetterRequestsList();
+                    if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
+                    if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
                     if (typeof renderAdminAppreciationDropdown === 'function') renderAdminAppreciationDropdown();
                     if (typeof renderAdminAppreciationsList === 'function') renderAdminAppreciationsList();
                     if (typeof renderPublicLeaderboardLogsBin === 'function') renderPublicLeaderboardLogsBin();
@@ -766,6 +797,11 @@ function saveTeamData() {
     renderAdminLeaderboardList();
     if (typeof renderAdminDemeritDropdown === 'function') renderAdminDemeritDropdown();
     if (typeof renderAdminDemeritsList === 'function') renderAdminDemeritsList();
+    if (typeof renderAdminWarningDropdown === 'function') renderAdminWarningDropdown();
+    if (typeof renderAdminWarningsList === 'function') renderAdminWarningsList();
+    if (typeof renderAdminOfferLetterRequestsList === 'function') renderAdminOfferLetterRequestsList();
+    if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
+    if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
     renderAdminTenureChips();
     renderAdminCommitteeTenureDropdown();
     renderAdminCommitteeRosterList();
@@ -1032,18 +1068,24 @@ function renderAdminDemeritDropdown() {
     const btnSelectAll = document.getElementById("btn-demerit-select-all");
     const btnDeselectAll = document.getElementById("btn-demerit-deselect-all");
     
+    if (!checklist) return;
+
     const memberMap = new Map();
     (appTeamData.committeeMembers || []).forEach(m => {
-        memberMap.set(m.name.trim().toLowerCase(), { id: m.id, name: m.name, sub: m.tenure + " (" + m.desc + ")" });
+        if (m && m.name) {
+            memberMap.set(m.name.trim().toLowerCase(), { id: m.id, name: m.name, sub: (m.tenure || "Tenure") + " (" + (m.desc || "Member") + ")" });
+        }
     });
     (appTeamData.leaderboard || []).forEach(l => {
-        const key = l.name.trim().toLowerCase();
-        if (!memberMap.has(key)) {
-            memberMap.set(key, { id: l.id, name: l.name, sub: "Leaderboard Roster" });
+        if (l && l.name) {
+            const key = l.name.trim().toLowerCase();
+            if (!memberMap.has(key)) {
+                memberMap.set(key, { id: l.id, name: l.name, sub: "Leaderboard Roster" });
+            }
         }
     });
     
-    const members = Array.from(memberMap.values());
+    const members = Array.from(memberMap.values()).sort((a, b) => a.name.localeCompare(b.name));
     
     // Populate fallback select
     if (select) {
@@ -1054,85 +1096,106 @@ function renderAdminDemeritDropdown() {
         }
     }
     
-    // Populate multi-member checklist
-    if (checklist) {
-        if (members.length === 0) {
-            checklist.innerHTML = `<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 0.82rem;">No members available. Add members in the leaderboard panel.</div>`;
-            return;
+    if (members.length === 0) {
+        checklist.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">No members available. Add members in the leaderboard panel.</div>`;
+        if (countBadge) countBadge.textContent = "0 selected";
+        return;
+    }
+    
+    // Preserve checked state if re-rendering
+    const currentlyChecked = new Set();
+    checklist.querySelectorAll(".demerit-chk-input:checked").forEach(chk => {
+        currentlyChecked.add(chk.value);
+    });
+
+    checklist.innerHTML = members.map(m => {
+        const isChecked = currentlyChecked.has(m.id);
+        return `
+        <label class="demerit-member-card${isChecked ? ' selected' : ''}" for="demerit-chk-${m.id}" data-name="${escapeHtml(m.name.toLowerCase())}">
+            <input type="checkbox" class="demerit-chk-input" id="demerit-chk-${m.id}" value="${m.id}" data-name="${escapeHtml(m.name)}"${isChecked ? ' checked' : ''}>
+            <div class="demerit-member-info">
+                <strong>${escapeHtml(m.name)}</strong>
+                <span>${escapeHtml(m.sub)}</span>
+            </div>
+        </label>
+        `;
+    }).join("") + `<div id="demerit-search-empty-notice" style="display: none; padding: 12px; text-align: center; color: var(--text-muted); font-size: 0.82rem; grid-column: 1 / -1;">No members found matching your search.</div>`;
+    
+    function updateSelectedCount() {
+        const checked = checklist.querySelectorAll(".demerit-chk-input:checked");
+        if (countBadge) countBadge.textContent = `${checked.length} selected`;
+        
+        checklist.querySelectorAll(".demerit-member-card").forEach(card => {
+            const chk = card.querySelector(".demerit-chk-input");
+            if (chk && chk.checked) {
+                card.classList.add("selected");
+            } else {
+                card.classList.remove("selected");
+            }
+        });
+    }
+    
+    checklist.querySelectorAll(".demerit-chk-input").forEach(chk => {
+        chk.addEventListener("change", updateSelectedCount);
+    });
+    
+    function filterDemeritMembers(query) {
+        query = (query || "").trim().toLowerCase();
+        let visibleCount = 0;
+        checklist.querySelectorAll(".demerit-member-card").forEach(card => {
+            const name = card.getAttribute("data-name") || "";
+            const text = card.textContent.toLowerCase();
+            if (!query || name.includes(query) || text.includes(query)) {
+                card.style.display = "flex";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+        const emptyNotice = document.getElementById("demerit-search-empty-notice");
+        if (emptyNotice) {
+            emptyNotice.style.display = (visibleCount === 0 && query) ? "block" : "none";
         }
-        
-        checklist.innerHTML = members.map(m => `
-            <label class="demerit-member-card" for="demerit-chk-${m.id}" data-name="${escapeHtml(m.name.toLowerCase())}">
-                <input type="checkbox" class="demerit-chk-input" id="demerit-chk-${m.id}" value="${m.id}" data-name="${escapeHtml(m.name)}">
-                <div class="demerit-member-info">
-                    <strong>${escapeHtml(m.name)}</strong>
-                    <span>${escapeHtml(m.sub)}</span>
-                </div>
-            </label>
-        `).join("");
-        
-        // Update selection count helper
-        function updateSelectedCount() {
-            const checked = checklist.querySelectorAll(".demerit-chk-input:checked");
-            if (countBadge) countBadge.textContent = `${checked.length} selected`;
-            
+    }
+
+    // Live search filter
+    if (searchInput && !searchInput.dataset.bound) {
+        searchInput.dataset.bound = "true";
+        searchInput.addEventListener("input", function() {
+            filterDemeritMembers(this.value);
+        });
+    }
+
+    if (searchInput && searchInput.value) {
+        filterDemeritMembers(searchInput.value);
+    }
+    
+    // Select All button
+    if (btnSelectAll && !btnSelectAll.dataset.bound) {
+        btnSelectAll.dataset.bound = "true";
+        btnSelectAll.addEventListener("click", () => {
             checklist.querySelectorAll(".demerit-member-card").forEach(card => {
-                const chk = card.querySelector(".demerit-chk-input");
-                if (chk && chk.checked) {
-                    card.classList.add("selected");
-                } else {
-                    card.classList.remove("selected");
+                if (card.style.display !== "none") {
+                    const chk = card.querySelector(".demerit-chk-input");
+                    if (chk) chk.checked = true;
                 }
             });
-        }
-        
-        checklist.querySelectorAll(".demerit-chk-input").forEach(chk => {
-            chk.addEventListener("change", updateSelectedCount);
+            updateSelectedCount();
         });
-        
-        // Live search filter
-        if (searchInput && !searchInput.dataset.bound) {
-            searchInput.dataset.bound = "true";
-            searchInput.addEventListener("input", function() {
-                const query = this.value.trim().toLowerCase();
-                checklist.querySelectorAll(".demerit-member-card").forEach(card => {
-                    const name = card.getAttribute("data-name") || "";
-                    if (!query || name.includes(query)) {
-                        card.style.display = "flex";
-                    } else {
-                        card.style.display = "none";
-                    }
-                });
-            });
-        }
-        
-        // Select All button
-        if (btnSelectAll && !btnSelectAll.dataset.bound) {
-            btnSelectAll.dataset.bound = "true";
-            btnSelectAll.addEventListener("click", () => {
-                checklist.querySelectorAll(".demerit-member-card").forEach(card => {
-                    if (card.style.display !== "none") {
-                        const chk = card.querySelector(".demerit-chk-input");
-                        if (chk) chk.checked = true;
-                    }
-                });
-                updateSelectedCount();
-            });
-        }
-        
-        // Deselect All button
-        if (btnDeselectAll && !btnDeselectAll.dataset.bound) {
-            btnDeselectAll.dataset.bound = "true";
-            btnDeselectAll.addEventListener("click", () => {
-                checklist.querySelectorAll(".demerit-chk-input").forEach(chk => {
-                    chk.checked = false;
-                });
-                updateSelectedCount();
-            });
-        }
-        
-        updateSelectedCount();
     }
+    
+    // Deselect All button
+    if (btnDeselectAll && !btnDeselectAll.dataset.bound) {
+        btnDeselectAll.dataset.bound = "true";
+        btnDeselectAll.addEventListener("click", () => {
+            checklist.querySelectorAll(".demerit-chk-input").forEach(chk => {
+                chk.checked = false;
+            });
+            updateSelectedCount();
+        });
+    }
+    
+    updateSelectedCount();
 }
 
 function renderAdminDemeritsList() {
@@ -1187,6 +1250,246 @@ function revokeAdminDemerit(demeritId) {
             renderMemberPortal();
         }
     }
+}
+
+
+// 3D. ADMIN: WARNINGS DROPDOWN & LOG (v8)
+function renderAdminWarningDropdown() {
+    const select = document.getElementById("admin-warning-member-select");
+    const checklist = document.getElementById("admin-warning-members-checklist");
+    const countBadge = document.getElementById("admin-warning-selected-count");
+    const searchInput = document.getElementById("admin-warning-member-search");
+    const btnSelectAll = document.getElementById("btn-warning-select-all");
+    const btnDeselectAll = document.getElementById("btn-warning-deselect-all");
+    
+    if (!checklist) return;
+
+    const memberMap = new Map();
+    (appTeamData.committeeMembers || []).forEach(m => {
+        if (m && m.name) {
+            memberMap.set(m.name.trim().toLowerCase(), { id: m.id, name: m.name, sub: (m.tenure || "Tenure") + " (" + (m.desc || "Member") + ")" });
+        }
+    });
+    (appTeamData.leaderboard || []).forEach(l => {
+        if (l && l.name) {
+            const key = l.name.trim().toLowerCase();
+            if (!memberMap.has(key)) {
+                memberMap.set(key, { id: l.id, name: l.name, sub: "Leaderboard Roster" });
+            }
+        }
+    });
+    
+    const members = Array.from(memberMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+    
+    // Populate fallback select
+    if (select) {
+        if (members.length === 0) {
+            select.innerHTML = `<option value="">No members available</option>`;
+        } else {
+            select.innerHTML = members.map(m => `<option value="${m.id}" data-name="${escapeHtml(m.name)}">${escapeHtml(m.name)} — ${escapeHtml(m.sub)}</option>`).join("");
+        }
+    }
+    
+    if (members.length === 0) {
+        checklist.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">No members available. Add members in the leaderboard panel.</div>`;
+        if (countBadge) countBadge.textContent = "0 selected";
+        return;
+    }
+
+    // Preserve checked state if re-rendering
+    const currentlyChecked = new Set();
+    checklist.querySelectorAll(".warning-chk-input:checked").forEach(chk => {
+        currentlyChecked.add(chk.value);
+    });
+    
+    checklist.innerHTML = members.map(m => {
+        const isChecked = currentlyChecked.has(m.id);
+        return `
+        <label class="warning-member-card${isChecked ? ' selected' : ''}" for="warn-chk-${m.id}" data-name="${escapeHtml(m.name.toLowerCase())}">
+            <input type="checkbox" class="warning-chk-input" id="warn-chk-${m.id}" value="${m.id}" data-name="${escapeHtml(m.name)}"${isChecked ? ' checked' : ''}>
+            <div class="demerit-member-info">
+                <strong>${escapeHtml(m.name)}</strong>
+                <span>${escapeHtml(m.sub)}</span>
+            </div>
+        </label>
+        `;
+    }).join("") + `<div id="warning-search-empty-notice" style="display: none; padding: 12px; text-align: center; color: var(--text-muted); font-size: 0.82rem; grid-column: 1 / -1;">No members found matching your search.</div>`;
+    
+    function updateSelectedCount() {
+        const checked = checklist.querySelectorAll(".warning-chk-input:checked");
+        if (countBadge) countBadge.textContent = `${checked.length} selected`;
+        
+        checklist.querySelectorAll(".warning-member-card").forEach(card => {
+            const chk = card.querySelector(".warning-chk-input");
+            if (chk && chk.checked) {
+                card.classList.add("selected");
+            } else {
+                card.classList.remove("selected");
+            }
+        });
+    }
+    
+    checklist.querySelectorAll(".warning-chk-input").forEach(chk => {
+        chk.addEventListener("change", updateSelectedCount);
+    });
+    
+    function filterWarningMembers(query) {
+        query = (query || "").trim().toLowerCase();
+        let visibleCount = 0;
+        checklist.querySelectorAll(".warning-member-card").forEach(card => {
+            const name = card.getAttribute("data-name") || "";
+            const text = card.textContent.toLowerCase();
+            if (!query || name.includes(query) || text.includes(query)) {
+                card.style.display = "flex";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+        const emptyNotice = document.getElementById("warning-search-empty-notice");
+        if (emptyNotice) {
+            emptyNotice.style.display = (visibleCount === 0 && query) ? "block" : "none";
+        }
+    }
+
+    // Live search filter
+    if (searchInput && !searchInput.dataset.bound) {
+        searchInput.dataset.bound = "true";
+        searchInput.addEventListener("input", function() {
+            filterWarningMembers(this.value);
+        });
+    }
+
+    if (searchInput && searchInput.value) {
+        filterWarningMembers(searchInput.value);
+    }
+    
+    // Select All button
+    if (btnSelectAll && !btnSelectAll.dataset.bound) {
+        btnSelectAll.dataset.bound = "true";
+        btnSelectAll.addEventListener("click", () => {
+            checklist.querySelectorAll(".warning-member-card").forEach(card => {
+                if (card.style.display !== "none") {
+                    const chk = card.querySelector(".warning-chk-input");
+                    if (chk) chk.checked = true;
+                }
+            });
+            updateSelectedCount();
+        });
+    }
+    
+    // Deselect All button
+    if (btnDeselectAll && !btnDeselectAll.dataset.bound) {
+        btnDeselectAll.dataset.bound = "true";
+        btnDeselectAll.addEventListener("click", () => {
+            checklist.querySelectorAll(".warning-chk-input").forEach(chk => {
+                chk.checked = false;
+            });
+            updateSelectedCount();
+        });
+    }
+    
+    updateSelectedCount();
+}
+
+function renderAdminWarningsList() {
+    const tbody = document.getElementById("admin-warnings-log-tbody");
+    const countBadge = document.getElementById("admin-warnings-count-badge");
+    if (!tbody) return;
+    
+    const warnings = Array.isArray(appTeamData.warnings) ? appTeamData.warnings : [];
+    if (countBadge) countBadge.textContent = `${warnings.length} Warning${warnings.length === 1 ? '' : 's'}`;
+    
+    if (warnings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 18px; color: var(--text-muted); font-size: 0.84rem;">No official warnings on file. Team compliance is 100%!</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = warnings.map(w => `
+        <tr>
+            <td style="font-weight: 700; font-size: 0.85rem;">${escapeHtml(w.memberName)}</td>
+            <td><span class="logs-stat-pill orange" style="font-size: 0.72rem; padding: 2px 8px;">${escapeHtml(w.category || 'Warning')}</span></td>
+            <td>
+                <div style="font-size: 0.8rem; color: var(--text-primary); max-width: 240px; word-break: break-word;">${escapeHtml(w.message)}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">${escapeHtml(w.issuedAt || "Recent")}</div>
+            </td>
+            <td>
+                <button type="button" class="btn-revoke-warning" data-id="${w.id}" title="Dismiss Warning" style="padding: 3px 8px; font-size: 0.72rem; font-weight: 700; border-radius: 6px; background: rgba(249, 115, 22, 0.15); color: #ea580c; border: 1px solid rgba(249, 115, 22, 0.35); cursor: pointer;">
+                    Dismiss
+                </button>
+            </td>
+        </tr>
+    `).join("");
+    
+    tbody.querySelectorAll(".btn-revoke-warning").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            revokeAdminWarning(id);
+        });
+    });
+}
+
+function revokeAdminWarning(warningId) {
+    const w = (appTeamData.warnings || []).find(x => x.id === warningId);
+    if (!w) return;
+    
+    if (confirm(`Dismiss this official warning notice for ${w.memberName}? This will remove it from their portal record.`)) {
+        appTeamData.warnings = appTeamData.warnings.filter(x => x.id !== warningId);
+        saveTeamData();
+        playClickSound();
+        renderAdminWarningsList();
+        
+        if (typeof renderMemberPortal === 'function' && typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) {
+            renderMemberPortal();
+        }
+    }
+}
+
+// 3E. ADMIN: OFFER LETTER REQUESTS LOG
+function renderAdminOfferLetterRequestsList() {
+    const tbody = document.getElementById("admin-offer-requests-tbody");
+    const countBadge = document.getElementById("admin-offer-requests-count-badge");
+    if (!tbody) return;
+    
+    const requests = Array.isArray(appTeamData.offerLetterRequests) ? appTeamData.offerLetterRequests : [];
+    if (countBadge) countBadge.textContent = `${requests.length} Request${requests.length === 1 ? '' : 's'}`;
+    
+    if (requests.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 18px; color: var(--text-muted); font-size: 0.84rem;">No offer letter requests received yet.</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = requests.map(r => `
+        <tr>
+            <td style="font-weight: 700; font-size: 0.85rem;">${escapeHtml(r.memberName)}</td>
+            <td><a href="mailto:${escapeHtml(r.email)}" style="color: var(--primary); font-weight: 600; font-size: 0.82rem;">${escapeHtml(r.email)}</a></td>
+            <td>
+                <div style="font-size: 0.78rem; font-weight: 700; color: ${r.status === 'Dispatched / Sent ✓' ? '#10b981' : '#f59e0b'};">
+                    ${escapeHtml(r.status || 'Pending Dispatch')}
+                </div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(r.requestedAt || 'Recent')}</div>
+            </td>
+            <td>
+                <button type="button" class="btn-toggle-offer-status" data-id="${r.id}" style="padding: 3px 8px; font-size: 0.72rem; font-weight: 700; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.35); cursor: pointer;">
+                    ${r.status === 'Dispatched / Sent ✓' ? 'Mark Pending' : '✓ Mark Sent'}
+                </button>
+            </td>
+        </tr>
+    `).join("");
+    
+    tbody.querySelectorAll(".btn-toggle-offer-status").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            const req = (appTeamData.offerLetterRequests || []).find(x => x.id === id);
+            if (req) {
+                req.status = (req.status === 'Dispatched / Sent ✓' ? 'Pending Dispatch' : 'Dispatched / Sent ✓');
+                saveTeamData();
+                playClickSound();
+                renderAdminOfferLetterRequestsList();
+                if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
+            }
+        });
+    });
 }
 
 // 3C. ADMIN: APPRECIATION POINTS CITATIONS DROPDOWN & LOG
@@ -1648,6 +1951,10 @@ function openAdminMasterConsole() {
     renderAdminLeaderboardList();
     renderAdminDemeritDropdown();
     renderAdminDemeritsList();
+    renderAdminWarningDropdown();
+    renderAdminWarningsList();
+    renderAdminOfferLetterRequestsList();
+    renderAdminVaultSettings();
     renderAdminAppreciationDropdown();
     renderAdminAppreciationsList();
     renderAdminTenureChips();
@@ -1919,6 +2226,16 @@ function setupModalsController() {
             this.classList.add("active");
             const targetTab = document.getElementById(tabId);
             if (targetTab) targetTab.classList.add("active");
+            
+            if (tabId === "tab-points") {
+                if (typeof renderAdminWarningDropdown === 'function') renderAdminWarningDropdown();
+                if (typeof renderAdminWarningsList === 'function') renderAdminWarningsList();
+                if (typeof renderAdminDemeritDropdown === 'function') renderAdminDemeritDropdown();
+                if (typeof renderAdminDemeritsList === 'function') renderAdminDemeritsList();
+                if (typeof renderAdminOfferLetterRequestsList === 'function') renderAdminOfferLetterRequestsList();
+            } else if (tabId === "tab-vault-admin") {
+                if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
+            }
             playClickSound();
         });
     });
@@ -2337,6 +2654,94 @@ function setupModalsController() {
         });
     }
 
+    
+    // Admin Issue Official Warning
+    const btnIssueWarning = document.getElementById("btn-admin-issue-warning");
+    if (btnIssueWarning) {
+        btnIssueWarning.addEventListener("click", (e) => {
+            e.preventDefault();
+            const categorySelect = document.getElementById("admin-warning-category");
+            const descInput = document.getElementById("admin-warning-desc");
+            const feedback = document.getElementById("admin-warning-feedback");
+            
+            // Gather selected members from checklist (or fallback select)
+            let selectedMembers = [];
+            const checkedBoxes = document.querySelectorAll("#admin-warning-members-checklist .warning-chk-input:checked");
+            if (checkedBoxes.length > 0) {
+                checkedBoxes.forEach(chk => {
+                    selectedMembers.push({
+                        id: chk.value,
+                        name: (chk.getAttribute("data-name") || "Member").trim()
+                    });
+                });
+            } else {
+                const memberSelect = document.getElementById("admin-warning-member-select");
+                if (memberSelect && memberSelect.value) {
+                    const selectedOpt = memberSelect.options[memberSelect.selectedIndex];
+                    const memberName = selectedOpt ? selectedOpt.getAttribute("data-name") || selectedOpt.text.split(" — ")[0] : memberSelect.value;
+                    selectedMembers.push({
+                        id: memberSelect.value,
+                        name: memberName.trim()
+                    });
+                }
+            }
+            
+            if (selectedMembers.length === 0) {
+                alert("Please select at least one member to issue the official warning to.");
+                return;
+            }
+            
+            const category = categorySelect ? categorySelect.value : "Operational Advisory";
+            const message = descInput ? descInput.value.trim() : "";
+            if (!message) {
+                alert("Please specify the warning notice message / cause.");
+                return;
+            }
+            
+            if (!Array.isArray(appTeamData.warnings)) appTeamData.warnings = [];
+            const nowFormatted = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            selectedMembers.forEach((m, idx) => {
+                const newWarn = {
+                    id: "warn-" + Date.now() + "-" + idx + "-" + Math.random().toString(36).substr(2, 4),
+                    memberId: m.id,
+                    memberName: m.name,
+                    category: category,
+                    message: message,
+                    issuedAt: nowFormatted
+                };
+                appTeamData.warnings.unshift(newWarn);
+            });
+            
+            saveTeamData();
+            playClickSound();
+            
+            renderAdminWarningsList();
+            
+            if (typeof renderMemberPortal === 'function' && typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) {
+                renderMemberPortal();
+            }
+            
+            if (descInput) descInput.value = "";
+            
+            document.querySelectorAll("#admin-warning-members-checklist .warning-chk-input").forEach(chk => {
+                chk.checked = false;
+            });
+            document.querySelectorAll("#admin-warning-members-checklist .warning-member-card").forEach(c => {
+                c.classList.remove("selected");
+            });
+            const countBadge = document.getElementById("admin-warning-selected-count");
+            if (countBadge) countBadge.textContent = "0 selected";
+            
+            const namesList = selectedMembers.map(m => m.name).join(", ");
+            if (feedback) {
+                feedback.innerHTML = `✓ Warning issued to ${selectedMembers.length} member(s): ${escapeHtml(namesList)}. Visible in orange alert box in their portal!`;
+                feedback.style.display = "block";
+                setTimeout(() => { feedback.style.display = "none"; }, 5000);
+            }
+        });
+    }
+
     // Award Appreciation Points Form Submission
     const btnIssueAppreciation = document.getElementById("btn-admin-issue-appreciation");
     const formIssueAppreciation = document.getElementById("admin-appreciation-form");
@@ -2515,6 +2920,10 @@ function openMemberPortal(member) {
 function closeMemberPortal() {
     const portal = document.getElementById("member-portal-modal");
     if (portal) portal.classList.remove("active");
+    const memberCardContainer = document.getElementById("member-portal-card-container");
+    if (memberCardContainer) memberCardContainer.classList.remove("is-fullscreen");
+    const memberFullscreenIcon = document.getElementById("member-fullscreen-icon");
+    if (memberFullscreenIcon) memberFullscreenIcon.textContent = "⛶";
     currentLoggedInMember = null;
     sessionStorage.removeItem("interactup_member_id");
     
@@ -2582,6 +2991,9 @@ function renderMemberPortal() {
     
     // 7. Tab 5: Personal Recognition & Accountability Logs Bin
     renderMemberLogsBinTab();
+
+    // 8. Tab 6: Career Vault & Privileges
+    if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
 }
 
 function renderMemberInvitationsBanner() {
@@ -2905,8 +3317,8 @@ function renderPublicLeaderboardLogsBin() {
                 "${escapeHtml(a.reason)}"
             </div>
             <div class="log-citation-meta">
-                <span>Awarded on: <strong>${escapeHtml(a.issuedAt || "Recent")}</strong></span>
-                <span style="color: #10b981; font-weight: 700;">Verified Community Citation</span>
+                <span style="color: #10b981; font-weight: 700;">🌟 Verified Community Citation</span>
+                <span style="color: var(--text-muted); font-size: 0.74rem;">Chronological Merit Recognition</span>
             </div>
         </div>
     `).join("");
@@ -2922,13 +3334,15 @@ function renderMemberLogsBinTab() {
     const container = document.getElementById("member-personal-logs-container");
     const apprTotalBadge = document.getElementById("member-logs-appr-total");
     const demeritTotalBadge = document.getElementById("member-logs-demerit-total");
+    const warningTotalBadge = document.getElementById("member-logs-warning-total");
     const countAll = document.getElementById("count-logs-all");
     const countAppr = document.getElementById("count-logs-appr");
     const countDemerit = document.getElementById("count-logs-demerit");
+    const countWarning = document.getElementById("count-logs-warning");
 
     if (!container || !currentLoggedInMember) return;
 
-    // Filter citations for this member
+    // Filter appreciations for this member
     const myAppreciations = (appTeamData.appreciations || []).filter(a =>
         (a.memberId && a.memberId === currentLoggedInMember.id) ||
         (a.memberName && a.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
@@ -2940,15 +3354,23 @@ function renderMemberLogsBinTab() {
         (d.memberName && d.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
     );
 
+    // Filter warnings for this member
+    const myWarnings = (appTeamData.warnings || []).filter(w =>
+        (w.memberId && w.memberId === currentLoggedInMember.id) ||
+        (w.memberName && w.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
+    );
+
     const totalApprPts = myAppreciations.reduce((acc, a) => acc + (a.points || 0), 0);
     const totalDemeritPts = myDemerits.reduce((acc, d) => acc + (d.points || 0), 0);
 
     if (apprTotalBadge) apprTotalBadge.textContent = `+${totalApprPts} pts Earned`;
     if (demeritTotalBadge) demeritTotalBadge.textContent = `${totalDemeritPts} pts Demerits`;
+    if (warningTotalBadge) warningTotalBadge.textContent = `${myWarnings.length} Warning${myWarnings.length === 1 ? '' : 's'}`;
 
-    if (countAll) countAll.textContent = myAppreciations.length + myDemerits.length;
+    if (countAll) countAll.textContent = myAppreciations.length + myDemerits.length + myWarnings.length;
     if (countAppr) countAppr.textContent = myAppreciations.length;
     if (countDemerit) countDemerit.textContent = myDemerits.length;
+    if (countWarning) countWarning.textContent = myWarnings.length;
 
     // Combine into unified activity feed
     let unified = [];
@@ -2958,7 +3380,6 @@ function renderMemberLogsBinTab() {
             type: "appreciation",
             points: a.points,
             reason: a.reason,
-            issuedAt: a.issuedAt || "Recent",
             title: "🌟 Official Appreciation Citation",
             raw: a
         });
@@ -2974,8 +3395,20 @@ function renderMemberLogsBinTab() {
             raw: d
         });
     });
+    myWarnings.forEach(w => {
+        unified.push({
+            id: w.id,
+            type: "warning",
+            points: 0,
+            category: w.category || "Official Operational Warning",
+            reason: w.message,
+            issuedAt: w.issuedAt || "Recent",
+            title: `⚠️ ${w.category || "Official Advisory Notice"} (#${w.id.slice(-6).toUpperCase()})`,
+            raw: w
+        });
+    });
 
-    // Sort by id descending
+    // Sort by id descending (chronological newest first)
     unified.sort((x, y) => String(y.id).localeCompare(String(x.id)));
 
     // Apply active filter
@@ -2984,6 +3417,8 @@ function renderMemberLogsBinTab() {
         filtered = unified.filter(item => item.type === "appreciation");
     } else if (currentLogsFilter === "demerits") {
         filtered = unified.filter(item => item.type === "demerit");
+    } else if (currentLogsFilter === "warning") {
+        filtered = unified.filter(item => item.type === "warning");
     }
 
     // Wire filter buttons
@@ -3000,39 +3435,86 @@ function renderMemberLogsBinTab() {
         let emptyMsg = "No activity logs recorded yet.";
         if (currentLogsFilter === "appreciation") emptyMsg = "No appreciation citations recorded yet.";
         if (currentLogsFilter === "demerits") emptyMsg = "Clean record! No system accountability notices on file.";
+        if (currentLogsFilter === "warning") emptyMsg = "Clean record! No official warnings on file.";
 
         container.innerHTML = `
             <div style="text-align: center; padding: 36px 20px; background: var(--bg-surface); border-radius: 12px; border: 1px dashed var(--border-light);">
-                <div style="font-size: 2rem; margin-bottom: 8px;">${currentLogsFilter === 'demerits' ? '🛡️' : '📜'}</div>
+                <div style="font-size: 2rem; margin-bottom: 8px;">${currentLogsFilter === 'demerits' ? '🛡️' : (currentLogsFilter === 'warning' ? '🛡️' : '📜')}</div>
                 <strong style="display: block; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 4px;">${emptyMsg}</strong>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Entries appear here automatically as activities, recognitions, and audits occur.</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Entries appear here automatically in chronological order.</p>
             </div>
         `;
         return;
     }
 
     container.innerHTML = filtered.map(item => {
-        const isAppr = item.type === "appreciation";
-        return `
-            <div class="personal-log-card ${isAppr ? 'appreciation' : 'demerit'}">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
-                    <div>
-                        <span class="log-type-tag ${isAppr ? 'green' : 'red'}">${isAppr ? '🌟 Official Citation' : '⚙️ Automated System Notice'}</span>
-                        <strong style="display: block; font-size: 0.94rem; margin-top: 3px; color: var(--text-primary);">${escapeHtml(item.title)}</strong>
+        if (item.type === "appreciation") {
+            // GREEN COLOR BOX FOR APPRECIATION - NO DATES DISPLAYED AS REQUESTED
+            return `
+                <div class="personal-log-card appreciation">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+                        <div>
+                            <span class="log-type-tag green">🌟 Official Merit Recognition</span>
+                            <strong style="display: block; font-size: 0.94rem; margin-top: 3px; color: var(--text-primary);">${escapeHtml(item.title)}</strong>
+                        </div>
+                        <div>
+                            <span class="logs-stat-pill green">+${item.points} pts</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="logs-stat-pill ${isAppr ? 'green' : 'red'}">${isAppr ? '+' : ''}${item.points} pts</span>
+                    <div style="margin: 8px 0; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5; background: rgba(16, 185, 129, 0.05); padding: 10px 14px; border-radius: 8px; border-left: 3.5px solid #10b981;">
+                        "${escapeHtml(item.reason)}"
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+                        <span>Accreditation: <strong style="color: #10b981;">Verified Community Citation</strong></span>
+                        <span style="color: #10b981; font-weight: 700;">Chronological Order</span>
                     </div>
                 </div>
-                <div style="margin: 8px 0; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5; background: rgba(0,0,0,0.03); padding: 10px 12px; border-radius: 8px; border-left: 3px solid ${isAppr ? '#10b981' : '#ef4444'};">
-                    ${escapeHtml(item.reason)}
+            `;
+        } else if (item.type === "demerit") {
+            // RED COLOR BOX FOR NEGATIVE POINTS - NO DATES DISPLAYED AS REQUESTED
+            return `
+                <div class="personal-log-card demerit">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+                        <div>
+                            <span class="log-type-tag red">⚙️ System Accountability Notice</span>
+                            <strong style="display: block; font-size: 0.94rem; margin-top: 3px; color: var(--text-primary);">${escapeHtml(item.title)}</strong>
+                        </div>
+                        <div>
+                            <span class="logs-stat-pill red">${item.points} pts</span>
+                        </div>
+                    </div>
+                    <div style="margin: 8px 0; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5; background: rgba(239, 68, 68, 0.05); padding: 10px 14px; border-radius: 8px; border-left: 3.5px solid #ef4444;">
+                        ${escapeHtml(item.reason)}
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+                        <span>Classification: <strong style="color: #ef4444;">System Demerit</strong></span>
+                        <span style="color: #ef4444; font-weight: 700;">Chronological Order</span>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
-                    <span>Recorded on: <strong>${escapeHtml(item.issuedAt)}</strong></span>
-                    <span>Classification: <strong style="color: ${isAppr ? '#10b981' : '#ef4444'};">${isAppr ? 'Merit Recognition' : 'System Demerit'}</strong></span>
+            `;
+        } else {
+            // ORANGE COLOR BOX FOR WARNINGS - NO DATES DISPLAYED AS REQUESTED
+            return `
+                <div class="personal-log-card warning">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+                        <div>
+                            <span class="log-type-tag orange">⚠️ Formal Advisory Notice</span>
+                            <strong style="display: block; font-size: 0.94rem; margin-top: 3px; color: var(--text-primary);">${escapeHtml(item.title)}</strong>
+                        </div>
+                        <div>
+                            <span class="logs-stat-pill orange">⚠️ Official Warning</span>
+                        </div>
+                    </div>
+                    <div style="margin: 8px 0; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5; background: rgba(249, 115, 22, 0.06); padding: 10px 14px; border-radius: 8px; border-left: 3.5px solid #ea580c;">
+                        ${escapeHtml(item.reason)}
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem; color: var(--text-muted); flex-wrap: wrap; gap: 6px;">
+                        <span>Classification: <strong style="color: #ea580c;">Administrative Advisory</strong></span>
+                        <span style="color: #ea580c; font-weight: 700;">Chronological Order</span>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     }).join("");
 }
 window.renderMemberLogsBinTab = renderMemberLogsBinTab;
@@ -3084,8 +3566,8 @@ function renderMemberDemeritsTab(myDemerits, totalDemeritPts) {
                 ${escapeHtml(d.reason)}
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; color: var(--text-muted); flex-wrap: wrap; gap: 8px;">
-                <span>Recorded on: <strong>${escapeHtml(d.issuedAt || "Recent")}</strong></span>
                 <span>Audit Classification: <strong style="color: #ef4444;">Procedural Demerit</strong></span>
+                <span style="color: #ef4444; font-weight: 700;">Chronological Order</span>
             </div>
         </div>
     `).join("");
@@ -3386,6 +3868,9 @@ function initMemberPortal() {
             if (targetId === "portal-tab-logs" && typeof renderMemberLogsBinTab === 'function') {
                 renderMemberLogsBinTab();
             }
+            if (targetId === "portal-tab-vault" && typeof renderMemberVaultTab === 'function') {
+                renderMemberVaultTab();
+            }
             playClickSound();
         });
     });
@@ -3478,6 +3963,34 @@ function initMemberPortal() {
         });
     }
     
+    // Member Portal Fullscreen Toggle
+    const btnMemberFullscreen = document.getElementById("btn-member-fullscreen");
+    const memberCardContainer = document.getElementById("member-portal-card-container");
+    const memberFullscreenIcon = document.getElementById("member-fullscreen-icon");
+    if (btnMemberFullscreen && memberCardContainer) {
+        btnMemberFullscreen.addEventListener("click", () => {
+            const isFull = memberCardContainer.classList.toggle("is-fullscreen");
+            if (memberFullscreenIcon) memberFullscreenIcon.textContent = isFull ? "🗗" : "⛶";
+            if (isFull) {
+                if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                }
+            } else {
+                if (document.exitFullscreen && document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                }
+            }
+            playClickSound();
+        });
+
+        document.addEventListener("fullscreenchange", () => {
+            if (!document.fullscreenElement && memberCardContainer.classList.contains("is-fullscreen")) {
+                memberCardContainer.classList.remove("is-fullscreen");
+                if (memberFullscreenIcon) memberFullscreenIcon.textContent = "⛶";
+            }
+        });
+    }
+
     // Close / Logout buttons
     const btnClosePortal = document.getElementById("btn-close-member-portal");
     if (btnClosePortal) btnClosePortal.addEventListener("click", closeMemberPortal);
@@ -5762,4 +6275,284 @@ document.addEventListener("DOMContentLoaded", () => {
             attachSoundToButtons();
         } catch (e) {}
     }
+});
+
+
+// ==========================================================================
+// 🏛️ TAB 6: CAREER VAULT & EXECUTIVE PRIVILEGES ENGINE (v8)
+// ==========================================================================
+function renderMemberVaultTab() {
+    // 1. Always apply dynamic vault content titles & subtitles across DOM
+    const vc = (appTeamData && appTeamData.vaultContent) ? appTeamData.vaultContent : (DEFAULT_TEAM_DATA.vaultContent || {});
+    
+    const heroTitle = document.getElementById("vault-hero-title-text");
+    if (heroTitle && vc.heroTitle) heroTitle.textContent = vc.heroTitle;
+
+    const heroSub = document.getElementById("vault-hero-sub-text");
+    if (heroSub && vc.heroSubtitle) heroSub.textContent = vc.heroSubtitle;
+    
+    const descOffer = document.getElementById("vault-desc-offer");
+    if (descOffer && vc.offerSubtitle) descOffer.textContent = vc.offerSubtitle;
+    
+    const descCompletion = document.getElementById("vault-desc-completion");
+    if (descCompletion && vc.completionSubtitle) descCompletion.textContent = vc.completionSubtitle;
+    
+    const descLor = document.getElementById("vault-desc-lor");
+    if (descLor && vc.lorSubtitle) descLor.textContent = vc.lorSubtitle;
+    
+    const descAlumni = document.getElementById("vault-desc-alumni");
+    if (descAlumni && vc.alumniSubtitle) descAlumni.textContent = vc.alumniSubtitle;
+    
+    const descBoard = document.getElementById("vault-desc-board");
+    if (descBoard && vc.boardSubtitle) descBoard.textContent = vc.boardSubtitle;
+    
+    const descMore = document.getElementById("vault-desc-more");
+    if (descMore && vc.moreSubtitle) descMore.textContent = vc.moreSubtitle;
+
+    if (!currentLoggedInMember) return;
+    
+    const offerStatusTxt = document.getElementById("vault-offer-status-txt");
+    const btnTriggerOffer = document.getElementById("btn-trigger-offer-letter");
+    
+    // Check if member has an existing request
+    const requests = Array.isArray(appTeamData.offerLetterRequests) ? appTeamData.offerLetterRequests : [];
+    const myReq = requests.find(r => 
+        (r.memberId && r.memberId === currentLoggedInMember.id) ||
+        (r.memberName && r.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
+    );
+    
+    if (offerStatusTxt && btnTriggerOffer) {
+        if (myReq) {
+            offerStatusTxt.innerHTML = `<span style="color: #10b981;">✓ Requested (${escapeHtml(myReq.email)}) &bull; ${escapeHtml(myReq.status || 'Pending Dispatch')}</span>`;
+            btnTriggerOffer.textContent = "Update Email 📨";
+        } else {
+            offerStatusTxt.textContent = "Ready to Dispatch";
+            btnTriggerOffer.textContent = "Request Letter 📨";
+        }
+        
+        btnTriggerOffer.onclick = openOfferLetterModal;
+    }
+    
+    // Wire locked cards info toasts
+    const lockedCards = [
+        { id: "vault-card-completion", name: "Certificate of Completion", req: "Unlocks automatically upon reaching the end of your official tenure cycle." },
+        { id: "vault-card-lor", name: "Letter of Recommendation (LOR)", req: "Authored and signed based strictly on high performance and positive appreciation standing during tenure." },
+        { id: "vault-card-alumni", name: "Executive Alum Guild", req: "Unlocks post-tenure upon successful tenure completion." },
+        { id: "vault-card-board-share", name: "Board Share & 20-Year Endowment", req: "Annual payouts for 20 years from the Board Fund. Allocation tier is based on net appreciation points, tenure, and zero-infraction standing." },
+        { id: "vault-card-many-more", name: "Many More Sovereign Perks", req: "Classified founder grants, incubators, and leadership perks will be revealed with time." }
+    ];
+    
+    lockedCards.forEach(c => {
+        const el = document.getElementById(c.id);
+        if (el && !el.dataset.bound) {
+            el.dataset.bound = "true";
+            el.addEventListener("click", () => {
+                alert(`🔒 ${c.name}\n\nStatus: Locked\n\nCriteria: ${c.req}`);
+                playClickSound();
+            });
+        }
+    });
+}
+
+// 🏛️ ADMIN: CAREER VAULT SETTINGS EDITOR
+function renderAdminVaultSettings() {
+    const vc = (appTeamData && appTeamData.vaultContent) ? appTeamData.vaultContent : (DEFAULT_TEAM_DATA.vaultContent || {});
+    
+    const inpHeroTitle = document.getElementById("admin-vault-hero-title");
+    const inpHeroSub = document.getElementById("admin-vault-hero-sub");
+    const inpOffer = document.getElementById("admin-vault-sub-offer");
+    const inpCompletion = document.getElementById("admin-vault-sub-completion");
+    const inpLor = document.getElementById("admin-vault-sub-lor");
+    const inpAlumni = document.getElementById("admin-vault-sub-alumni");
+    const inpBoard = document.getElementById("admin-vault-sub-board");
+    const inpMore = document.getElementById("admin-vault-sub-more");
+    
+    if (inpHeroTitle) inpHeroTitle.value = vc.heroTitle || "Career Vault & Tenure Endowments";
+    if (inpHeroSub) inpHeroSub.value = vc.heroSubtitle || "";
+    if (inpOffer) inpOffer.value = vc.offerSubtitle || "";
+    if (inpCompletion) inpCompletion.value = vc.completionSubtitle || "";
+    if (inpLor) inpLor.value = vc.lorSubtitle || "";
+    if (inpAlumni) inpAlumni.value = vc.alumniSubtitle || "";
+    if (inpBoard) inpBoard.value = vc.boardSubtitle || "";
+    if (inpMore) inpMore.value = vc.moreSubtitle || "";
+}
+
+function saveAdminVaultSettings() {
+    if (!appTeamData.vaultContent) {
+        appTeamData.vaultContent = JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA.vaultContent || {}));
+    }
+    
+    const inpHeroTitle = document.getElementById("admin-vault-hero-title");
+    const inpHeroSub = document.getElementById("admin-vault-hero-sub");
+    const inpOffer = document.getElementById("admin-vault-sub-offer");
+    const inpCompletion = document.getElementById("admin-vault-sub-completion");
+    const inpLor = document.getElementById("admin-vault-sub-lor");
+    const inpAlumni = document.getElementById("admin-vault-sub-alumni");
+    const inpBoard = document.getElementById("admin-vault-sub-board");
+    const inpMore = document.getElementById("admin-vault-sub-more");
+    
+    if (inpHeroTitle && inpHeroTitle.value.trim()) appTeamData.vaultContent.heroTitle = inpHeroTitle.value.trim();
+    if (inpHeroSub) appTeamData.vaultContent.heroSubtitle = inpHeroSub.value.trim();
+    if (inpOffer) appTeamData.vaultContent.offerSubtitle = inpOffer.value.trim();
+    if (inpCompletion) appTeamData.vaultContent.completionSubtitle = inpCompletion.value.trim();
+    if (inpLor) appTeamData.vaultContent.lorSubtitle = inpLor.value.trim();
+    if (inpAlumni) appTeamData.vaultContent.alumniSubtitle = inpAlumni.value.trim();
+    if (inpBoard) appTeamData.vaultContent.boardSubtitle = inpBoard.value.trim();
+    if (inpMore) appTeamData.vaultContent.moreSubtitle = inpMore.value.trim();
+    
+    saveTeamData();
+    if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
+    
+    const feedback = document.getElementById("vault-admin-feedback");
+    if (feedback) {
+        feedback.style.display = "block";
+        feedback.textContent = "✓ Career Vault subtitles successfully saved and published!";
+        setTimeout(() => { feedback.style.display = "none"; }, 4000);
+    }
+    playClickSound();
+}
+
+function resetAdminVaultSettings() {
+    if (!confirm("Reset all Career Vault titles and subtitles back to official defaults?")) return;
+    appTeamData.vaultContent = JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA.vaultContent || {}));
+    saveTeamData();
+    renderAdminVaultSettings();
+    if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
+    
+    const feedback = document.getElementById("vault-admin-feedback");
+    if (feedback) {
+        feedback.style.display = "block";
+        feedback.textContent = "✓ Reset to default Career Vault titles and subtitles.";
+        setTimeout(() => { feedback.style.display = "none"; }, 4000);
+    }
+    playClickSound();
+}
+
+function openOfferLetterModal() {
+    const modal = document.getElementById("modal-offer-letter-request");
+    const inputEmail = document.getElementById("input-offer-letter-email");
+    const feedback = document.getElementById("offer-letter-modal-feedback");
+    
+    if (!modal) return;
+    modal.classList.add("active");
+    modal.style.display = "flex";
+    if (feedback) feedback.style.display = "none";
+    
+    const requests = Array.isArray(appTeamData.offerLetterRequests) ? appTeamData.offerLetterRequests : [];
+    const myReq = (currentLoggedInMember && requests) ? requests.find(r => 
+        (r.memberId && r.memberId === currentLoggedInMember.id) ||
+        (r.memberName && r.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
+    ) : null;
+    
+    if (inputEmail) {
+        inputEmail.value = myReq ? myReq.email : "";
+        setTimeout(() => {
+            try { inputEmail.focus(); } catch(e) {}
+        }, 100);
+    }
+    playClickSound();
+}
+
+function closeOfferLetterModal() {
+    const modal = document.getElementById("modal-offer-letter-request");
+    if (modal) {
+        modal.classList.remove("active");
+        modal.style.display = "none";
+    }
+    playClickSound();
+}
+
+// Wire Offer Letter modal close & form submission, and Vault admin buttons
+document.addEventListener("DOMContentLoaded", () => {
+    const btnCloseOffer = document.getElementById("btn-close-offer-modal");
+    if (btnCloseOffer) btnCloseOffer.addEventListener("click", closeOfferLetterModal);
+
+    // Close when clicking outside on the backdrop
+    const modalOffer = document.getElementById("modal-offer-letter-request");
+    if (modalOffer) {
+        modalOffer.addEventListener("click", (e) => {
+            if (e.target === modalOffer) closeOfferLetterModal();
+        });
+    }
+
+    // Close on Escape key press
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            const m = document.getElementById("modal-offer-letter-request");
+            if (m && (m.classList.contains("active") || m.style.display === "flex")) {
+                closeOfferLetterModal();
+            }
+        }
+    });
+    
+    const formOffer = document.getElementById("form-submit-offer-letter");
+    if (formOffer) {
+        formOffer.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (!currentLoggedInMember) return;
+            
+            const inputEmail = document.getElementById("input-offer-letter-email");
+            const feedback = document.getElementById("offer-letter-modal-feedback");
+            const emailVal = inputEmail ? inputEmail.value.trim() : "";
+            
+            if (!emailVal || !emailVal.includes("@")) {
+                alert("Please provide a valid email address.");
+                return;
+            }
+            
+            if (!Array.isArray(appTeamData.offerLetterRequests)) appTeamData.offerLetterRequests = [];
+            
+            let existing = appTeamData.offerLetterRequests.find(r => 
+                (r.memberId && r.memberId === currentLoggedInMember.id) ||
+                (r.memberName && r.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
+            );
+            
+            const nowFormatted = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            if (existing) {
+                existing.email = emailVal;
+                existing.requestedAt = nowFormatted;
+                existing.status = "Pending Dispatch";
+            } else {
+                appTeamData.offerLetterRequests.unshift({
+                    id: "req-" + Date.now(),
+                    memberId: currentLoggedInMember.id,
+                    memberName: currentLoggedInMember.name,
+                    email: emailVal,
+                    requestedAt: nowFormatted,
+                    status: "Pending Dispatch"
+                });
+            }
+            
+            saveTeamData();
+            playClickSound();
+            
+            if (feedback) {
+                feedback.style.display = "block";
+            }
+            
+            setTimeout(() => {
+                closeOfferLetterModal();
+                renderMemberVaultTab();
+                if (typeof renderAdminOfferLetterRequestsList === 'function') renderAdminOfferLetterRequestsList();
+            }, 1200);
+        });
+    }
+
+    // Wire Vault Admin settings buttons
+    const btnSaveVault = document.getElementById("btn-save-vault-subtitles");
+    if (btnSaveVault) btnSaveVault.addEventListener("click", saveAdminVaultSettings);
+    
+    const btnSaveVaultBottom = document.getElementById("btn-save-vault-subtitles-bottom");
+    if (btnSaveVaultBottom) btnSaveVaultBottom.addEventListener("click", saveAdminVaultSettings);
+    
+    const btnResetVault = document.getElementById("btn-reset-vault-subtitles");
+    if (btnResetVault) btnResetVault.addEventListener("click", resetAdminVaultSettings);
+
+    // Initial render of vault and warning components
+    if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
+    if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
+    if (typeof renderAdminWarningDropdown === 'function') renderAdminWarningDropdown();
+    if (typeof renderAdminWarningsList === 'function') renderAdminWarningsList();
+    if (typeof renderAdminOfferLetterRequestsList === 'function') renderAdminOfferLetterRequestsList();
 });

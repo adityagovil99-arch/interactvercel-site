@@ -952,7 +952,7 @@
 
     <!-- 5B. PERSONALIZED MEMBER PORTAL MODAL -->
     <div class="modal-backdrop" id="member-portal-modal">
-        <div class="modal-card member-portal-card">
+        <div class="modal-card member-portal-card" id="member-portal-card-container">
             <!-- Header -->
             <div class="member-portal-header">
                 <div class="member-profile-summary">
@@ -974,6 +974,9 @@
                         <span style="font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: #ef4444;">⚠️ Demerits</span>
                         <strong id="member-portal-demerits-display" style="font-size: 1.1rem; color: #ef4444;">0 pts</strong>
                     </div>
+                    <button type="button" class="btn-portal-fullscreen" id="btn-member-fullscreen" title="Toggle Fullscreen View">
+                        <span id="member-fullscreen-icon">⛶</span> Fullscreen
+                    </button>
                     <button type="button" class="btn-portal-logout" id="btn-member-logout" title="Log out from member portal">🚪 Log Out</button>
                     <button class="btn-close-modal" id="btn-close-member-portal" aria-label="Close Member Portal">&times;</button>
                 </div>
@@ -989,6 +992,7 @@
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-activity">📜 My Claimed Tasks</button>
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-demerits">⚠️ Accountability & Demerits</button>
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-logs">📜 Logs Bin & History</button>
+                <button class="portal-tab-btn" data-portal-tab="portal-tab-vault">💎 Career Vault &amp; Privileges</button>
             </div>
 
             <!-- TAB 1: CLAIM APPRECIATION TASKS -->
@@ -1162,6 +1166,7 @@
                     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                         <span id="member-logs-appr-total" class="logs-stat-pill green">+0 pts Earned</span>
                         <span id="member-logs-demerit-total" class="logs-stat-pill red">-0 pts Demerits</span>
+                        <span id="member-logs-warning-total" class="logs-stat-pill orange">0 Warnings</span>
                     </div>
                 </div>
 
@@ -1170,12 +1175,163 @@
                     <button type="button" class="logs-filter-btn active" data-filter="all">All Activity (<span id="count-logs-all">0</span>)</button>
                     <button type="button" class="logs-filter-btn" data-filter="appreciation">🌟 Appreciation Citations (<span id="count-logs-appr">0</span>)</button>
                     <button type="button" class="logs-filter-btn" data-filter="demerits">⚠️ Accountability Demerits (<span id="count-logs-demerit">0</span>)</button>
+                    <button type="button" class="logs-filter-btn" data-filter="warning">⚠️ Official Warnings (<span id="count-logs-warning">0</span>)</button>
                 </div>
 
                 <div id="member-personal-logs-container" class="personal-logs-stream">
                     <!-- Loaded dynamically by JS -->
                 </div>
             </div>
+
+            <!-- TAB 6: CAREER VAULT & EXECUTIVE PRIVILEGES -->
+            <div class="portal-tab-content" id="portal-tab-vault">
+                <div class="career-vault-hero">
+                    <span class="career-vault-hero-badge">🏛️ EXECUTIVE HONORS &amp; SOVEREIGN ASSETS</span>
+                    <h3 id="vault-hero-title-text" style="margin: 0 0 6px 0; font-size: 1.3rem; color: var(--text-primary);">Career Vault &amp; Tenure Endowments</h3>
+                    <p id="vault-hero-sub-text" style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); max-width: 720px; line-height: 1.5;">
+                        Official credential repository, institutional assets, board profit-shares, and post-tenure career honors. As you deliver impact, earn appreciation, and maintain high accountability, each executive milestone unlocks automatically.
+                    </p>
+                </div>
+
+                <div class="career-vault-grid">
+                    <!-- 1. Offer Letter (UNLOCKED) -->
+                    <div class="career-vault-banner-card status-unlocked" id="vault-card-offer-letter">
+                        <div>
+                            <div class="vault-card-header">
+                                <div class="vault-icon-frame" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981;">📄</div>
+                                <span class="vault-badge unlocked">🔓 Available Now</span>
+                            </div>
+                            <h4 class="vault-title">Official Executive Offer Letter</h4>
+                            <p class="vault-desc" id="vault-desc-offer">
+                                Authenticated appointment letter on formal InteractUp corporate stationery certifying your tenure, executive role, and community credentials.
+                            </p>
+                        </div>
+                        <div class="vault-action-row">
+                            <span id="vault-offer-status-txt" style="color: #10b981; font-weight: 700;">Ready to Dispatch</span>
+                            <button type="button" class="btn-vault-action primary" id="btn-trigger-offer-letter">Request Letter 📨</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Certificate of Completion (LOCKED) -->
+                    <div class="career-vault-banner-card status-locked" id="vault-card-completion">
+                        <div>
+                            <div class="vault-card-header">
+                                <div class="vault-icon-frame">🎓</div>
+                                <span class="vault-badge locked">🔒 Locked (Tenure)</span>
+                            </div>
+                            <h4 class="vault-title">Certificate of Tenure Completion</h4>
+                            <p class="vault-desc" id="vault-desc-completion">
+                                Formal institutional accreditation awarded upon successful conclusion of your official executive tenure with verifiable verification code.
+                            </p>
+                        </div>
+                        <div class="vault-action-row">
+                            <span style="color: var(--text-muted);">Unlocks: End of Tenure</span>
+                            <button type="button" class="btn-vault-action locked-btn">🔒 Locked</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. Recommendation Letter (LOCKED - Performance Based) -->
+                    <div class="career-vault-banner-card status-locked" id="vault-card-lor">
+                        <div>
+                            <div class="vault-card-header">
+                                <div class="vault-icon-frame">🖋️</div>
+                                <span class="vault-badge locked">🔒 Performance Based</span>
+                            </div>
+                            <h4 class="vault-title">Letter of Recommendation (LOR)</h4>
+                            <p class="vault-desc" id="vault-desc-lor">
+                                Bespoke executive reference letter signed by Founders &amp; Board of Directors for university admissions, venture grants, and leadership roles. Authored strictly based on your performance, initiative, and appreciation standing during tenure.
+                            </p>
+                        </div>
+                        <div class="vault-action-row">
+                            <span style="color: var(--text-muted);">Criteria: Standing &ge; Tier 1</span>
+                            <button type="button" class="btn-vault-action locked-btn">🔒 Locked</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Alum Network (LOCKED) -->
+                    <div class="career-vault-banner-card status-locked" id="vault-card-alumni">
+                        <div>
+                            <div class="vault-card-header">
+                                <div class="vault-icon-frame">🌐</div>
+                                <span class="vault-badge locked">🔒 Post-Tenure Access</span>
+                            </div>
+                            <h4 class="vault-title">InteractUp Executive Alum Guild</h4>
+                            <p class="vault-desc" id="vault-desc-alumni">
+                                Lifetime VIP access to our closed executive alumni directory, senior corporate mentors, venture capital syndicates, and private alumni mixers worldwide.
+                            </p>
+                        </div>
+                        <div class="vault-action-row">
+                            <span style="color: var(--text-muted);">Unlocks: Post-Tenure</span>
+                            <button type="button" class="btn-vault-action locked-btn">🔒 Locked</button>
+                        </div>
+                    </div>
+
+                    <!-- 5. Board Share / 20-Year Endowment (LOCKED) -->
+                    <div class="career-vault-banner-card status-locked" id="vault-card-board-share">
+                        <div>
+                            <div class="vault-card-header">
+                                <div class="vault-icon-frame" style="border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">💼</div>
+                                <span class="vault-badge gold">🔒 Sovereign Board Fund</span>
+                            </div>
+                            <h4 class="vault-title">Board Share &amp; 20-Year Profit Endowment</h4>
+                            <p class="vault-desc" id="vault-desc-board">
+                                Receive annual financial distributions for 20 years post-tenure from the Sovereign Board Fund. Payout allocation is calculated based on net appreciation points, leadership tenure, and zero-infraction standing.
+                            </p>
+                        </div>
+                        <div class="vault-action-row">
+                            <span style="color: var(--text-muted);">Allocation: Merits vs Demerits</span>
+                            <button type="button" class="btn-vault-action locked-btn">🔒 Locked</button>
+                        </div>
+                    </div>
+
+                    <!-- 6. Many More Sovereign Perks (LOCKED) -->
+                    <div class="career-vault-banner-card status-locked" id="vault-card-many-more">
+                        <div>
+                            <div class="vault-card-header">
+                                <div class="vault-icon-frame">✨</div>
+                                <span class="vault-badge locked">🔒 Classified Reveal</span>
+                            </div>
+                            <h4 class="vault-title">Many More Sovereign Privileges</h4>
+                            <p class="vault-desc" id="vault-desc-more">
+                                Classified institutional benefits, founder grants, speaker fellowships, and private global roundtables will be unsealed as milestones are conquered.
+                            </p>
+                        </div>
+                        <div class="vault-action-row">
+                            <span style="color: var(--text-muted);">Revealed with Time</span>
+                            <button type="button" class="btn-vault-action locked-btn">🔒 Mystery Asset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- OFFER LETTER DISPATCH REQUEST MODAL -->
+    <div class="modal-backdrop" id="modal-offer-letter-request" style="display: none; align-items: center; justify-content: center; z-index: 1000000;">
+        <div class="modal-card" style="max-width: 480px; width: 92%; padding: 28px; border-radius: 18px; border: 2px solid #10b981; box-shadow: 0 20px 60px rgba(0,0,0,0.5); opacity: 1 !important; transform: none !important; position: relative; z-index: 1000001; pointer-events: auto; background: var(--bg-surface, #ffffff);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.4rem;">📄</span>
+                    <h3 style="margin: 0; font-size: 1.15rem; color: var(--text-primary);">Request Official Offer Letter</h3>
+                </div>
+                <button type="button" class="btn-close-modal" id="btn-close-offer-modal" style="font-size: 1.6rem; cursor: pointer; border: none; background: transparent; color: var(--text-primary); line-height: 1;">&times;</button>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 18px; line-height: 1.5;">
+                Enter your official email address below. Your request will reflect directly in the <strong>Admin Executive Console</strong>, and our office will dispatch your official tenure offer letter promptly.
+            </p>
+            <form id="form-submit-offer-letter" onsubmit="return false;">
+                <div class="form-field" style="margin-bottom: 16px;">
+                    <label for="input-offer-letter-email" style="display: block; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; margin-bottom: 6px;">Your Official Email Address *</label>
+                    <input type="email" id="input-offer-letter-email" class="styled-input" placeholder="e.g. yourname@gmail.com" required style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary);">
+                </div>
+                <button type="submit" class="btn btn-primary" id="btn-submit-offer-letter" style="background: #10b981; border-color: #10b981; width: 100%; padding: 12px; font-weight: 800;">
+                    📨 Submit Request to Admin Portal
+                </button>
+                <div id="offer-letter-modal-feedback" style="display: none; color: #10b981; font-weight: 800; font-size: 0.82rem; margin-top: 10px; text-align: center;">
+                    ✓ Request logged! Dispatched to Admin Portal.
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1209,6 +1365,7 @@
                 <button class="admin-tab-btn" data-tab="tab-tasks">🎯 Tasks & Claims</button>
                 <button class="admin-tab-btn" data-tab="tab-ratings">⭐ Member Ratings Feed</button>
                 <button class="admin-tab-btn" data-tab="tab-events">📅 Live Competitions</button>
+                <button class="admin-tab-btn" data-tab="tab-vault-admin">💎 Career Vault Settings</button>
                 <button class="admin-tab-btn" data-tab="tab-passwords">🔑 Passwords</button>
                 <button class="admin-tab-btn" data-tab="tab-export">💾 Save & Export</button>
             </div>
@@ -1295,6 +1452,51 @@
                                 ✓ Appreciation citation credited and published to Logs Bin!
                             </div>
                         </form>
+
+                        <hr style="margin: 22px 0; border: none; border-top: 1.5px solid var(--border-light);">
+
+                        <h4 style="color: #ea580c;">⚠️ Issue Official Member Warning</h4>
+                        <p class="admin-list-subtitle">Issue formal operational advisories or warnings. Dispatched directly to the member's personal portal in an eye-catching orange box without altering their points.</p>
+                        <form id="admin-warning-form" onsubmit="return false;">
+                            <div class="form-field">
+                                <div class="demerit-selection-header">
+                                    <label style="margin: 0; font-weight: 800;">Select Members * (Click to choose multiple)</label>
+                                    <div class="demerit-batch-actions">
+                                        <button type="button" class="btn-batch-select" id="btn-warning-select-all">Select All</button>
+                                        <button type="button" class="btn-batch-select" id="btn-warning-deselect-all">Clear</button>
+                                        <span id="admin-warning-selected-count" style="font-weight: 800; color: #ea580c;">0 selected</span>
+                                    </div>
+                                </div>
+                                <input type="text" id="admin-warning-member-search" class="demerit-search-input" placeholder="🔍 Search member name...">
+                                <div id="admin-warning-members-checklist" class="demerit-members-grid">
+                                    <!-- Populated dynamically with member checkboxes -->
+                                </div>
+                                <select id="admin-warning-member-select" multiple style="display: none;">
+                                    <!-- Fallback select -->
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-warning-category">Warning Advisory Category *</label>
+                                <select id="admin-warning-category" style="width: 100%; padding: 9px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary);">
+                                    <option value="Operational Advisory">⚙️ Operational Advisory</option>
+                                    <option value="Meeting Attendance &amp; Punctuality Warning">⏰ Meeting Attendance &amp; Punctuality Warning</option>
+                                    <option value="Task Delay &amp; Deadline Advisory">⏳ Task Delay &amp; Deadline Advisory</option>
+                                    <option value="Communication &amp; Sync Advisory">💬 Communication &amp; Team Sync Advisory</option>
+                                    <option value="Conduct &amp; Procedural Notice">📋 Conduct &amp; Procedural Notice</option>
+                                    <option value="Formal Performance Notice">🚨 Formal Performance Notice</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-warning-desc">Warning Notice Message / Cause *</label>
+                                <textarea id="admin-warning-desc" rows="3" placeholder="e.g. Unannounced absence from mandatory team meeting. Repeated delays in handoffs..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-admin-issue-warning" style="background: #ea580c; border-color: #ea580c; width: 100%;">
+                                ⚠️ Issue Official Warning to Selected Members
+                            </button>
+                            <div id="admin-warning-feedback" style="display: none; color: #10b981; font-weight: 800; font-size: 0.82rem; margin-top: 8px; text-align: center;">
+                                ✓ Official warning issued and dispatched to members' portals in orange alert card!
+                            </div>
+                        </form>
                     </div>
 
                     <div class="admin-list-pane">
@@ -1312,6 +1514,52 @@
                                 </thead>
                                 <tbody id="admin-leaderboard-list">
                                     <!-- Populated dynamically with editable inputs -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr style="margin: 20px 0; border: none; border-top: 1.5px solid var(--border-light);">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="margin: 0; font-size: 0.98rem; color: #ea580c;">⚠️ Active Member Warnings Log</h4>
+                            <span id="admin-warnings-count-badge" style="font-size: 0.72rem; background: rgba(249, 115, 22, 0.15); color: #ea580c; font-weight: 800; padding: 2px 8px; border-radius: 999px;">0 Warnings</span>
+                        </div>
+                        <p class="admin-list-subtitle">Review official warnings issued to members. Click Revoke / Dismiss to clear a warning notice.</p>
+                        <div class="admin-table-scroll" style="max-height: 220px;">
+                            <table class="admin-mini-table">
+                                <thead>
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Category</th>
+                                        <th>Notice &amp; Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-warnings-log-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr style="margin: 20px 0; border: none; border-top: 1.5px solid var(--border-light);">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="margin: 0; font-size: 0.98rem; color: #10b981;">📥 Career Vault: Offer Letter Requests</h4>
+                            <span id="admin-offer-requests-count-badge" style="font-size: 0.72rem; background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 800; padding: 2px 8px; border-radius: 999px;">0 Requests</span>
+                        </div>
+                        <p class="admin-list-subtitle">Members requesting official offer letters with their submitted email addresses.</p>
+                        <div class="admin-table-scroll" style="max-height: 200px;">
+                            <table class="admin-mini-table">
+                                <thead>
+                                    <tr>
+                                        <th>Member Name</th>
+                                        <th>Submitted Email</th>
+                                        <th>Date &amp; Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-offer-requests-tbody">
+                                    <!-- Populated dynamically -->
                                 </tbody>
                             </table>
                         </div>
@@ -1542,6 +1790,105 @@
                         <div class="admin-events-list" id="admin-current-events-list">
                             <!-- Loaded dynamically by JS -->
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CAREER VAULT SETTINGS -->
+            <div class="admin-tab-content" id="tab-vault-admin">
+                <div style="max-width: 860px; margin: 0 auto; padding: 10px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 1.15rem; color: #10b981;">💎 Career Vault &amp; Privileges Content Editor</h4>
+                            <p class="admin-list-subtitle" style="margin: 4px 0 0 0;">
+                                Edit the section hero title, main subtitle / mission statement, and each executive privilege card subtitle. Changes reflect instantly in the Member Portal!
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn btn-outline" id="btn-reset-vault-subtitles" style="font-size: 0.8rem; padding: 6px 14px;">↺ Reset Defaults</button>
+                            <button type="button" class="btn btn-primary" id="btn-save-vault-subtitles" style="font-size: 0.8rem; padding: 6px 18px;">💾 Save Subtitles</button>
+                        </div>
+                    </div>
+
+                    <div id="vault-admin-feedback" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1.5px solid #10b981; color: #10b981; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; margin-bottom: 16px;">
+                        ✓ Career Vault subtitles successfully saved and published!
+                    </div>
+
+                    <!-- Hero Subtitle Card -->
+                    <div style="background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 1.2rem;">🏛️</span>
+                            <h5 style="margin: 0; color: var(--text-primary); font-size: 1rem;">Main Section Header &amp; Subtitle</h5>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+                            <div class="form-field" style="margin-bottom: 0;">
+                                <label for="admin-vault-hero-title" style="font-weight: 700; font-size: 0.82rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">
+                                    Vault Title Heading
+                                </label>
+                                <input type="text" id="admin-vault-hero-title" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.88rem;" placeholder="Career Vault & Tenure Endowments">
+                            </div>
+                            <div class="form-field" style="margin-bottom: 0;">
+                                <label for="admin-vault-hero-sub" style="font-weight: 700; font-size: 0.82rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">
+                                    Hero Mission Statement / Subtitle
+                                </label>
+                                <textarea id="admin-vault-hero-sub" rows="3" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.85rem; line-height: 1.5; resize: vertical;" placeholder="Enter Career Vault mission statement..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6 Cards Grid -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" class="admin-vault-cards-grid">
+                        <!-- Card 1 -->
+                        <div style="background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 10px; padding: 14px;">
+                            <label for="admin-vault-sub-offer" style="font-weight: 700; font-size: 0.84rem; color: #10b981; display: block; margin-bottom: 6px;">
+                                📄 1. Official Offer Letter Subtitle
+                            </label>
+                            <textarea id="admin-vault-sub-offer" rows="3" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; line-height: 1.4; resize: vertical;" placeholder="Offer letter description..."></textarea>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div style="background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 10px; padding: 14px;">
+                            <label for="admin-vault-sub-completion" style="font-weight: 700; font-size: 0.84rem; color: var(--text-primary); display: block; margin-bottom: 6px;">
+                                🎓 2. Certificate of Completion Subtitle
+                            </label>
+                            <textarea id="admin-vault-sub-completion" rows="3" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; line-height: 1.4; resize: vertical;" placeholder="Certificate completion description..."></textarea>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div style="background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 10px; padding: 14px;">
+                            <label for="admin-vault-sub-lor" style="font-weight: 700; font-size: 0.84rem; color: var(--text-primary); display: block; margin-bottom: 6px;">
+                                🖋️ 3. Recommendation Letter (LOR) Subtitle
+                            </label>
+                            <textarea id="admin-vault-sub-lor" rows="3" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; line-height: 1.4; resize: vertical;" placeholder="LOR description..."></textarea>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div style="background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 10px; padding: 14px;">
+                            <label for="admin-vault-sub-alumni" style="font-weight: 700; font-size: 0.84rem; color: var(--text-primary); display: block; margin-bottom: 6px;">
+                                🌐 4. Executive Alum Guild Subtitle
+                            </label>
+                            <textarea id="admin-vault-sub-alumni" rows="3" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; line-height: 1.4; resize: vertical;" placeholder="Alum network description..."></textarea>
+                        </div>
+
+                        <!-- Card 5 -->
+                        <div style="background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 10px; padding: 14px;">
+                            <label for="admin-vault-sub-board" style="font-weight: 700; font-size: 0.84rem; color: #f59e0b; display: block; margin-bottom: 6px;">
+                                💼 5. Board Share &amp; 20-Year Endowment Subtitle
+                            </label>
+                            <textarea id="admin-vault-sub-board" rows="3" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; line-height: 1.4; resize: vertical;" placeholder="Board share description..."></textarea>
+                        </div>
+
+                        <!-- Card 6 -->
+                        <div style="background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 10px; padding: 14px;">
+                            <label for="admin-vault-sub-more" style="font-weight: 700; font-size: 0.84rem; color: var(--text-primary); display: block; margin-bottom: 6px;">
+                                ✨ 6. Many More Sovereign Privileges Subtitle
+                            </label>
+                            <textarea id="admin-vault-sub-more" rows="3" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; line-height: 1.4; resize: vertical;" placeholder="Many more privileges description..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" class="btn btn-primary" id="btn-save-vault-subtitles-bottom" style="padding: 9px 24px;">💾 Save &amp; Publish Subtitles</button>
                     </div>
                 </div>
             </div>

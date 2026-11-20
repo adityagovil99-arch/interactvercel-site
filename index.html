@@ -987,7 +987,8 @@
 
             <!-- Portal Tabs -->
             <div class="portal-nav-tabs">
-                <button class="portal-tab-btn active" data-portal-tab="portal-tab-tasks">🎯 Claim Appreciation Tasks</button>
+                <button class="portal-tab-btn active" data-portal-tab="portal-tab-leaderboard">🏆 Team Leaderboard</button>
+                <button class="portal-tab-btn" data-portal-tab="portal-tab-tasks">🎯 Claim Appreciation Tasks</button>
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-ratings">⭐ Peer Appreciation & Ratings</button>
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-activity">📜 My Claimed Tasks</button>
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-demerits">⚠️ Accountability & Demerits</button>
@@ -995,8 +996,71 @@
                 <button class="portal-tab-btn" data-portal-tab="portal-tab-vault">💎 Career Vault &amp; Privileges</button>
             </div>
 
+            <!-- TAB 0: TOTAL TEAM LEADERSHIP DASHBOARD (HOMEPAGE) -->
+            <div class="portal-tab-content active" id="portal-tab-leaderboard">
+                <div class="member-leaderboard-hero">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 2rem; line-height: 1;">🏆</span>
+                            <div>
+                                <h4 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-primary);">Total Team Leadership &amp; Appreciation Dashboard</h4>
+                                <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">
+                                    Celebrating member ownership, consistency, and active contributions across InteractUp cohorts.
+                                </p>
+                            </div>
+                        </div>
+                        <div id="member-leaderboard-my-rank-badge" class="member-my-rank-pill">
+                            <!-- Injected dynamically by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="leaderboard-search-box" style="margin: 14px 0 16px 0;">
+                    <input type="text" id="member-portal-leaderboard-search" class="leaderboard-search-input" placeholder="🔍 Search member by name..." autocomplete="off">
+                </div>
+
+                <!-- Table Container -->
+                <div class="leaderboard-table-container" style="max-height: 380px; overflow-y: auto; margin-bottom: 24px; border: 1.5px solid var(--border-light); border-radius: 12px;">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th class="leaderboard-rank-col">Rank</th>
+                                <th class="leaderboard-name-col">Member Name</th>
+                                <th class="leaderboard-points-col">Appreciation Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="member-portal-leaderboard-table-body">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- PUBLIC RECOGNITION & AUDIT LOGS BIN -->
+                <div class="leaderboard-logs-bin-container" style="border: 1.5px solid var(--border-light); border-radius: 12px; padding: 18px;">
+                    <div class="logs-bin-header">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.3rem;">📜</span>
+                            <div>
+                                <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800;">Recognition &amp; Appreciation Logs Bin</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.78rem; color: var(--text-muted);">
+                                    Live public ledger of verified appreciation citations and earned contribution milestones across the community.
+                                </p>
+                            </div>
+                        </div>
+                        <span id="member-portal-logs-count-badge" class="logs-bin-count-pill">0 Citations</span>
+                    </div>
+                    <div class="logs-bin-body" id="member-portal-public-logs-bin" style="max-height: 300px; overflow-y: auto; margin-top: 14px;">
+                        <!-- Populated dynamically by JS -->
+                    </div>
+                    <div class="logs-bin-footer-note" style="margin-top: 12px;">
+                        🔒 <strong>Confidentiality Notice:</strong> Individual accountability audit records (system demerits) are strictly confidential and visible only to respective members inside their personal profile.
+                    </div>
+                </div>
+            </div>
+
             <!-- TAB 1: CLAIM APPRECIATION TASKS -->
-            <div class="portal-tab-content active" id="portal-tab-tasks">
+            <div class="portal-tab-content" id="portal-tab-tasks">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
                     <div>
                         <h4 style="margin: 0;">🚀 Available Appreciation Tasks</h4>
@@ -1187,8 +1251,8 @@
             <div class="portal-tab-content" id="portal-tab-vault">
                 <div class="career-vault-hero">
                     <span class="career-vault-hero-badge">🏛️ EXECUTIVE HONORS &amp; SOVEREIGN ASSETS</span>
-                    <h3 id="vault-hero-title-text" style="margin: 0 0 6px 0; font-size: 1.3rem; color: var(--text-primary);">Career Vault &amp; Tenure Endowments</h3>
-                    <p id="vault-hero-sub-text" style="margin: 0; font-size: 0.85rem; color: var(--text-secondary); max-width: 720px; line-height: 1.5;">
+                    <h3 id="vault-hero-title-text" style="margin: 0 0 8px 0; font-size: 1.35rem; font-weight: 800; color: #1e1b4b; font-family: var(--font-heading);">Career Vault &amp; Tenure Endowments</h3>
+                    <p id="vault-hero-sub-text" style="margin: 0; font-size: 0.88rem; color: #475569; max-width: 740px; line-height: 1.6;">
                         Official credential repository, institutional assets, board profit-shares, and post-tenure career honors. As you deliver impact, earn appreciation, and maintain high accountability, each executive milestone unlocks automatically.
                     </p>
                 </div>

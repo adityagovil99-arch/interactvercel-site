@@ -2577,23 +2577,30 @@ body.theme-indigo .dashboard-viewport {
 }
 
 .tenure-pill {
-    padding: 8px 18px;
+    padding: 7px 18px;
     border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 800;
+    font-size: 0.82rem;
+    font-weight: 700;
     font-family: var(--font-heading);
-    background: var(--bg-slate);
-    border: 2px solid var(--border-bold);
-    color: var(--text-secondary);
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    color: #475569;
     cursor: pointer;
     transition: var(--transition-smooth);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
-.tenure-pill.active,
 .tenure-pill:hover {
-    background: var(--text-primary);
-    color: var(--text-white);
-    border-color: var(--text-primary);
+    background: #f5f3ff;
+    color: #7c3aed;
+    border-color: #a78bfa;
+}
+
+.tenure-pill.active {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
 }
 
 .committee-empty-state {
@@ -6028,27 +6035,30 @@ body.theme-indigo .dashboard-viewport {
 
 /* Executive Privileges & Career Vault Styles */
 .career-vault-hero {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
-    border: 1.5px solid var(--border-bold);
+    background: linear-gradient(135deg, #f8faff 0%, #f3effe 50%, #eff6ff 100%);
+    border: 1.5px solid rgba(139, 92, 246, 0.25);
     border-radius: 16px;
-    padding: 22px 26px;
+    padding: 24px 28px;
     margin-bottom: 22px;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 18px rgba(124, 58, 237, 0.06);
 }
 
 .career-vault-hero-badge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: 0.72rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.15);
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    padding: 2px 10px;
+    letter-spacing: 0.8px;
+    color: #b45309;
+    background: rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    padding: 3px 12px;
     border-radius: 999px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .career-vault-grid {
@@ -6202,4 +6212,61 @@ body.theme-indigo .dashboard-viewport {
     .admin-vault-cards-grid {
         grid-template-columns: 1fr !important;
     }
+}
+
+/* Member Portal Total Leadership Dashboard (Home Tab) */
+.member-leaderboard-hero {
+    background: linear-gradient(135deg, #f8faff 0%, #f3effe 50%, #eff6ff 100%);
+    border: 1.5px solid rgba(139, 92, 246, 0.2);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 6px;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.05);
+}
+
+.member-my-rank-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #ffffff;
+    border: 1.5px solid rgba(16, 185, 129, 0.35);
+    border-radius: 999px;
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);
+}
+
+.leaderboard-row-self {
+    background: rgba(124, 58, 237, 0.08) !important;
+    font-weight: 700;
+}
+
+.leaderboard-row-self td {
+    border-top: 1.5px solid rgba(124, 58, 237, 0.35) !important;
+    border-bottom: 1.5px solid rgba(124, 58, 237, 0.35) !important;
+}
+
+.current-user-tag {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(124, 58, 237, 0.15);
+    color: #6d28d9;
+    border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+[data-theme="dark"] .member-leaderboard-hero,
+[data-theme="dark"] .career-vault-hero {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+[data-theme="dark"] .member-my-rank-pill {
+    background: #1e293b;
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #f1f5f9;
 }

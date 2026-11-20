@@ -2912,6 +2912,16 @@ function openMemberPortal(member) {
     const portal = document.getElementById("member-portal-modal");
     if (!portal) return;
     
+    // Ensure member lands on Homepage (Total Team Leadership Dashboard) by default
+    const homeTabBtn = document.querySelector('.portal-nav-tabs .portal-tab-btn[data-portal-tab="portal-tab-leaderboard"]');
+    if (homeTabBtn) {
+        document.querySelectorAll(".portal-nav-tabs .portal-tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".member-portal-card .portal-tab-content").forEach(c => c.classList.remove("active"));
+        homeTabBtn.classList.add("active");
+        const homeContent = document.getElementById("portal-tab-leaderboard");
+        if (homeContent) homeContent.classList.add("active");
+    }
+
     renderMemberPortal();
     portal.classList.add("active");
     playClickSound();
@@ -2976,6 +2986,9 @@ function renderMemberPortal() {
     
     // 2. Pending Teammate Invitations Banner
     renderMemberInvitationsBanner();
+
+    // 2B. Tab 0 (Home): Total Team Leadership & Appreciation Dashboard
+    if (typeof renderMemberPortalLeaderboard === 'function') renderMemberPortalLeaderboard();
     
     // 3. Tab 1: Available Appreciation Tasks
     renderMemberAvailableTasks();
@@ -3057,6 +3070,92 @@ function respondToTeammateInvite(taskId, claimId, responseStatus) {
     saveTeamData();
     playClickSound();
     renderMemberPortal();
+}
+
+// ==========================================================================
+// MEMBER PORTAL TAB 0 (HOMEPAGE): TOTAL TEAM LEADERSHIP DASHBOARD
+// ==========================================================================
+function renderMemberPortalLeaderboard(filterText = "") {
+    const tbody = document.getElementById("member-portal-leaderboard-table-body");
+    const myRankBadge = document.getElementById("member-leaderboard-my-rank-badge");
+    const logsContainer = document.getElementById("member-portal-public-logs-bin");
+    const logsBadge = document.getElementById("member-portal-logs-count-badge");
+    if (!tbody) return;
+
+    const sorted = [...(appTeamData.leaderboard || [])].sort((a, b) => (b.points || 0) - (a.points || 0));
+
+    // Update current member's personal standing badge
+    if (myRankBadge && currentLoggedInMember) {
+        const myIndex = sorted.findIndex(m => m.name && m.name.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase());
+        const myRank = myIndex !== -1 ? myIndex + 1 : "—";
+        const myPoints = myIndex !== -1 ? (sorted[myIndex].points || 0) : 0;
+        myRankBadge.innerHTML = `
+            <span>Your Standing:</span>
+            <strong style="color: #5b21b6; font-size: 0.95rem;">Rank #${myRank}</strong>
+            <span style="color: var(--text-muted);">•</span>
+            <strong style="color: #10b981; font-size: 0.95rem;">${myPoints} pts</strong>
+        `;
+    }
+
+    // Filter by query
+    const query = (filterText || "").trim().toLowerCase();
+    const filtered = query ? sorted.filter(m => (m.name || "").toLowerCase().includes(query)) : sorted;
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 24px; color: var(--text-muted);">No members found matching "${escapeHtml(query)}"</td></tr>`;
+    } else {
+        tbody.innerHTML = filtered.map(m => {
+            const rank = sorted.indexOf(m) + 1;
+            const isSelf = currentLoggedInMember && m.name && (m.name.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase());
+            let rankDisplay = `#${rank}`;
+            if (rank === 1) rankDisplay = `🥇 #${rank}`;
+            else if (rank === 2) rankDisplay = `🥈 #${rank}`;
+            else if (rank === 3) rankDisplay = `🥉 #${rank}`;
+
+            return `
+                <tr class="${isSelf ? 'leaderboard-row-self' : ''}">
+                    <td class="leaderboard-rank-col" style="${isSelf ? 'font-weight: 800; color: #5b21b6;' : ''}">${rankDisplay}</td>
+                    <td class="leaderboard-name-col">
+                        <span>${escapeHtml(m.name || "")}</span>
+                        ${isSelf ? '<span class="current-user-tag">⭐ You</span>' : ''}
+                    </td>
+                    <td class="leaderboard-points-col" style="${isSelf ? 'font-weight: 800; color: #10b981;' : ''}">${m.points || 0} pts</td>
+                </tr>
+            `;
+        }).join("");
+    }
+
+    // Render Public Recognition Logs Bin in Member Portal
+    if (logsContainer) {
+        const appreciations = Array.isArray(appTeamData.appreciations) ? appTeamData.appreciations : [];
+        if (logsBadge) logsBadge.textContent = `${appreciations.length} Citations`;
+
+        if (appreciations.length === 0) {
+            logsContainer.innerHTML = `
+                <div style="text-align: center; padding: 24px 16px; color: var(--text-muted); font-size: 0.84rem;">
+                    🌟 No appreciation citations recorded yet. Earn recognition by completing tasks and contributing to the community!
+                </div>
+            `;
+        } else {
+            logsContainer.innerHTML = appreciations.map(a => `
+                <div class="log-citation-card">
+                    <div class="log-citation-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.1rem;">🌟</span>
+                            <span class="log-citation-member">${escapeHtml(a.memberName || "")}</span>
+                        </div>
+                        <span class="log-citation-points">+${a.points || 0} pts</span>
+                    </div>
+                    <div class="log-citation-quote">
+                        "${escapeHtml(a.reason || "")}"
+                    </div>
+                    <div class="log-citation-meta">
+                        <span style="color: #10b981; font-weight: 700;">🌟 Verified Community Citation</span>
+                    </div>
+                </div>
+            `).join("");
+        }
+    }
 }
 
 function renderMemberAvailableTasks() {
@@ -3865,6 +3964,9 @@ function initMemberPortal() {
             this.classList.add("active");
             const targetEl = document.getElementById(targetId);
             if (targetEl) targetEl.classList.add("active");
+            if (targetId === "portal-tab-leaderboard" && typeof renderMemberPortalLeaderboard === 'function') {
+                renderMemberPortalLeaderboard();
+            }
             if (targetId === "portal-tab-logs" && typeof renderMemberLogsBinTab === 'function') {
                 renderMemberLogsBinTab();
             }
@@ -3963,6 +4065,16 @@ function initMemberPortal() {
         });
     }
     
+    // Member Portal Leaderboard Search Filter
+    const memberLeaderboardSearch = document.getElementById("member-portal-leaderboard-search");
+    if (memberLeaderboardSearch) {
+        memberLeaderboardSearch.addEventListener("input", function() {
+            if (typeof renderMemberPortalLeaderboard === 'function') {
+                renderMemberPortalLeaderboard(this.value);
+            }
+        });
+    }
+
     // Member Portal Fullscreen Toggle
     const btnMemberFullscreen = document.getElementById("btn-member-fullscreen");
     const memberCardContainer = document.getElementById("member-portal-card-container");

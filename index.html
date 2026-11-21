@@ -1258,12 +1258,12 @@
                 </div>
 
                 <div class="career-vault-grid">
-                    <!-- 1. Offer Letter (UNLOCKED) -->
+                    <!-- 1. Offer Letter (UNLOCKED / THRESHOLD PROTECTED) -->
                     <div class="career-vault-banner-card status-unlocked" id="vault-card-offer-letter">
                         <div>
                             <div class="vault-card-header">
-                                <div class="vault-icon-frame" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981;">📄</div>
-                                <span class="vault-badge unlocked">🔓 Available Now</span>
+                                <div class="vault-icon-frame" id="vault-offer-icon-frame" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981;">📄</div>
+                                <span class="vault-badge unlocked" id="vault-offer-badge">🔓 Available Now</span>
                             </div>
                             <h4 class="vault-title">Official Executive Offer Letter</h4>
                             <p class="vault-desc" id="vault-desc-offer">
@@ -1903,11 +1903,48 @@
                     <!-- 6 Cards Grid -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" class="admin-vault-cards-grid">
                         <!-- Card 1 -->
-                        <div style="background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 10px; padding: 14px;">
-                            <label for="admin-vault-sub-offer" style="font-weight: 700; font-size: 0.84rem; color: #10b981; display: block; margin-bottom: 6px;">
-                                📄 1. Official Offer Letter Subtitle
-                            </label>
-                            <textarea id="admin-vault-sub-offer" rows="3" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; line-height: 1.4; resize: vertical;" placeholder="Offer letter description..."></textarea>
+                        <div style="background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 10px; padding: 14px; grid-column: 1 / -1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                                <label for="admin-vault-sub-offer" style="font-weight: 700; font-size: 0.88rem; color: #10b981; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                    <span>📄</span> 1. Official Offer Letter Content &amp; Access Policy
+                                </label>
+                                <span id="admin-offer-policy-preview-badge" style="font-size: 0.72rem; font-weight: 800; padding: 2px 10px; border-radius: 999px; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">
+                                    🔓 Currently Unlocked
+                                </span>
+                            </div>
+                            
+                            <div style="margin-bottom: 12px;">
+                                <label style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;">Card Subtitle Description</label>
+                                <textarea id="admin-vault-sub-offer" rows="2" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; line-height: 1.4; resize: vertical;" placeholder="Offer letter description..."></textarea>
+                            </div>
+
+                            <!-- Lock & Appreciation Points Policy Controls -->
+                            <div style="background: rgba(245, 158, 11, 0.06); border: 1.5px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 12px;">
+                                <div style="font-weight: 800; font-size: 0.82rem; color: #b45309; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                                    <span>🔒</span> Offer Letter Request Lock &amp; Unlock Rules
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" class="admin-offer-policy-grid">
+                                    <div>
+                                        <label for="admin-vault-offer-lock-mode" style="font-weight: 700; font-size: 0.78rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">
+                                            Lock Access Status *
+                                        </label>
+                                        <select id="admin-vault-offer-lock-mode" style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; font-weight: 700;">
+                                            <option value="unlocked">🔓 Unlocked for All (Open Request)</option>
+                                            <option value="points_required">🎯 Locked - Requires Minimum Appreciation Points</option>
+                                            <option value="locked_all">🔒 Completely Locked (Closed for All)</option>
+                                        </select>
+                                    </div>
+                                    <div id="admin-vault-offer-points-container">
+                                        <label for="admin-vault-offer-min-points" style="font-weight: 700; font-size: 0.78rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">
+                                            Required Appreciation Points (e.g. 100)
+                                        </label>
+                                        <input type="number" id="admin-vault-offer-min-points" min="0" step="1" placeholder="e.g. 100" style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; font-weight: 700;">
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.74rem; color: var(--text-muted); margin: 8px 0 0 0; line-height: 1.4;">
+                                    💡 <strong>Rule Logic:</strong> When set to <em>"Requires Minimum Appreciation Points"</em>, members with points &ge; threshold can unlock and submit their email. Members with fewer points will see the space locked with their progress and remaining points needed.
+                                </p>
+                            </div>
                         </div>
 
                         <!-- Card 2 -->

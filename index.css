@@ -6212,6 +6212,9 @@ body.theme-indigo .dashboard-viewport {
     .admin-vault-cards-grid {
         grid-template-columns: 1fr !important;
     }
+    .admin-offer-policy-grid {
+        grid-template-columns: 1fr !important;
+    }
 }
 
 /* Member Portal Total Leadership Dashboard (Home Tab) */

@@ -381,6 +381,8 @@ const DEFAULT_TEAM_DATA = {
         "heroTitle": "Career Vault & Tenure Endowments",
         "heroSubtitle": "Official credential repository, institutional assets, board profit-shares, and post-tenure career honors. As you deliver impact, earn appreciation, and maintain high accountability, each executive milestone unlocks automatically.",
         "offerSubtitle": "Authenticated appointment letter on formal InteractUp corporate stationery certifying your tenure, executive role, and community credentials.",
+        "offerLockMode": "unlocked",
+        "offerMinPoints": 100,
         "completionSubtitle": "Formal institutional accreditation awarded upon successful conclusion of your official executive tenure with verifiable verification code.",
         "lorSubtitle": "Bespoke executive reference letter signed by Founders & Board of Directors for university admissions, venture grants, and leadership roles. Authored strictly based on your performance, initiative, and appreciation standing during tenure.",
         "alumniSubtitle": "Lifetime VIP access to our closed executive alumni directory, senior corporate mentors, venture capital syndicates, and private alumni mixers worldwide.",
@@ -6423,26 +6425,109 @@ function renderMemberVaultTab() {
 
     if (!currentLoggedInMember) return;
     
+    const offerCard = document.getElementById("vault-card-offer-letter");
+    const offerBadge = document.getElementById("vault-offer-badge");
+    const offerIconFrame = document.getElementById("vault-offer-icon-frame");
     const offerStatusTxt = document.getElementById("vault-offer-status-txt");
     const btnTriggerOffer = document.getElementById("btn-trigger-offer-letter");
     
+    const lockMode = vc.offerLockMode || "unlocked";
+    const minPoints = (typeof vc.offerMinPoints !== 'undefined') ? parseInt(vc.offerMinPoints, 10) : 100;
+
+    // Calculate current member's appreciation points from leaderboard
+    let myPts = 0;
+    if (Array.isArray(appTeamData.leaderboard)) {
+        const leaderItem = appTeamData.leaderboard.find(l => l.name && l.name.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase());
+        if (leaderItem) myPts = leaderItem.points || 0;
+    }
+
     // Check if member has an existing request
     const requests = Array.isArray(appTeamData.offerLetterRequests) ? appTeamData.offerLetterRequests : [];
     const myReq = requests.find(r => 
         (r.memberId && r.memberId === currentLoggedInMember.id) ||
         (r.memberName && r.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
     );
-    
-    if (offerStatusTxt && btnTriggerOffer) {
-        if (myReq) {
-            offerStatusTxt.innerHTML = `<span style="color: #10b981;">✓ Requested (${escapeHtml(myReq.email)}) &bull; ${escapeHtml(myReq.status || 'Pending Dispatch')}</span>`;
-            btnTriggerOffer.textContent = "Update Email 📨";
+
+    // Determine access
+    let isUnlocked = true;
+    let lockReason = "";
+
+    if (lockMode === "locked_all") {
+        isUnlocked = false;
+        lockReason = "Offer letter requests are currently closed by Master Admin.";
+    } else if (lockMode === "points_required") {
+        if (myPts >= minPoints) {
+            isUnlocked = true;
         } else {
-            offerStatusTxt.textContent = "Ready to Dispatch";
-            btnTriggerOffer.textContent = "Request Letter 📨";
+            isUnlocked = false;
+            lockReason = `Requires ${minPoints} appreciation points to unlock (You have ${myPts} / ${minPoints} pts). Earn ${minPoints - myPts} more points to qualify!`;
         }
-        
-        btnTriggerOffer.onclick = openOfferLetterModal;
+    }
+
+    if (offerStatusTxt && btnTriggerOffer) {
+        if (isUnlocked) {
+            if (offerCard) {
+                offerCard.classList.remove("status-locked");
+                offerCard.classList.add("status-unlocked");
+            }
+            if (offerIconFrame) {
+                offerIconFrame.style.borderColor = "rgba(16, 185, 129, 0.4)";
+                offerIconFrame.style.color = "#10b981";
+            }
+            if (offerBadge) {
+                offerBadge.className = "vault-badge unlocked";
+                if (lockMode === "points_required") {
+                    offerBadge.textContent = `🔓 Unlocked (${myPts}/${minPoints} pts)`;
+                } else {
+                    offerBadge.textContent = "🔓 Available Now";
+                }
+            }
+
+            btnTriggerOffer.className = "btn-vault-action primary";
+            if (myReq) {
+                offerStatusTxt.innerHTML = `<span style="color: #10b981;">✓ Requested (${escapeHtml(myReq.email)}) &bull; ${escapeHtml(myReq.status || 'Pending Dispatch')}</span>`;
+                btnTriggerOffer.textContent = "Update Email 📨";
+            } else {
+                if (lockMode === "points_required") {
+                    offerStatusTxt.innerHTML = `<span style="color: #10b981; font-weight: 700;">✓ Threshold Met (${myPts}/${minPoints} pts) &bull; Ready</span>`;
+                } else {
+                    offerStatusTxt.textContent = "Ready to Dispatch";
+                }
+                btnTriggerOffer.textContent = "Request Letter 📨";
+            }
+            btnTriggerOffer.onclick = openOfferLetterModal;
+        } else {
+            if (offerCard) {
+                offerCard.classList.remove("status-unlocked");
+                offerCard.classList.add("status-locked");
+            }
+            if (offerIconFrame) {
+                offerIconFrame.style.borderColor = "";
+                offerIconFrame.style.color = "";
+            }
+            if (offerBadge) {
+                offerBadge.className = "vault-badge locked";
+                if (lockMode === "points_required") {
+                    offerBadge.textContent = `🔒 Locked (${myPts}/${minPoints} pts)`;
+                } else {
+                    offerBadge.textContent = "🔒 Locked by Admin";
+                }
+            }
+            
+            if (lockMode === "points_required") {
+                offerStatusTxt.innerHTML = `<span style="color: #ef4444; font-weight: 700;">🔒 Requires ${minPoints} pts (${myPts}/${minPoints} earned)</span>`;
+                btnTriggerOffer.textContent = `🔒 Locked (${myPts}/${minPoints} pts)`;
+            } else {
+                offerStatusTxt.innerHTML = `<span style="color: #ef4444; font-weight: 700;">🔒 Requests Currently Closed</span>`;
+                btnTriggerOffer.textContent = "🔒 Locked";
+            }
+            
+            btnTriggerOffer.className = "btn-vault-action locked-btn";
+            btnTriggerOffer.onclick = () => {
+                alert(`🔒 Official Executive Offer Letter\n\nStatus: Locked\n\nRequirement: ${lockReason}`);
+                playClickSound();
+            };
+        }
     }
     
     // Wire locked cards info toasts
@@ -6478,6 +6563,11 @@ function renderAdminVaultSettings() {
     const inpAlumni = document.getElementById("admin-vault-sub-alumni");
     const inpBoard = document.getElementById("admin-vault-sub-board");
     const inpMore = document.getElementById("admin-vault-sub-more");
+
+    const selLockMode = document.getElementById("admin-vault-offer-lock-mode");
+    const inpMinPoints = document.getElementById("admin-vault-offer-min-points");
+    const pointsContainer = document.getElementById("admin-vault-offer-points-container");
+    const badgePreview = document.getElementById("admin-offer-policy-preview-badge");
     
     if (inpHeroTitle) inpHeroTitle.value = vc.heroTitle || "Career Vault & Tenure Endowments";
     if (inpHeroSub) inpHeroSub.value = vc.heroSubtitle || "";
@@ -6487,6 +6577,46 @@ function renderAdminVaultSettings() {
     if (inpAlumni) inpAlumni.value = vc.alumniSubtitle || "";
     if (inpBoard) inpBoard.value = vc.boardSubtitle || "";
     if (inpMore) inpMore.value = vc.moreSubtitle || "";
+
+    function updateAdminOfferBadge() {
+        if (!badgePreview || !selLockMode) return;
+        const mode = selLockMode.value;
+        const pts = inpMinPoints ? (parseInt(inpMinPoints.value, 10) || 0) : 100;
+        if (mode === "unlocked") {
+            badgePreview.textContent = "🔓 Currently Unlocked (Open)";
+            badgePreview.style.background = "rgba(16, 185, 129, 0.15)";
+            badgePreview.style.color = "#10b981";
+            badgePreview.style.borderColor = "rgba(16, 185, 129, 0.3)";
+        } else if (mode === "points_required") {
+            badgePreview.textContent = `🎯 Locked: Requires ${pts} Pts`;
+            badgePreview.style.background = "rgba(245, 158, 11, 0.15)";
+            badgePreview.style.color = "#b45309";
+            badgePreview.style.borderColor = "rgba(245, 158, 11, 0.35)";
+        } else {
+            badgePreview.textContent = "🔒 Completely Locked";
+            badgePreview.style.background = "rgba(239, 68, 68, 0.15)";
+            badgePreview.style.color = "#ef4444";
+            badgePreview.style.borderColor = "rgba(239, 68, 68, 0.3)";
+        }
+    }
+
+    if (selLockMode) {
+        selLockMode.value = vc.offerLockMode || "unlocked";
+        selLockMode.onchange = function() {
+            if (pointsContainer) {
+                pointsContainer.style.display = (this.value === "points_required") ? "block" : "none";
+            }
+            updateAdminOfferBadge();
+        };
+    }
+    if (inpMinPoints) {
+        inpMinPoints.value = (typeof vc.offerMinPoints !== 'undefined') ? vc.offerMinPoints : 100;
+        inpMinPoints.oninput = updateAdminOfferBadge;
+    }
+    if (pointsContainer && selLockMode) {
+        pointsContainer.style.display = (selLockMode.value === "points_required") ? "block" : "none";
+    }
+    updateAdminOfferBadge();
 }
 
 function saveAdminVaultSettings() {
@@ -6502,6 +6632,9 @@ function saveAdminVaultSettings() {
     const inpAlumni = document.getElementById("admin-vault-sub-alumni");
     const inpBoard = document.getElementById("admin-vault-sub-board");
     const inpMore = document.getElementById("admin-vault-sub-more");
+
+    const selLockMode = document.getElementById("admin-vault-offer-lock-mode");
+    const inpMinPoints = document.getElementById("admin-vault-offer-min-points");
     
     if (inpHeroTitle && inpHeroTitle.value.trim()) appTeamData.vaultContent.heroTitle = inpHeroTitle.value.trim();
     if (inpHeroSub) appTeamData.vaultContent.heroSubtitle = inpHeroSub.value.trim();
@@ -6511,6 +6644,9 @@ function saveAdminVaultSettings() {
     if (inpAlumni) appTeamData.vaultContent.alumniSubtitle = inpAlumni.value.trim();
     if (inpBoard) appTeamData.vaultContent.boardSubtitle = inpBoard.value.trim();
     if (inpMore) appTeamData.vaultContent.moreSubtitle = inpMore.value.trim();
+
+    if (selLockMode) appTeamData.vaultContent.offerLockMode = selLockMode.value;
+    if (inpMinPoints) appTeamData.vaultContent.offerMinPoints = Math.max(0, parseInt(inpMinPoints.value, 10) || 0);
     
     saveTeamData();
     if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
@@ -6518,14 +6654,14 @@ function saveAdminVaultSettings() {
     const feedback = document.getElementById("vault-admin-feedback");
     if (feedback) {
         feedback.style.display = "block";
-        feedback.textContent = "✓ Career Vault subtitles successfully saved and published!";
+        feedback.textContent = "✓ Career Vault settings and offer letter lock policy successfully saved and published!";
         setTimeout(() => { feedback.style.display = "none"; }, 4000);
     }
     playClickSound();
 }
 
 function resetAdminVaultSettings() {
-    if (!confirm("Reset all Career Vault titles and subtitles back to official defaults?")) return;
+    if (!confirm("Reset all Career Vault titles, subtitles, and lock policy back to official defaults?")) return;
     appTeamData.vaultContent = JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA.vaultContent || {}));
     saveTeamData();
     renderAdminVaultSettings();
@@ -6534,13 +6670,32 @@ function resetAdminVaultSettings() {
     const feedback = document.getElementById("vault-admin-feedback");
     if (feedback) {
         feedback.style.display = "block";
-        feedback.textContent = "✓ Reset to default Career Vault titles and subtitles.";
+        feedback.textContent = "✓ Reset to default Career Vault titles, subtitles, and unlocked policy.";
         setTimeout(() => { feedback.style.display = "none"; }, 4000);
     }
     playClickSound();
 }
 
 function openOfferLetterModal() {
+    const vc = (appTeamData && appTeamData.vaultContent) ? appTeamData.vaultContent : {};
+    const lockMode = vc.offerLockMode || "unlocked";
+    const minPoints = (typeof vc.offerMinPoints !== 'undefined') ? parseInt(vc.offerMinPoints, 10) : 100;
+    
+    let myPts = 0;
+    if (currentLoggedInMember && Array.isArray(appTeamData.leaderboard)) {
+        const leaderItem = appTeamData.leaderboard.find(l => l.name && l.name.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase());
+        if (leaderItem) myPts = leaderItem.points || 0;
+    }
+
+    if (lockMode === "locked_all") {
+        alert("🔒 Official Executive Offer Letter requests are currently closed by Master Admin.");
+        return;
+    }
+    if (lockMode === "points_required" && myPts < minPoints) {
+        alert(`🔒 Offer Letter Locked\n\nYou need at least ${minPoints} appreciation points to request an offer letter.\nYour current points: ${myPts} pts (${minPoints - myPts} more needed).`);
+        return;
+    }
+
     const modal = document.getElementById("modal-offer-letter-request");
     const inputEmail = document.getElementById("input-offer-letter-email");
     const feedback = document.getElementById("offer-letter-modal-feedback");

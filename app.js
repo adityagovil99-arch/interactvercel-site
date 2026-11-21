@@ -383,6 +383,7 @@ const DEFAULT_TEAM_DATA = {
         "offerSubtitle": "Authenticated appointment letter on formal InteractUp corporate stationery certifying your tenure, executive role, and community credentials.",
         "offerLockMode": "unlocked",
         "offerMinPoints": 100,
+        "exemptPastSubmitters": true,
         "completionSubtitle": "Formal institutional accreditation awarded upon successful conclusion of your official executive tenure with verifiable verification code.",
         "lorSubtitle": "Bespoke executive reference letter signed by Founders & Board of Directors for university admissions, venture grants, and leadership roles. Authored strictly based on your performance, initiative, and appreciation standing during tenure.",
         "alumniSubtitle": "Lifetime VIP access to our closed executive alumni directory, senior corporate mentors, venture capital syndicates, and private alumni mixers worldwide.",
@@ -6433,6 +6434,7 @@ function renderMemberVaultTab() {
     
     const lockMode = vc.offerLockMode || "unlocked";
     const minPoints = (typeof vc.offerMinPoints !== 'undefined') ? parseInt(vc.offerMinPoints, 10) : 100;
+    const exemptPastSubmitters = (typeof vc.exemptPastSubmitters !== 'undefined') ? (vc.exemptPastSubmitters === true || vc.exemptPastSubmitters === "true") : true;
 
     // Calculate current member's appreciation points from leaderboard
     let myPts = 0;
@@ -6447,12 +6449,16 @@ function renderMemberVaultTab() {
         (r.memberId && r.memberId === currentLoggedInMember.id) ||
         (r.memberName && r.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
     );
+    const hasAlreadyFilled = Boolean(myReq);
 
     // Determine access
     let isUnlocked = true;
     let lockReason = "";
 
-    if (lockMode === "locked_all") {
+    if (hasAlreadyFilled && exemptPastSubmitters) {
+        // Grandfathered in: member already submitted on time, keep space unlocked
+        isUnlocked = true;
+    } else if (lockMode === "locked_all") {
         isUnlocked = false;
         lockReason = "Offer letter requests are currently closed by Master Admin.";
     } else if (lockMode === "points_required") {
@@ -6476,7 +6482,9 @@ function renderMemberVaultTab() {
             }
             if (offerBadge) {
                 offerBadge.className = "vault-badge unlocked";
-                if (lockMode === "points_required") {
+                if (hasAlreadyFilled) {
+                    offerBadge.textContent = "🔓 Unlocked (Request On File)";
+                } else if (lockMode === "points_required") {
                     offerBadge.textContent = `🔓 Unlocked (${myPts}/${minPoints} pts)`;
                 } else {
                     offerBadge.textContent = "🔓 Available Now";
@@ -6568,6 +6576,7 @@ function renderAdminVaultSettings() {
     const inpMinPoints = document.getElementById("admin-vault-offer-min-points");
     const pointsContainer = document.getElementById("admin-vault-offer-points-container");
     const badgePreview = document.getElementById("admin-offer-policy-preview-badge");
+    const chkExempt = document.getElementById("admin-vault-offer-exempt-past");
     
     if (inpHeroTitle) inpHeroTitle.value = vc.heroTitle || "Career Vault & Tenure Endowments";
     if (inpHeroSub) inpHeroSub.value = vc.heroSubtitle || "";
@@ -6577,6 +6586,10 @@ function renderAdminVaultSettings() {
     if (inpAlumni) inpAlumni.value = vc.alumniSubtitle || "";
     if (inpBoard) inpBoard.value = vc.boardSubtitle || "";
     if (inpMore) inpMore.value = vc.moreSubtitle || "";
+
+    if (chkExempt) {
+        chkExempt.checked = (typeof vc.exemptPastSubmitters !== 'undefined') ? (vc.exemptPastSubmitters === true || vc.exemptPastSubmitters === "true") : true;
+    }
 
     function updateAdminOfferBadge() {
         if (!badgePreview || !selLockMode) return;
@@ -6635,6 +6648,7 @@ function saveAdminVaultSettings() {
 
     const selLockMode = document.getElementById("admin-vault-offer-lock-mode");
     const inpMinPoints = document.getElementById("admin-vault-offer-min-points");
+    const chkExempt = document.getElementById("admin-vault-offer-exempt-past");
     
     if (inpHeroTitle && inpHeroTitle.value.trim()) appTeamData.vaultContent.heroTitle = inpHeroTitle.value.trim();
     if (inpHeroSub) appTeamData.vaultContent.heroSubtitle = inpHeroSub.value.trim();
@@ -6647,6 +6661,7 @@ function saveAdminVaultSettings() {
 
     if (selLockMode) appTeamData.vaultContent.offerLockMode = selLockMode.value;
     if (inpMinPoints) appTeamData.vaultContent.offerMinPoints = Math.max(0, parseInt(inpMinPoints.value, 10) || 0);
+    if (chkExempt) appTeamData.vaultContent.exemptPastSubmitters = chkExempt.checked;
     
     saveTeamData();
     if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
@@ -6680,20 +6695,30 @@ function openOfferLetterModal() {
     const vc = (appTeamData && appTeamData.vaultContent) ? appTeamData.vaultContent : {};
     const lockMode = vc.offerLockMode || "unlocked";
     const minPoints = (typeof vc.offerMinPoints !== 'undefined') ? parseInt(vc.offerMinPoints, 10) : 100;
+    const exemptPastSubmitters = (typeof vc.exemptPastSubmitters !== 'undefined') ? (vc.exemptPastSubmitters === true || vc.exemptPastSubmitters === "true") : true;
     
+    const requests = Array.isArray(appTeamData.offerLetterRequests) ? appTeamData.offerLetterRequests : [];
+    const myReq = (currentLoggedInMember && requests) ? requests.find(r => 
+        (r.memberId && r.memberId === currentLoggedInMember.id) ||
+        (r.memberName && r.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
+    ) : null;
+    const isExempt = Boolean(myReq && exemptPastSubmitters);
+
     let myPts = 0;
     if (currentLoggedInMember && Array.isArray(appTeamData.leaderboard)) {
         const leaderItem = appTeamData.leaderboard.find(l => l.name && l.name.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase());
         if (leaderItem) myPts = leaderItem.points || 0;
     }
 
-    if (lockMode === "locked_all") {
-        alert("🔒 Official Executive Offer Letter requests are currently closed by Master Admin.");
-        return;
-    }
-    if (lockMode === "points_required" && myPts < minPoints) {
-        alert(`🔒 Offer Letter Locked\n\nYou need at least ${minPoints} appreciation points to request an offer letter.\nYour current points: ${myPts} pts (${minPoints - myPts} more needed).`);
-        return;
+    if (!isExempt) {
+        if (lockMode === "locked_all") {
+            alert("🔒 Official Executive Offer Letter requests are currently closed by Master Admin.");
+            return;
+        }
+        if (lockMode === "points_required" && myPts < minPoints) {
+            alert(`🔒 Offer Letter Locked\n\nYou need at least ${minPoints} appreciation points to request an offer letter.\nYour current points: ${myPts} pts (${minPoints - myPts} more needed).`);
+            return;
+        }
     }
 
     const modal = document.getElementById("modal-offer-letter-request");
@@ -6704,12 +6729,6 @@ function openOfferLetterModal() {
     modal.classList.add("active");
     modal.style.display = "flex";
     if (feedback) feedback.style.display = "none";
-    
-    const requests = Array.isArray(appTeamData.offerLetterRequests) ? appTeamData.offerLetterRequests : [];
-    const myReq = (currentLoggedInMember && requests) ? requests.find(r => 
-        (r.memberId && r.memberId === currentLoggedInMember.id) ||
-        (r.memberName && r.memberName.trim().toLowerCase() === currentLoggedInMember.name.trim().toLowerCase())
-    ) : null;
     
     if (inputEmail) {
         inputEmail.value = myReq ? myReq.email : "";

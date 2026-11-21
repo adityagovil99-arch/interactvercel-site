@@ -1941,8 +1941,14 @@
                                         <input type="number" id="admin-vault-offer-min-points" min="0" step="1" placeholder="e.g. 100" style="width: 100%; padding: 7px 10px; border-radius: 6px; border: 1.5px solid var(--border-bold); background: var(--bg-surface); color: var(--text-primary); font-size: 0.82rem; font-weight: 700;">
                                     </div>
                                 </div>
+                                <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(245, 158, 11, 0.4); display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="admin-vault-offer-exempt-past" style="width: 16px; height: 16px; accent-color: #10b981; cursor: pointer;" checked>
+                                    <label for="admin-vault-offer-exempt-past" style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); cursor: pointer; margin: 0;">
+                                        ✅ Only lock for candidates who have NOT filled it yet (keep unlocked for members who already submitted their request on time)
+                                    </label>
+                                </div>
                                 <p style="font-size: 0.74rem; color: var(--text-muted); margin: 8px 0 0 0; line-height: 1.4;">
-                                    💡 <strong>Rule Logic:</strong> When set to <em>"Requires Minimum Appreciation Points"</em>, members with points &ge; threshold can unlock and submit their email. Members with fewer points will see the space locked with their progress and remaining points needed.
+                                    💡 <strong>Rule Logic:</strong> When set to <em>"Requires Minimum Appreciation Points"</em>, members with points &ge; threshold can unlock and submit their email. Members with fewer points will see the space locked with their progress and remaining points needed. If the checkbox above is checked, anyone who previously submitted their request retains access to view and update their submission regardless of points.
                                 </p>
                             </div>
                         </div>

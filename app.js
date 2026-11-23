@@ -252,26 +252,287 @@ function escapeHtml(str) {
         .replace(/'/g, "&#039;");
 }
 
+const DEMO_COMMITTEE_MEMBERS = [
+    {
+        id: "comm-megha",
+        name: "Megha",
+        tenure: "Tenure 2026 - 2027",
+        desc: "President",
+        trait: "Compassionate guide | Turning ideas into actions!",
+        passcode: "megha2026",
+        image: "assets/images/committee/megha.png"
+    },
+    {
+        id: "comm-nayna",
+        name: "Nayna",
+        tenure: "Tenure 2026 - 2027",
+        desc: "General Secretary",
+        trait: "Stoic | Levelheaded optimistic voice | Resolute leader",
+        passcode: "nayna2026",
+        image: "assets/images/committee/nayna.png"
+    },
+    {
+        id: "comm-farahan",
+        name: "Farahan",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Curious Initiator | Vocal Visionary",
+        passcode: "farahan2026",
+        image: "assets/images/committee/farahan.png"
+    },
+    {
+        id: "comm-nishita",
+        name: "Nishita",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Driven Dreamer | Articulate Organizer",
+        passcode: "nishita2026",
+        image: "assets/images/committee/nishita.png"
+    },
+    {
+        id: "comm-indhuja",
+        name: "Indhuja",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Dynamic Explorer | Tech Catalyst",
+        passcode: "indhuja2026",
+        image: "assets/images/committee/indhuja.png"
+    },
+    {
+        id: "comm-deven",
+        name: "Deven",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Resourceful Strategist | Inspiring Collaborator",
+        passcode: "deven2026",
+        image: "assets/images/committee/deven.png"
+    },
+    {
+        id: "comm-sai",
+        name: "Sai",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Meticulous Planner | Operational Anchor",
+        passcode: "sai2026",
+        image: "assets/images/committee/sai.png"
+    },
+    {
+        id: "comm-ananya",
+        name: "Ananya",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Eloquent Communicator | Community Builder",
+        passcode: "ananya2026",
+        image: "assets/images/committee/ananya.png"
+    },
+    {
+        id: "comm-somyaditya",
+        name: "Somyaditya",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Proactive Networker | Growth Catalyst",
+        passcode: "somyaditya2026",
+        image: "assets/images/committee/somyaditya.png"
+    },
+    {
+        id: "comm-vedika",
+        name: "Vedika",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Empathetic Mentor | Creative Thinker",
+        passcode: "vedika2026",
+        image: "assets/images/committee/vedika.png"
+    },
+    {
+        id: "comm-ankur",
+        name: "Ankur",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Dedicated Student Leader | Empowering Peers",
+        passcode: "ankur2026",
+        image: "assets/images/logo.png"
+    },
+    {
+        id: "comm-tauheed",
+        name: "Tauheed",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Active Contributor | Youth Engagement Catalyst",
+        passcode: "tauheed2026",
+        image: "assets/images/logo.png"
+    },
+    {
+        id: "comm-dhruv",
+        name: "Dhruv",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Strategic Thinker | Initiative Driver",
+        passcode: "dhruv2026",
+        image: "assets/images/logo.png"
+    },
+    {
+        id: "comm-nikhil",
+        name: "Nikhil",
+        tenure: "Tenure 2026 - 2027",
+        desc: "Core Member",
+        trait: "Energetic | People-oriented | Cultivated mind",
+        passcode: "nikhil2026",
+        image: "assets/images/committee/nikhil.png"
+    }
+];
+
+function ensureDemoCommitteeMembers(data) {
+    if (!data) return;
+    if (!Array.isArray(data.tenures)) data.tenures = ["Tenure 2026 - 2027"];
+    if (!data.tenures.includes("Tenure 2026 - 2027")) {
+        data.tenures.unshift("Tenure 2026 - 2027");
+    }
+    if (!Array.isArray(data.committeeMembers)) data.committeeMembers = [];
+
+    // Specifically purge Arpita and Kritika per explicit user instruction ("remove Kritika and Arpita")
+    // and old provisional dummy placeholders.
+    const purgedNames = ["arpita", "kritika"];
+    const oldIds = ["comm-member-1", "comm-member-2", "comm-member-7", "comm-member-10", "comm-member-11", "comm-devain"];
+    data.committeeMembers = data.committeeMembers.filter(m => {
+        const n = (m.name || '').toLowerCase();
+        const img = (m.image || '').toLowerCase();
+        const id = m.id || '';
+        const isPurged = purgedNames.some(p => n.includes(p) || img.includes(p));
+        return !isPurged && !oldIds.includes(id) && !img.includes("member_") && n !== "devain"
+            && !n.includes("rohan verma") && !n.includes("aman sharma") && !n.includes("riya kapoor") && !n.includes("saurav das") && !n.includes("sneha patel");
+    });
+
+    // Migrate any accidental "Saumya" entry to "Somyaditya" so no duplicate Saumya exists
+    data.committeeMembers.forEach(m => {
+        if (m.tenure === "Tenure 2026 - 2027") {
+            const raw = (m.name || '').toLowerCase();
+            if (raw.includes("saumya")) {
+                m.id = "comm-somyaditya";
+                m.name = "Somyaditya";
+                m.desc = "Core Member";
+                m.image = "assets/images/committee/somyaditya.png";
+                m.passcode = "somyaditya2026";
+            }
+        }
+    });
+
+    // Helper to match existing member
+    function findExisting(demo) {
+        const demoKey = demo.name.toLowerCase();
+        return data.committeeMembers.find(m => {
+            if (m.tenure !== demo.tenure) return false;
+            if (m.id === demo.id) return true;
+            const mName = (m.name || '').toLowerCase();
+            if (demoKey === 'farahan') {
+                return mName.includes('farahan') || mName.includes('farhan');
+            }
+            if (demoKey === 'deven') {
+                return mName.includes('deven') || mName.includes('devain');
+            }
+            if (demoKey === 'somyaditya') {
+                return mName.includes('somyaditya') || mName.includes('somy') || mName.includes('saumya');
+            }
+            if (demoKey === 'tauheed') {
+                return mName.includes('tauheed') || mName.includes('towhid') || mName.includes('tauhid');
+            }
+            return mName.includes(demoKey);
+        });
+    }
+
+    // Update existing or add missing demo members without creating duplicates
+    const matchedOfficialIds = new Set();
+    DEMO_COMMITTEE_MEMBERS.forEach(demo => {
+        let existing = findExisting(demo);
+        if (existing) {
+            existing.id = demo.id;
+            existing.name = demo.name;
+            existing.desc = demo.desc;
+            if (demo.image && demo.image !== "assets/images/logo.png") {
+                existing.image = demo.image;
+            } else if (!existing.image) {
+                existing.image = demo.image;
+            }
+            if (!existing.trait) existing.trait = demo.trait;
+            if (!existing.passcode) existing.passcode = demo.passcode;
+            matchedOfficialIds.add(existing.id);
+        } else {
+            const newMember = JSON.parse(JSON.stringify(demo));
+            data.committeeMembers.push(newMember);
+            matchedOfficialIds.add(newMember.id);
+        }
+    });
+
+    // Deduplicate any repeated entries for the roster in Tenure 2026 - 2027
+    const seenOfficial = new Set();
+    data.committeeMembers = data.committeeMembers.filter(m => {
+        if (m.tenure === "Tenure 2026 - 2027" && matchedOfficialIds.has(m.id)) {
+            if (seenOfficial.has(m.id)) return false;
+            seenOfficial.add(m.id);
+        }
+        return true;
+    });
+
+    // Sequence for Tenure 2026 - 2027:
+    // 1. Megha (President)
+    // 2. Nayna (General Secretary)
+    // 3. Farahan (Core Member)
+    // 4. Nishita (Core Member)
+    // 5. Indhuja (Core Member)
+    // 6. Deven (Core Member)
+    // 7. Sai (Core Member)
+    // 8. Ananya (Core Member)
+    // 9. Somyaditya (Core Member)
+    // 10. Vedika (Core Member)
+    // 11. Ankur (Core Member)
+    // 12. Tauheed (Core Member)
+    // 13. Dhruv (Core Member)
+    // 14. Nikhil (Core Member) -> placed at the very end (#14)
+    const officialOrder = [
+        "comm-megha",
+        "comm-nayna",
+        "comm-farahan",
+        "comm-nishita",
+        "comm-indhuja",
+        "comm-deven",
+        "comm-sai",
+        "comm-ananya",
+        "comm-somyaditya",
+        "comm-vedika",
+        "comm-ankur",
+        "comm-tauheed",
+        "comm-dhruv"
+    ];
+
+    function getRank(m) {
+        if (m.id === "comm-nikhil") return 1000;
+        const idx = officialOrder.indexOf(m.id);
+        if (idx !== -1) return idx;
+        return 500;
+    }
+
+    data.committeeMembers.sort((a, b) => {
+        if (a.tenure === "Tenure 2026 - 2027" && b.tenure === "Tenure 2026 - 2027") {
+            return getRank(a) - getRank(b);
+        }
+        return 0;
+    });
+
+    data.committeeMembers.forEach(m => {
+        if (!m.passcode) m.passcode = (m.name || 'member').toLowerCase().replace(/[^a-z0-9]/g, '') + "2026";
+    });
+}
+
 const DEFAULT_TEAM_DATA = {
     "teamPasscode": "teamup2026",
     "adminPasscode": "adminup2026",
     "tenures": [
+        "Tenure 2026 - 2027",
         "Tenure 2025 - 2026",
         "Tenure 2024 - 2025",
-        "Founding Tenure",
-        "Tenure 2026 - 2027"
+        "Founding Tenure"
     ],
     "leaderboard": [],
-    "committeeMembers": [
-        {
-            "id": "comm-1794259452724",
-            "name": "Megha",
-            "tenure": "Tenure 2026 - 2027",
-            "desc": "President",
-            "passcode": "megha2026",
-            "image": "data:image/jpeg;base64,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"
-        }
-    ],
+    "committeeMembers": JSON.parse(JSON.stringify(DEMO_COMMITTEE_MEMBERS)),
     "competitions": [
         {
             "id": "debate-impromptu",
@@ -413,22 +674,14 @@ let appTeamData = (() => {
                 impactContent: (parsed.impactContent && typeof parsed.impactContent === 'object') ? parsed.impactContent : DEFAULT_TEAM_DATA.impactContent,
                 vaultContent: (parsed.vaultContent && typeof parsed.vaultContent === 'object') ? parsed.vaultContent : JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA.vaultContent))
             };
-            if (Array.isArray(data.committeeMembers)) {
-                data.committeeMembers.forEach(m => {
-                    if (!m.passcode) m.passcode = m.name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026";
-                });
-            }
+            ensureDemoCommitteeMembers(data);
             return data;
         }
     } catch (e) {
         console.error("Failed to parse saved team data", e);
     }
     const fallback = JSON.parse(JSON.stringify(DEFAULT_TEAM_DATA));
-    if (Array.isArray(fallback.committeeMembers)) {
-        fallback.committeeMembers.forEach(m => {
-            if (!m.passcode) m.passcode = m.name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026";
-        });
-    }
+    ensureDemoCommitteeMembers(fallback);
     return fallback;
 })();
 
@@ -500,11 +753,7 @@ try {
                         if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
                         if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
                     }
-                    if (Array.isArray(appTeamData.committeeMembers)) {
-                        appTeamData.committeeMembers.forEach(m => {
-                            if (!m.passcode) m.passcode = m.name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026";
-                        });
-                    }
+                    ensureDemoCommitteeMembers(appTeamData);
                     if (typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) {
                         const updatedSelf = appTeamData.committeeMembers.find(m => m.id === currentLoggedInMember.id);
                         if (updatedSelf) currentLoggedInMember = updatedSelf;
@@ -766,7 +1015,11 @@ function deleteEvent(id) {
 // ==========================================================================
 // 🛡️ INTERACTUP TEAM PORTAL, LEADERBOARD & MASTER ADMIN SYSTEM
 // ==========================================================================
-let currentActiveTenure = appTeamData.tenures[0] || "Tenure 2025 - 2026";
+let currentActiveTenure = (appTeamData.tenures && appTeamData.tenures.includes("Tenure 2026 - 2027")) 
+    ? "Tenure 2026 - 2027" 
+    : (appTeamData.tenures[0] || "Tenure 2026 - 2027");
+let currentCommitteeViewMode = 'orbital'; // 'orbital' | 'grid'
+let currentOrbitalIndex = 0;
 let adminCommPhotoData = "";
 
 function saveTeamData() {
@@ -814,16 +1067,19 @@ function saveTeamData() {
     renderAdminExportCode();
 }
 
-// 1. RENDER MAIN PAGE CORE COMMITTEE DIRECTORY
+// 1. RENDER MAIN PAGE CORE COMMITTEE DIRECTORY (3D ORBITAL & PLAIN GRID)
 function renderCoreCommitteeMainView() {
     const tabsContainer = document.getElementById("committee-tenure-tabs-container");
-    const gridContainer = document.getElementById("committee-members-grid");
+    const orbitalWrapper = document.getElementById("committee-orbital-wrapper");
+    const plainWrapper = document.getElementById("committee-plain-wrapper");
     const emptyState = document.getElementById("committee-empty-state");
     
-    if (!tabsContainer || !gridContainer) return;
+    if (!tabsContainer) return;
     
     if (!appTeamData.tenures.includes(currentActiveTenure)) {
-        currentActiveTenure = appTeamData.tenures[0] || "";
+        currentActiveTenure = (appTeamData.tenures.includes("Tenure 2026 - 2027")) 
+            ? "Tenure 2026 - 2027" 
+            : (appTeamData.tenures[0] || "");
     }
     
     tabsContainer.innerHTML = appTeamData.tenures.map(tenure => {
@@ -834,6 +1090,7 @@ function renderCoreCommitteeMainView() {
     tabsContainer.querySelectorAll(".tenure-pill").forEach(pill => {
         pill.addEventListener("click", function() {
             currentActiveTenure = this.getAttribute("data-tenure");
+            currentOrbitalIndex = 0;
             renderCoreCommitteeMainView();
             playClickSound();
         });
@@ -842,62 +1099,305 @@ function renderCoreCommitteeMainView() {
     const members = appTeamData.committeeMembers.filter(m => m.tenure === currentActiveTenure);
     
     if (members.length === 0) {
-        gridContainer.innerHTML = "";
+        if (orbitalWrapper) orbitalWrapper.style.display = "none";
+        if (plainWrapper) plainWrapper.style.display = "none";
         if (emptyState) {
             emptyState.style.display = "inline-flex";
             const emptyText = document.getElementById("committee-empty-state-text");
             if (emptyText) emptyText.textContent = `${currentActiveTenure}: Profiles Under Curation`;
         }
-    } else {
-        if (emptyState) emptyState.style.display = "none";
-        gridContainer.innerHTML = members.map((m, idx) => `
-            <div class="committee-member-card ${isAdminModeActive ? 'admin-card-active' : ''}">
-                ${isAdminModeActive ? `
-                    <div class="member-card-admin-bar">
-                        <button type="button" class="btn-card-move-prev" data-id="${m.id}" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Left / Earlier">⬅️</button>
-                        <span class="member-order-badge">Order #${idx + 1}</span>
-                        <button type="button" class="btn-card-move-next" data-id="${m.id}" data-idx="${idx}" ${idx === members.length - 1 ? 'disabled' : ''} title="Move Right / Later">➡️</button>
-                        <button type="button" class="btn-card-delete-member" data-id="${m.id}" title="Remove Member">🗑️</button>
-                    </div>
-                ` : ''}
-                <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="committee-member-img" onerror="this.src='assets/images/logo.png'">
-                <div class="committee-member-name">${escapeHtml(m.name)}</div>
-                <div class="committee-member-desc">${escapeHtml(m.desc)}</div>
-            </div>
-        `).join("");
-        
-        if (isAdminModeActive) {
-            gridContainer.querySelectorAll(".btn-card-move-prev").forEach(btn => {
-                btn.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    const idx = parseInt(this.getAttribute("data-idx"), 10);
-                    if (idx > 0) {
-                        moveCommitteeMemberOrder(currentActiveTenure, idx, idx - 1);
-                    }
-                });
-            });
-            gridContainer.querySelectorAll(".btn-card-move-next").forEach(btn => {
-                btn.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    const idx = parseInt(this.getAttribute("data-idx"), 10);
-                    if (idx < members.length - 1) {
-                        moveCommitteeMemberOrder(currentActiveTenure, idx, idx + 1);
-                    }
-                });
-            });
-            gridContainer.querySelectorAll(".btn-card-delete-member").forEach(btn => {
-                btn.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    const id = this.getAttribute("data-id");
-                    if (confirm("Remove this member profile from " + currentActiveTenure + "?")) {
-                        appTeamData.committeeMembers = appTeamData.committeeMembers.filter(x => x.id !== id);
-                        saveTeamData();
-                        playClickSound();
-                    }
-                });
-            });
-        }
+        return;
     }
+    
+    if (emptyState) emptyState.style.display = "none";
+    if (currentOrbitalIndex >= members.length) currentOrbitalIndex = 0;
+    
+    if (currentCommitteeViewMode === 'orbital') {
+        if (orbitalWrapper) orbitalWrapper.style.display = "block";
+        if (plainWrapper) plainWrapper.style.display = "none";
+        renderOrbitalStage(members);
+    } else {
+        if (orbitalWrapper) orbitalWrapper.style.display = "none";
+        if (plainWrapper) plainWrapper.style.display = "block";
+        renderPlainGrid(members);
+    }
+}
+
+function renderOrbitalStage(members) {
+    const orbitalStage = document.getElementById("committee-orbital-stage");
+    if (!orbitalStage) return;
+
+    orbitalStage.innerHTML = members.map((m, idx) => `
+        <div class="orbital-member-card ${isAdminModeActive ? 'admin-card-active' : ''}" data-idx="${idx}" id="orbital-card-${idx}">
+            ${isAdminModeActive ? `
+                <div class="member-card-admin-bar">
+                    <button type="button" class="btn-card-move-prev" data-id="${m.id}" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Left / Earlier">⬅️</button>
+                    <span class="member-order-badge">#${idx + 1}</span>
+                    <button type="button" class="btn-card-move-next" data-id="${m.id}" data-idx="${idx}" ${idx === members.length - 1 ? 'disabled' : ''} title="Move Right / Later">➡️</button>
+                    <button type="button" class="btn-card-edit-member" data-id="${m.id}" title="Edit Member & Photo">✏️</button>
+                    <button type="button" class="btn-card-delete-member" data-id="${m.id}" title="Remove Member">🗑️</button>
+                </div>
+            ` : ''}
+            <div class="comm-card-trait-box">
+                ${escapeHtml(m.trait || "Dedicated Student Leader | Empowering Peers")}
+            </div>
+            <div class="comm-card-photo-wrapper">
+                <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="comm-card-img" onerror="this.src='assets/images/logo.png'">
+                <div class="comm-card-photo-overlay"></div>
+            </div>
+            <div class="comm-card-bottom">
+                <span class="comm-card-arrow">↗</span>
+                <div class="comm-card-name">${escapeHtml(m.name)}</div>
+                <div class="comm-card-role">${escapeHtml(m.desc || 'Core Committee Member')}</div>
+            </div>
+        </div>
+    `).join("");
+
+    updateOrbitalPositions(members);
+    renderOrbitalIndicators(members);
+    attachOrbitalEventListeners(members);
+}
+
+function updateOrbitalPositions(members) {
+    const N = members.length;
+    const isMobile = window.innerWidth <= 768;
+
+    members.forEach((m, idx) => {
+        const card = document.getElementById(`orbital-card-${idx}`);
+        if (!card) return;
+
+        let offset = idx - currentOrbitalIndex;
+        while (offset > N / 2) offset -= N;
+        while (offset < -N / 2) offset += N;
+
+        card.classList.remove("is-active", "is-flank");
+
+        if (offset === 0) {
+            // Center / Active card
+            card.classList.add("is-active");
+            const tz = isMobile ? 35 : 70;
+            const scale = isMobile ? 1.0 : 1.05;
+            card.style.transform = `translateX(0px) translateZ(${tz}px) rotateY(0deg) scale(${scale})`;
+            card.style.opacity = "1";
+            card.style.filter = "blur(0px)";
+            card.style.zIndex = "10";
+            card.style.pointerEvents = "auto";
+        } else if (offset === -1 || (N === 2 && offset === 1 && currentOrbitalIndex === 1)) {
+            // Left Flank
+            card.classList.add("is-flank");
+            const tx = isMobile ? -145 : -260;
+            const tz = isMobile ? -35 : -60;
+            const rotY = isMobile ? 18 : 24;
+            const scale = isMobile ? 0.78 : 0.82;
+            card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${rotY}deg) scale(${scale})`;
+            card.style.opacity = "0.55";
+            card.style.filter = "blur(3.5px)";
+            card.style.zIndex = "5";
+            card.style.pointerEvents = "auto";
+        } else if (offset === 1) {
+            // Right Flank
+            card.classList.add("is-flank");
+            const tx = isMobile ? 145 : 260;
+            const tz = isMobile ? -35 : -60;
+            const rotY = isMobile ? -18 : -24;
+            const scale = isMobile ? 0.78 : 0.82;
+            card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${rotY}deg) scale(${scale})`;
+            card.style.opacity = "0.55";
+            card.style.filter = "blur(3.5px)";
+            card.style.zIndex = "5";
+            card.style.pointerEvents = "auto";
+        } else {
+            // Background / Far card
+            const tx = offset > 0 ? (isMobile ? 240 : 420) : (isMobile ? -240 : -420);
+            const tz = -150;
+            const scale = 0.65;
+            card.style.transform = `translateX(${tx}px) translateZ(${tz}px) scale(${scale})`;
+            card.style.opacity = "0";
+            card.style.filter = "blur(8px)";
+            card.style.zIndex = "1";
+            card.style.pointerEvents = "none";
+        }
+    });
+}
+
+function renderOrbitalIndicators(members) {
+    const container = document.getElementById("committee-orbital-indicators");
+    if (!container) return;
+    container.innerHTML = members.map((m, idx) => `
+        <span class="orbital-indicator-dot ${idx === currentOrbitalIndex ? 'active' : ''}" data-idx="${idx}" title="${escapeHtml(m.name)}"></span>
+    `).join("");
+
+    container.querySelectorAll(".orbital-indicator-dot").forEach(dot => {
+        dot.addEventListener("click", function() {
+            currentOrbitalIndex = parseInt(this.getAttribute("data-idx"), 10);
+            updateOrbitalPositions(members);
+            renderOrbitalIndicators(members);
+            playClickSound();
+        });
+    });
+}
+
+function attachOrbitalEventListeners(members) {
+    const btnPrev = document.getElementById("btn-orbital-prev");
+    const btnNext = document.getElementById("btn-orbital-next");
+    const btnSeeAll = document.getElementById("btn-orbital-see-all");
+
+    if (btnPrev) {
+        btnPrev.onclick = () => {
+            currentOrbitalIndex = (currentOrbitalIndex - 1 + members.length) % members.length;
+            updateOrbitalPositions(members);
+            renderOrbitalIndicators(members);
+            playClickSound();
+        };
+    }
+
+    if (btnNext) {
+        btnNext.onclick = () => {
+            currentOrbitalIndex = (currentOrbitalIndex + 1) % members.length;
+            updateOrbitalPositions(members);
+            renderOrbitalIndicators(members);
+            playClickSound();
+        };
+    }
+
+    if (btnSeeAll) {
+        btnSeeAll.onclick = () => {
+            currentCommitteeViewMode = 'grid';
+            renderCoreCommitteeMainView();
+            playClickSound();
+        };
+    }
+
+    // Direct card click: brings card to center
+    members.forEach((m, idx) => {
+        const card = document.getElementById(`orbital-card-${idx}`);
+        if (card) {
+            card.onclick = (e) => {
+                if (e.target.closest(".member-card-admin-bar")) return;
+                if (idx !== currentOrbitalIndex) {
+                    currentOrbitalIndex = idx;
+                    updateOrbitalPositions(members);
+                    renderOrbitalIndicators(members);
+                    playClickSound();
+                }
+            };
+        }
+    });
+
+    // Touch swipe gestures
+    const viewport = document.getElementById("orbital-stage-viewport");
+    if (viewport && !viewport._hasTouchListeners) {
+        viewport._hasTouchListeners = true;
+        let touchStartX = 0;
+        viewport.addEventListener("touchstart", (e) => {
+            if (e.changedTouches && e.changedTouches[0]) {
+                touchStartX = e.changedTouches[0].screenX;
+            }
+        }, { passive: true });
+        viewport.addEventListener("touchend", (e) => {
+            if (!e.changedTouches || !e.changedTouches[0]) return;
+            const touchEndX = e.changedTouches[0].screenX;
+            const diffX = touchEndX - touchStartX;
+            const currentMembers = appTeamData.committeeMembers.filter(m => m.tenure === currentActiveTenure);
+            if (currentMembers.length > 1 && Math.abs(diffX) > 40) {
+                if (diffX < 0) {
+                    currentOrbitalIndex = (currentOrbitalIndex + 1) % currentMembers.length;
+                } else {
+                    currentOrbitalIndex = (currentOrbitalIndex - 1 + currentMembers.length) % currentMembers.length;
+                }
+                updateOrbitalPositions(currentMembers);
+                renderOrbitalIndicators(currentMembers);
+                playClickSound();
+            }
+        }, { passive: true });
+    }
+
+    if (isAdminModeActive) {
+        attachCommitteeAdminListeners(members);
+    }
+}
+
+function renderPlainGrid(members) {
+    const plainGrid = document.getElementById("committee-plain-grid");
+    const btnReturn = document.getElementById("btn-switch-to-orbital");
+    if (!plainGrid) return;
+
+    plainGrid.innerHTML = members.map((m, idx) => `
+        <div class="plain-member-card ${isAdminModeActive ? 'admin-card-active' : ''}" data-idx="${idx}">
+            ${isAdminModeActive ? `
+                <div class="member-card-admin-bar">
+                    <button type="button" class="btn-card-move-prev" data-id="${m.id}" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Left / Earlier">⬅️</button>
+                    <span class="member-order-badge">#${idx + 1}</span>
+                    <button type="button" class="btn-card-move-next" data-id="${m.id}" data-idx="${idx}" ${idx === members.length - 1 ? 'disabled' : ''} title="Move Right / Later">➡️</button>
+                    <button type="button" class="btn-card-edit-member" data-id="${m.id}" title="Edit Member & Photo">✏️</button>
+                    <button type="button" class="btn-card-delete-member" data-id="${m.id}" title="Remove Member">🗑️</button>
+                </div>
+            ` : ''}
+            <div class="comm-card-trait-box">
+                ${escapeHtml(m.trait || "Dedicated Student Leader | Empowering Peers")}
+            </div>
+            <div class="comm-card-photo-wrapper">
+                <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="comm-card-img" onerror="this.src='assets/images/logo.png'">
+                <div class="comm-card-photo-overlay"></div>
+            </div>
+            <div class="comm-card-bottom">
+                <span class="comm-card-arrow">↗</span>
+                <div class="comm-card-name">${escapeHtml(m.name)}</div>
+                <div class="comm-card-role">${escapeHtml(m.desc || 'Core Committee Member')}</div>
+            </div>
+        </div>
+    `).join("");
+
+    if (btnReturn) {
+        btnReturn.onclick = () => {
+            currentCommitteeViewMode = 'orbital';
+            renderCoreCommitteeMainView();
+            playClickSound();
+        };
+    }
+
+    if (isAdminModeActive) {
+        attachCommitteeAdminListeners(members);
+    }
+}
+
+function attachCommitteeAdminListeners(members) {
+    document.querySelectorAll(".btn-card-move-prev").forEach(btn => {
+        btn.onclick = function(e) {
+            e.stopPropagation();
+            const idx = parseInt(this.getAttribute("data-idx"), 10);
+            if (idx > 0) {
+                moveCommitteeMemberOrder(currentActiveTenure, idx, idx - 1);
+            }
+        };
+    });
+    document.querySelectorAll(".btn-card-move-next").forEach(btn => {
+        btn.onclick = function(e) {
+            e.stopPropagation();
+            const idx = parseInt(this.getAttribute("data-idx"), 10);
+            if (idx < members.length - 1) {
+                moveCommitteeMemberOrder(currentActiveTenure, idx, idx + 1);
+            }
+        };
+    });
+    document.querySelectorAll(".btn-card-edit-member").forEach(btn => {
+        btn.onclick = function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute("data-id");
+            openEditCommitteeMemberModal(id);
+        };
+    });
+    document.querySelectorAll(".btn-card-delete-member").forEach(btn => {
+        btn.onclick = function(e) {
+            e.stopPropagation();
+            const id = this.getAttribute("data-id");
+            if (confirm("Remove this member profile from " + currentActiveTenure + "?")) {
+                appTeamData.committeeMembers = appTeamData.committeeMembers.filter(x => x.id !== id);
+                saveTeamData();
+                playClickSound();
+            }
+        };
+    });
 }
 
 // HELPER: REORDER COMMITTEE MEMBERS WITHIN A TENURE
@@ -918,6 +1418,14 @@ function moveCommitteeMemberOrder(tenure, fromIdx, toIdx) {
         playClickSound();
     }
 }
+
+// Window resize listener to keep 3D orbital positions calibrated
+window.addEventListener("resize", () => {
+    if (currentCommitteeViewMode === 'orbital') {
+        const members = appTeamData.committeeMembers.filter(m => m.tenure === currentActiveTenure);
+        if (members && members.length > 0) updateOrbitalPositions(members);
+    }
+});
 
 // 2. RENDER VIEW-ONLY TEAM LEADERBOARD
 function renderLeaderboardTable(filterText = "") {
@@ -1690,9 +2198,11 @@ function renderAdminCommitteeRosterList() {
                     </div>
                     <span class="admin-comm-item-tenure" style="font-size: 0.76rem; color: var(--text-muted);">${escapeHtml(m.tenure)}</span>
                     <p class="admin-comm-item-desc" style="font-size: 0.8rem; margin: 4px 0 0 0; color: var(--text-secondary);">${escapeHtml(m.desc)}</p>
+                    ${m.trait ? `<div style="font-size: 0.74rem; color: #ea580c; font-weight: 700; margin-top: 2px;">🏷️ ${escapeHtml(m.trait)}</div>` : ''}
                 </div>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
+                <button type="button" class="btn-order-move btn-edit-comm-member" data-id="${m.id}" title="Edit Member & Photo" style="background: rgba(234, 88, 12, 0.12); color: #ea580c; border: 1px solid rgba(234, 88, 12, 0.35); font-weight: 700; padding: 4px 10px;">✏️ Edit</button>
                 <button type="button" class="btn-order-move btn-edit-comm-passcode" data-id="${m.id}" title="Edit Member Password">🔑 Pass</button>
                 <button type="button" class="btn-order-move btn-comm-move-up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Earlier (Higher)">⬆️</button>
                 <button type="button" class="btn-order-move btn-comm-move-down" data-idx="${idx}" ${idx === members.length - 1 ? 'disabled' : ''} title="Move Later (Lower)">⬇️</button>
@@ -1701,6 +2211,13 @@ function renderAdminCommitteeRosterList() {
         </div>
     `).join("");
     
+    list.querySelectorAll(".btn-edit-comm-member").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            openEditCommitteeMemberModal(id);
+        });
+    });
+
     list.querySelectorAll(".btn-edit-comm-passcode").forEach(btn => {
         btn.addEventListener("click", function() {
             const id = this.getAttribute("data-id");
@@ -1744,6 +2261,104 @@ function renderAdminCommitteeRosterList() {
             }
         });
     });
+}
+
+// 6B. ADMIN EDIT COMMITTEE MEMBER MODAL CONTROLLERS
+let editCommPhotoData = "";
+
+function openEditCommitteeMemberModal(memberId) {
+    const m = appTeamData.committeeMembers.find(x => x.id === memberId);
+    if (!m) return;
+    
+    const modal = document.getElementById("modal-edit-committee-member");
+    if (!modal) return;
+    
+    const idInput = document.getElementById("edit-comm-member-id");
+    if (idInput) idInput.value = m.id;
+    
+    const tenureSelect = document.getElementById("edit-comm-tenure");
+    if (tenureSelect) {
+        tenureSelect.innerHTML = appTeamData.tenures.map(t => `
+            <option value="${escapeHtml(t)}" ${t === m.tenure ? 'selected' : ''}>${escapeHtml(t)}</option>
+        `).join("");
+    }
+    
+    const nameInput = document.getElementById("edit-comm-name");
+    if (nameInput) nameInput.value = m.name || "";
+    
+    const descInput = document.getElementById("edit-comm-desc");
+    if (descInput) descInput.value = m.desc || "";
+    
+    const traitInput = document.getElementById("edit-comm-trait");
+    if (traitInput) traitInput.value = m.trait || "";
+    
+    const passcodeInput = document.getElementById("edit-comm-passcode");
+    if (passcodeInput) passcodeInput.value = m.passcode || "";
+    
+    editCommPhotoData = m.image || "";
+    const preview = document.getElementById("edit-comm-photo-preview");
+    if (preview) {
+        preview.src = m.image || "assets/images/logo.png";
+    }
+    const fileInput = document.getElementById("edit-comm-photo-file");
+    if (fileInput) fileInput.value = "";
+    
+    modal.style.display = "flex";
+    playClickSound();
+}
+
+function closeEditCommitteeMemberModal() {
+    const modal = document.getElementById("modal-edit-committee-member");
+    if (modal) modal.style.display = "none";
+    editCommPhotoData = "";
+}
+
+function handleSaveEditCommitteeMember() {
+    const idInput = document.getElementById("edit-comm-member-id");
+    if (!idInput) return;
+    const id = idInput.value;
+    const m = appTeamData.committeeMembers.find(x => x.id === id);
+    if (!m) {
+        alert("Member profile not found.");
+        return;
+    }
+    
+    const tenureSelect = document.getElementById("edit-comm-tenure");
+    const nameInput = document.getElementById("edit-comm-name");
+    const descInput = document.getElementById("edit-comm-desc");
+    const traitInput = document.getElementById("edit-comm-trait");
+    const passcodeInput = document.getElementById("edit-comm-passcode");
+    
+    const tenure = tenureSelect ? tenureSelect.value : m.tenure;
+    const name = nameInput ? nameInput.value.trim() : m.name;
+    const desc = descInput ? descInput.value.trim() : m.desc;
+    const trait = traitInput ? traitInput.value.trim() : m.trait;
+    const passcode = passcodeInput ? passcodeInput.value.trim() : m.passcode;
+    
+    if (!name || !desc) {
+        alert("Please provide both the member name and role title/position.");
+        return;
+    }
+    
+    m.tenure = tenure;
+    m.name = name;
+    m.desc = desc;
+    m.trait = trait || "Dedicated Student Leader | Empowering Peers";
+    m.passcode = passcode || (name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026");
+    if (editCommPhotoData) {
+        m.image = editCommPhotoData;
+    }
+    
+    saveTeamData();
+    closeEditCommitteeMemberModal();
+    playClickSound();
+    
+    renderCoreCommitteeMainView();
+    renderAdminCommitteeRosterList();
+    if (typeof renderMemberPortal === 'function' && typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember && currentLoggedInMember.id === m.id) {
+        currentLoggedInMember = m;
+        renderMemberPortal();
+    }
 }
 
 // 7. ADMIN: APPRECIATION TASKS & CLAIMS MANAGER
@@ -1967,6 +2582,7 @@ function openAdminMasterConsole() {
     renderAdminRatingsFeed();
     renderAdminEventsList();
     renderAdminExportCode();
+    if (typeof renderAdminWinnerCertsTab === 'function') renderAdminWinnerCertsTab();
     
     adminMasterModal.classList.add("active");
     playClickSound();
@@ -2238,6 +2854,8 @@ function setupModalsController() {
                 if (typeof renderAdminOfferLetterRequestsList === 'function') renderAdminOfferLetterRequestsList();
             } else if (tabId === "tab-vault-admin") {
                 if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
+            } else if (tabId === "tab-winner-certs") {
+                if (typeof renderAdminWinnerCertsTab === 'function') renderAdminWinnerCertsTab();
             }
             playClickSound();
         });
@@ -2333,6 +2951,7 @@ function setupModalsController() {
             const tenureSelect = document.getElementById("admin-comm-tenure-select");
             const nameInput = document.getElementById("admin-comm-name");
             const descInput = document.getElementById("admin-comm-desc");
+            const traitInput = document.getElementById("admin-comm-trait");
             const passcodeInput = document.getElementById("admin-comm-passcode");
             
             if (!nameInput.value.trim() || !descInput.value.trim()) {
@@ -2349,6 +2968,7 @@ function setupModalsController() {
                 name: nameInput.value.trim(),
                 tenure: tenureSelect.value,
                 desc: descInput.value.trim(),
+                trait: (traitInput && traitInput.value.trim()) ? traitInput.value.trim() : "Dedicated Student Leader | Empowering Peers",
                 passcode: customPasscode,
                 image: adminCommPhotoData || "assets/images/logo.png"
             };
@@ -2358,6 +2978,7 @@ function setupModalsController() {
             
             nameInput.value = "";
             descInput.value = "";
+            if (traitInput) traitInput.value = "";
             if (passcodeInput) passcodeInput.value = "";
             if (commWordCount) commWordCount.textContent = "0";
             adminCommPhotoData = "";
@@ -2365,6 +2986,58 @@ function setupModalsController() {
             if (commPhotoPlaceholder) commPhotoPlaceholder.style.display = "block";
             if (commPhotoFile) commPhotoFile.value = "";
             playClickSound();
+        });
+    }
+
+    // Admin Edit Committee Member Modal Listeners
+    const editCommPhotoFile = document.getElementById("edit-comm-photo-file");
+    if (editCommPhotoFile) {
+        editCommPhotoFile.addEventListener("change", function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    editCommPhotoData = evt.target.result;
+                    const preview = document.getElementById("edit-comm-photo-preview");
+                    if (preview) preview.src = editCommPhotoData;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    const btnCloseEditCommModal = document.getElementById("btn-close-edit-committee-modal");
+    if (btnCloseEditCommModal) {
+        btnCloseEditCommModal.addEventListener("click", closeEditCommitteeMemberModal);
+    }
+
+    const btnCancelEditComm = document.getElementById("btn-cancel-edit-comm");
+    if (btnCancelEditComm) {
+        btnCancelEditComm.addEventListener("click", closeEditCommitteeMemberModal);
+    }
+
+    const formEditComm = document.getElementById("form-edit-committee-member");
+    if (formEditComm) {
+        formEditComm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            handleSaveEditCommitteeMember();
+        });
+    }
+
+    const btnSaveEditComm = document.getElementById("btn-save-edit-comm");
+    if (btnSaveEditComm) {
+        btnSaveEditComm.addEventListener("click", function(e) {
+            e.preventDefault();
+            handleSaveEditCommitteeMember();
+        });
+    }
+
+    const modalEditComm = document.getElementById("modal-edit-committee-member");
+    if (modalEditComm) {
+        modalEditComm.addEventListener("click", function(e) {
+            if (e.target === modalEditComm) {
+                closeEditCommitteeMemberModal();
+            }
         });
     }
     
@@ -6262,6 +6935,7 @@ function initDashboardNavigation() {
             
             // Adjust 3D Particle morph shape
             if (targetView === "home") morphStageToShape("sphere");
+            else if (targetView === "immersion") morphStageToShape("sphere");
             else if (targetView === "booth") morphStageToShape("soundwave");
             else if (targetView === "gallery") morphStageToShape("sphere");
             else if (targetView === "streak") morphStageToShape("ladder");

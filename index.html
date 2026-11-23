@@ -110,6 +110,15 @@
                     </div>
                     <span class="nav-label">Home Lounge</span>
                 </a>
+                <a href="#immersion" class="nav-item" data-view="immersion" data-theme="orange">
+                    <div class="nav-icon-wrapper">
+                        <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                        </svg>
+                    </div>
+                    <span class="nav-label">Immersion</span>
+                </a>
                 <a href="#booth" class="nav-item" data-view="booth" data-theme="cyan">
                     <div class="nav-icon-wrapper">
                         <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -383,6 +392,28 @@
                         </div>
                     </div>
                 </section>
+            </div>
+
+            <!-- PANEL 1B: UNIVERSITY IMMERSION PROGRAMME (theme-orange) -->
+            <div class="view-panel" id="view-immersion">
+                <div class="immersion-viewport-container" style="width: 100%; padding: 0 0 40px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); border: 1.5px solid var(--border-light); padding: 12px 20px; border-radius: 14px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <img src="assets/images/logo.png" alt="InteractUp Logo" style="width: 32px; height: 32px; object-fit: contain; border-radius: 6px;">
+                            <div>
+                                <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                                    <span>🏛️ University Immersion Program</span>
+                                    <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; background: rgba(234, 88, 12, 0.12); color: #ea580c; font-weight: 700;">New Delhi Edition</span>
+                                </h3>
+                                <p style="margin: 2px 0 0 0; font-size: 0.78rem; color: var(--text-muted);">Institutional Experiential Learning &bull; Pedagogy, Market Sprints, Mind Games &amp; Cultural Immersion</p>
+                            </div>
+                        </div>
+                        <a href="immersion.html" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 14px; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+                            <span>↗</span> Open Full Page
+                        </a>
+                    </div>
+                    <iframe src="immersion.html" id="immersion-frame" title="InteractUp Academic Immersion Programme" style="width: 100%; height: calc(100vh - 170px); min-height: 820px; border: 1.5px solid var(--border-light); border-radius: 16px; background: #FAF9F6; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: block;" loading="eager"></iframe>
+                </div>
             </div>
 
             <!-- PANEL 2: SPEAK BOOTH & ARENA (theme-cyan) -->
@@ -711,7 +742,7 @@
                         <p class="section-subtitle text-center">Recognizing our dedicated student and alumni leadership who steered InteractUp across diverse operational tenures.</p>
                     </div>
 
-                    <div class="committee-archive-card glass">
+                    <div class="committee-archive-card committee-showcase-poster glass">
                         <div class="committee-archive-icon">🏛️</div>
                         <h3>National Core Committee Directory</h3>
                         <p class="committee-archive-desc">
@@ -723,14 +754,57 @@
                             <!-- Injected dynamically by JS -->
                         </div>
 
-                        <!-- Committee Members Dynamic Grid -->
-                        <div class="committee-members-grid" id="committee-members-grid">
-                            <!-- Injected dynamically by JS -->
+                        <!-- 3D ORBITAL STAGE WRAPPER -->
+                        <div class="committee-orbital-wrapper" id="committee-orbital-wrapper">
+                            <div class="orbital-stage-viewport" id="orbital-stage-viewport">
+                                <div class="orbital-stage-track" id="committee-orbital-stage">
+                                    <!-- Dynamic 3D orbital cards injected here -->
+                                </div>
+                            </div>
+                            <!-- Orbital Navigation Controls -->
+                            <div class="orbital-controls">
+                                <button type="button" class="orbital-nav-btn" id="btn-orbital-prev" aria-label="Previous Member" title="Previous Member">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                </button>
+                                <button type="button" class="orbital-see-all-btn" id="btn-orbital-see-all" title="View as Standard Grid">
+                                    <span class="see-all-icon">👁️</span> See All
+                                </button>
+                                <button type="button" class="orbital-nav-btn" id="btn-orbital-next" aria-label="Next Member" title="Next Member">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
+                            </div>
+                            <!-- Indicators -->
+                            <div class="orbital-indicators" id="committee-orbital-indicators"></div>
                         </div>
 
-                        <div class="committee-empty-state" id="committee-empty-state">
+                        <!-- PLAIN GRID WRAPPER (Shown when 'See All' is clicked) -->
+                        <div class="committee-plain-wrapper" id="committee-plain-wrapper" style="display: none;">
+                            <div class="committee-plain-grid" id="committee-plain-grid">
+                                <!-- Injected plain cards -->
+                            </div>
+                            <div class="committee-switch-back-bar">
+                                <button type="button" class="btn-switch-orbital" id="btn-switch-to-orbital">
+                                    <span class="orbit-icon">🪐</span> Return to 3D Orbital Animation
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Fallback / Legacy reference -->
+                        <div id="committee-members-grid" style="display: none;"></div>
+
+                        <div class="committee-empty-state" id="committee-empty-state" style="display: none;">
                             <span class="status-pulse-dot"></span>
                             <span id="committee-empty-state-text">Tenure Rosters & Profiles Under Curation</span>
+                        </div>
+
+                        <!-- Editorial Poster Branding Footer -->
+                        <div class="committee-poster-footer">
+                            <div class="poster-footer-title">MEET THE TEAM</div>
+                            <div class="poster-footer-badge">NATIONAL CORE COMMITTEE MEMBERS</div>
+                            <p class="poster-footer-desc">
+                                Meet the people who make it happen — members united by a shared purpose of empowering individuals, nurturing talent, and creating opportunities for growth.
+                            </p>
+                            <div class="poster-footer-tag">@INTERACTUP ↗</div>
                         </div>
                     </div>
                 </section>
@@ -1711,9 +1785,13 @@
                                 <input type="text" id="admin-comm-passcode" placeholder="e.g. megha2026 (defaults to firstname2026)">
                             </div>
                             <div class="form-field">
-                                <label for="admin-comm-desc">Description (2-3 lines, max 50 words)</label>
-                                <textarea id="admin-comm-desc" rows="3" placeholder="Brief portfolio highlight or contribution..." required></textarea>
+                                <label for="admin-comm-desc">Description / Role Title</label>
+                                <textarea id="admin-comm-desc" rows="2" placeholder="e.g. Vice President or General Secretary..." required></textarea>
                                 <span class="word-count-badge" id="admin-comm-word-badge"><span id="committee-desc-word-count">0</span> / 50 words max</span>
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-comm-trait">Editorial Trait Tag (Top Badge)</label>
+                                <input type="text" id="admin-comm-trait" placeholder="e.g. Compassionate guide | Turning ideas into actions!">
                             </div>
                             <div class="form-field">
                                 <label>Member Photo</label>
@@ -2076,6 +2154,63 @@
                 </div>
             </div>
 
+            <!-- 6B. EDIT COMMITTEE MEMBER MODAL (Admin Console) -->
+    <div class="modal-backdrop" id="modal-edit-committee-member" style="display: none; align-items: center; justify-content: center; z-index: 1000010;">
+        <div class="modal-card" style="max-width: 520px; width: 92%; background: var(--bg-surface); padding: 24px; border-radius: 16px; border: 1.5px solid var(--border-bold); box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+                <h4 style="margin: 0; font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                    <span>✏️</span> Edit Committee Member &amp; Photo
+                </h4>
+                <button type="button" class="btn-close-modal" id="btn-close-edit-committee-modal">&times;</button>
+            </div>
+            <form id="form-edit-committee-member" onsubmit="return false;">
+                <input type="hidden" id="edit-comm-member-id" value="">
+                
+                <div class="form-field" style="margin-bottom: 12px;">
+                    <label for="edit-comm-tenure">Assigned Tenure *</label>
+                    <select id="edit-comm-tenure" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-white); color: var(--text-primary); font-weight: 600;"></select>
+                </div>
+                
+                <div class="form-field" style="margin-bottom: 12px;">
+                    <label for="edit-comm-name">Member Name *</label>
+                    <input type="text" id="edit-comm-name" placeholder="Full name..." required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-white); color: var(--text-primary);">
+                </div>
+                
+                <div class="form-field" style="margin-bottom: 12px;">
+                    <label for="edit-comm-desc">Role Title / Position *</label>
+                    <input type="text" id="edit-comm-desc" placeholder="e.g. President, General Secretary, Core Member" required style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-white); color: var(--text-primary);">
+                </div>
+                
+                <div class="form-field" style="margin-bottom: 12px;">
+                    <label for="edit-comm-trait">Editorial Trait Tag (Top Badge on 3D Card)</label>
+                    <input type="text" id="edit-comm-trait" placeholder="e.g. Compassionate guide | Turning ideas into actions!" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-white); color: var(--text-primary);">
+                </div>
+                
+                <div class="form-field" style="margin-bottom: 14px;">
+                    <label for="edit-comm-passcode">Personal Member Password</label>
+                    <input type="text" id="edit-comm-passcode" placeholder="e.g. megha2026" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-white); color: var(--text-primary);">
+                </div>
+                
+                <div class="form-field" style="margin-bottom: 18px;">
+                    <label>Member Photo (Change Image)</label>
+                    <div style="display: flex; gap: 14px; align-items: center; margin-top: 6px; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 10px; border: 1px dashed var(--border-bold);">
+                        <div style="width: 68px; height: 68px; border-radius: 12px; overflow: hidden; background: #0f111a; border: 2px solid #ea580c; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <img id="edit-comm-photo-preview" src="assets/images/logo.png" style="width: 100%; height: 100%; object-fit: contain;" alt="Preview">
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="file" id="edit-comm-photo-file" accept="image/*" style="font-size: 0.8rem; margin-bottom: 4px; width: 100%;">
+                            <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Select a PNG or JPG to change this member's image</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-light); padding-top: 14px;">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-edit-comm">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-edit-comm" style="background: #ea580c; border-color: #ea580c; font-weight: 800;">
+                        💾 Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

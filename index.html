@@ -909,7 +909,7 @@
                     </div>
                 </div>
                 <div class="footer-bottom">
-                    <p>&copy; 2026 InteractUp Community. All rights reserved. Created for students and builders. <a href="#admin" class="hidden-admin-key" id="footer-admin-trigger" title="Admin Portal Access">🔑</a></p>
+                    <p>&copy; 2026 InteractUp Community. All rights reserved. Created for students and builders.</p>
                 </div>
             </footer>
         </main>
@@ -948,12 +948,13 @@
                 <h3>🔐 InteractUp Community Access</h3>
                 <button class="btn-close-modal" id="btn-close-team-login" aria-label="Close Modal">&times;</button>
             </div>
-            <p class="passcode-subtitle">Enter your unique member password to access your portal, or enter master admin credentials.</p>
-            <div class="passcode-form-group">
-                <input type="password" id="team-passcode-input" placeholder="Enter your unique password..." autocomplete="off">
-                <button class="btn btn-primary" id="btn-validate-team-passcode">Unlock Portal</button>
+            <p class="passcode-subtitle">Sign in with your InteractUp Email &amp; Password to access your Member Portal or Admin Console.</p>
+            <div class="passcode-form-group" style="flex-direction: column; gap: 10px;">
+                <input type="email" id="team-login-email" placeholder="Enter your email address..." autocomplete="email" style="width: 100%; box-sizing: border-box;">
+                <input type="password" id="team-passcode-input" placeholder="Enter your password..." autocomplete="current-password" style="width: 100%; box-sizing: border-box;">
+                <button class="btn btn-primary" id="btn-validate-team-passcode" style="width: 100%;">Sign In to Portal</button>
             </div>
-            <div class="passcode-error-msg" id="team-passcode-error">Invalid password. Please check with Master Admin.</div>
+            <div class="passcode-error-msg" id="team-passcode-error">Invalid email or password. Please check with Master Admin.</div>
         </div>
     </div>
 
@@ -1781,8 +1782,12 @@
                                 <input type="text" id="admin-comm-name" placeholder="Member Name..." required>
                             </div>
                             <div class="form-field">
-                                <label for="admin-comm-passcode">Personal Member Password (Optional)</label>
-                                <input type="text" id="admin-comm-passcode" placeholder="e.g. megha2026 (defaults to firstname2026)">
+                                <label for="admin-comm-email">Member Login Email (Firebase Auth)</label>
+                                <input type="email" id="admin-comm-email" placeholder="e.g. megha@interactup.in">
+                            </div>
+                            <div class="form-field">
+                                <label for="admin-comm-passcode">Initial Account Password (min 6 chars, stored only in Firebase Auth)</label>
+                                <input type="password" id="admin-comm-passcode" placeholder="Create login password (never stored in database)..." autocomplete="new-password">
                             </div>
                             <div class="form-field">
                                 <label for="admin-comm-desc">Description / Role Title</label>
@@ -2187,8 +2192,13 @@
                 </div>
                 
                 <div class="form-field" style="margin-bottom: 14px;">
-                    <label for="edit-comm-passcode">Personal Member Password</label>
-                    <input type="text" id="edit-comm-passcode" placeholder="e.g. megha2026" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-white); color: var(--text-primary);">
+                    <label for="edit-comm-email">Linked Login Email (Firebase Auth)</label>
+                    <input type="email" id="edit-comm-email" placeholder="e.g. megha@interactup.in" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-white); color: var(--text-primary);">
+                </div>
+
+                <div class="form-field" style="margin-bottom: 14px;">
+                    <label for="edit-comm-new-password">Create Login Password (Optional, min 6 chars — stored only in Firebase Auth)</label>
+                    <input type="password" id="edit-comm-new-password" placeholder="Leave blank if already created in Firebase Auth..." autocomplete="new-password" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--border-bold); background: var(--bg-white); color: var(--text-primary);">
                 </div>
                 
                 <div class="form-field" style="margin-bottom: 18px;">
@@ -2421,6 +2431,7 @@
     <!-- Scripts -->
     <!-- Firebase Cloud Sync SDKs (Vanilla Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="app.js"></script>
 </body>

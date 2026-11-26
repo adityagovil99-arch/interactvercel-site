@@ -252,6 +252,9 @@ function escapeHtml(str) {
         .replace(/'/g, "&#039;");
 }
 
+const READ_ONLY_SHOWCASE_MODE = false;
+const ADMIN_AUTH_UID = "FX9s7HkfmRhqRRy3S37WyLEVNkj2";
+
 const DEMO_COMMITTEE_MEMBERS = [
     {
         id: "comm-megha",
@@ -259,7 +262,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "President",
         trait: "Compassionate guide | Turning ideas into actions!",
-        passcode: "megha2026",
         image: "assets/images/committee/megha.png"
     },
     {
@@ -268,7 +270,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "General Secretary",
         trait: "Stoic | Levelheaded optimistic voice | Resolute leader",
-        passcode: "nayna2026",
         image: "assets/images/committee/nayna.png"
     },
     {
@@ -277,7 +278,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Curious Initiator | Vocal Visionary",
-        passcode: "farahan2026",
         image: "assets/images/committee/farahan.png"
     },
     {
@@ -286,7 +286,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Driven Dreamer | Articulate Organizer",
-        passcode: "nishita2026",
         image: "assets/images/committee/nishita.png"
     },
     {
@@ -295,7 +294,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Dynamic Explorer | Tech Catalyst",
-        passcode: "indhuja2026",
         image: "assets/images/committee/indhuja.png"
     },
     {
@@ -304,7 +302,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Resourceful Strategist | Inspiring Collaborator",
-        passcode: "deven2026",
         image: "assets/images/committee/deven.png"
     },
     {
@@ -313,7 +310,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Meticulous Planner | Operational Anchor",
-        passcode: "sai2026",
         image: "assets/images/committee/sai.png"
     },
     {
@@ -322,7 +318,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Eloquent Communicator | Community Builder",
-        passcode: "ananya2026",
         image: "assets/images/committee/ananya.png"
     },
     {
@@ -331,7 +326,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Proactive Networker | Growth Catalyst",
-        passcode: "somyaditya2026",
         image: "assets/images/committee/somyaditya.png"
     },
     {
@@ -340,7 +334,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Empathetic Mentor | Creative Thinker",
-        passcode: "vedika2026",
         image: "assets/images/committee/vedika.png"
     },
     {
@@ -349,7 +342,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Dedicated Student Leader | Empowering Peers",
-        passcode: "ankur2026",
         image: "assets/images/logo.png"
     },
     {
@@ -358,7 +350,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Active Contributor | Youth Engagement Catalyst",
-        passcode: "tauheed2026",
         image: "assets/images/logo.png"
     },
     {
@@ -367,7 +358,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Strategic Thinker | Initiative Driver",
-        passcode: "dhruv2026",
         image: "assets/images/logo.png"
     },
     {
@@ -376,7 +366,6 @@ const DEMO_COMMITTEE_MEMBERS = [
         tenure: "Tenure 2026 - 2027",
         desc: "Core Member",
         trait: "Energetic | People-oriented | Cultivated mind",
-        passcode: "nikhil2026",
         image: "assets/images/committee/nikhil.png"
     }
 ];
@@ -411,7 +400,7 @@ function ensureDemoCommitteeMembers(data) {
                 m.name = "Somyaditya";
                 m.desc = "Core Member";
                 m.image = "assets/images/committee/somyaditya.png";
-                m.passcode = "somyaditya2026";
+                delete m.passcode;
             }
         }
     });
@@ -453,7 +442,7 @@ function ensureDemoCommitteeMembers(data) {
                 existing.image = demo.image;
             }
             if (!existing.trait) existing.trait = demo.trait;
-            if (!existing.passcode) existing.passcode = demo.passcode;
+            delete existing.passcode;
             matchedOfficialIds.add(existing.id);
         } else {
             const newMember = JSON.parse(JSON.stringify(demo));
@@ -518,13 +507,11 @@ function ensureDemoCommitteeMembers(data) {
     });
 
     data.committeeMembers.forEach(m => {
-        if (!m.passcode) m.passcode = (m.name || 'member').toLowerCase().replace(/[^a-z0-9]/g, '') + "2026";
+        if (m && typeof m === "object") delete m.passcode;
     });
 }
 
 const DEFAULT_TEAM_DATA = {
-    "teamPasscode": "teamup2026",
-    "adminPasscode": "adminup2026",
     "tenures": [
         "Tenure 2026 - 2027",
         "Tenure 2025 - 2026",
@@ -659,8 +646,6 @@ let appTeamData = (() => {
         if (saved) {
             const parsed = JSON.parse(saved);
             const data = {
-                teamPasscode: parsed.teamPasscode || DEFAULT_TEAM_DATA.teamPasscode,
-                adminPasscode: parsed.adminPasscode || DEFAULT_TEAM_DATA.adminPasscode,
                 tenures: Array.isArray(parsed.tenures) && parsed.tenures.length > 0 ? parsed.tenures : DEFAULT_TEAM_DATA.tenures,
                 leaderboard: Array.isArray(parsed.leaderboard) ? parsed.leaderboard : DEFAULT_TEAM_DATA.leaderboard,
                 committeeMembers: Array.isArray(parsed.committeeMembers) ? parsed.committeeMembers : DEFAULT_TEAM_DATA.committeeMembers,
@@ -689,7 +674,7 @@ let appTeamData = (() => {
 // 🔥 GOOGLE FIREBASE REALTIME CLOUD DATABASE INTEGRATION
 // ==========================================================================
 const firebaseConfig = {
-    apiKey: "AIzaSyChFIHDUso_wY3AdWSO4O4Dw9MRmo7z_Ts",
+    apiKey: "AIzaSyChfIHDUso_wY3AdWSO4O4Dw9MRmo7z_Ts",
     authDomain: "interactup-3881b.firebaseapp.com",
     projectId: "interactup-3881b",
     storageBucket: "interactup-3881b.firebasestorage.app",
@@ -698,7 +683,27 @@ const firebaseConfig = {
 };
 
 let db = null;
+let auth = null;
 let isFirestoreSeeded = false;
+
+function getSecondaryAuthApp() {
+    if (typeof firebase === 'undefined' || !firebase.initializeApp) return null;
+    const existing = firebase.apps.find(a => a.name === "AdminUserCreator");
+    return existing || firebase.initializeApp(firebaseConfig, "AdminUserCreator");
+}
+
+function resolveCommitteeMemberFromUser(user) {
+    if (!user || !user.email) return null;
+    const email = user.email.trim().toLowerCase();
+    const localPart = email.split("@")[0].replace(/[^a-z0-9]/g, "");
+    const members = appTeamData.committeeMembers || [];
+    return members.find(m => m.email && m.email.trim().toLowerCase() === email)
+        || members.find(m => {
+            const cleanName = (m.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+            return cleanName && (localPart === cleanName || localPart.startsWith(cleanName));
+        })
+        || null;
+}
 
 try {
     if (typeof firebase !== 'undefined' && firebase.initializeApp) {
@@ -706,14 +711,53 @@ try {
             firebase.initializeApp(firebaseConfig);
         }
         db = firebase.firestore();
+        if (typeof firebase.auth === 'function') {
+            auth = firebase.auth();
+            auth.onAuthStateChanged((user) => {
+                sessionStorage.removeItem("interactup_is_admin");
+                sessionStorage.removeItem("interactup_member_id");
+                if (user && user.uid === ADMIN_AUTH_UID) {
+                    if (typeof activateAdminMode === 'function') activateAdminMode();
+                } else if (user) {
+                    if (typeof isAdminModeActive !== 'undefined' && isAdminModeActive && typeof deactivateAdminMode === 'function') {
+                        isAdminModeActive = false;
+                        document.body.classList.remove("admin-mode-active");
+                    }
+                    const matched = resolveCommitteeMemberFromUser(user);
+                    if (matched && !matched.portalLocked) {
+                        currentLoggedInMember = matched;
+                        const btnTeam = document.getElementById("btn-team-login-trigger");
+                        if (btnTeam) {
+                            const label = btnTeam.querySelector(".nav-label");
+                            if (label) label.textContent = `👤 ${matched.name}`;
+                            btnTeam.style.borderColor = "#10b981";
+                        }
+                    } else if (matched && matched.portalLocked) {
+                        auth.signOut().catch(() => {});
+                    }
+                } else {
+                    currentLoggedInMember = null;
+                    if (typeof isAdminModeActive !== 'undefined' && isAdminModeActive) {
+                        isAdminModeActive = false;
+                        document.body.classList.remove("admin-mode-active");
+                        const dock = document.getElementById("admin-persistent-dock");
+                        if (dock) dock.classList.remove("active");
+                    }
+                    const btnTeam = document.getElementById("btn-team-login-trigger");
+                    if (btnTeam) {
+                        const label = btnTeam.querySelector(".nav-label");
+                        if (label) label.textContent = "Team Login";
+                        btnTeam.style.borderColor = "";
+                    }
+                }
+            });
+        }
         console.log("🔥 Firebase initialized. Listening for real-time cloud updates...");
         
         db.collection("interactup_config").doc("team_data").onSnapshot((doc) => {
             if (doc.exists) {
                 const cloud = doc.data();
                 if (cloud && typeof cloud === 'object') {
-                    appTeamData.teamPasscode = cloud.teamPasscode || appTeamData.teamPasscode;
-                    appTeamData.adminPasscode = cloud.adminPasscode || appTeamData.adminPasscode;
                     if (Array.isArray(cloud.tenures) && cloud.tenures.length > 0) {
                         appTeamData.tenures = cloud.tenures;
                     }
@@ -789,7 +833,7 @@ try {
                     if (typeof renderAdminExportCode === 'function') renderAdminExportCode();
                     if (typeof renderImpactShowcase === 'function') renderImpactShowcase();
                 }
-            } else if (!isFirestoreSeeded) {
+            } else if (!READ_ONLY_SHOWCASE_MODE && !isFirestoreSeeded && auth && auth.currentUser && auth.currentUser.uid === ADMIN_AUTH_UID) {
                 isFirestoreSeeded = true;
                 console.log("🔥 Initializing Firestore document with current team data...");
                 db.collection("interactup_config").doc("team_data").set(appTeamData)
@@ -859,13 +903,19 @@ function renderLiveEventsCarousel() {
         if (ev.template === "creative") badgeClass = "badge-creative";
         if (ev.template === "impact") badgeClass = "badge-impact";
         
+        const safeBadge = escapeHtml(ev.badge || "");
+        const safeTitle = escapeHtml(ev.title || "");
+        const safeDesc = escapeHtml(ev.desc || "");
+        const rawLink = String(ev.link || "#").trim();
+        const safeLink = /^https?:\/\//i.test(rawLink) ? escapeHtml(rawLink) : "#";
+
         if (ev.isImpact) {
             card.innerHTML = `
                 <div class="event-card-header">
-                    <span class="event-card-badge ${badgeClass}">${ev.badge}</span>
+                    <span class="event-card-badge ${badgeClass}">${safeBadge}</span>
                 </div>
-                <h4 style="color: #f59e0b;">${ev.title}</h4>
-                <p>${ev.desc}</p>
+                <h4 style="color: #f59e0b;">${safeTitle}</h4>
+                <p>${safeDesc}</p>
                 <button type="button" class="btn btn-primary btn-open-impact-showcase" style="background: linear-gradient(135deg, #f59e0b, #ef4444); border: none; font-weight: 800; width: 100%;">
                     ✨ Explore Impact & Achievements ➜
                 </button>
@@ -873,11 +923,11 @@ function renderLiveEventsCarousel() {
         } else {
             card.innerHTML = `
                 <div class="event-card-header">
-                    <span class="event-card-badge ${badgeClass}">${ev.badge}</span>
+                    <span class="event-card-badge ${badgeClass}">${safeBadge}</span>
                 </div>
-                <h4>${ev.title}</h4>
-                <p>${ev.desc}</p>
-                <a href="${ev.link}" target="_blank" class="btn btn-primary btn-apply-event">Apply Now & Register</a>
+                <h4>${safeTitle}</h4>
+                <p>${safeDesc}</p>
+                <a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-apply-event">Apply Now & Register</a>
             `;
         }
         
@@ -959,11 +1009,17 @@ function renderAllEventsTable() {
         if (ev.template === "casing") badgeClass = "badge-casing";
         if (ev.template === "creative") badgeClass = "badge-creative";
         
+        const safeTitle = escapeHtml(ev.title || "");
+        const safeBadge = escapeHtml(ev.badge || "");
+        const safeDesc = escapeHtml(ev.desc || "");
+        const rawLink = String(ev.link || "#").trim();
+        const safeLink = /^https?:\/\//i.test(rawLink) ? escapeHtml(rawLink) : "#";
+
         row.innerHTML = `
-            <td><span class="table-event-name">${ev.title}</span></td>
-            <td><span class="event-card-badge ${badgeClass}" style="display:inline-block;">${ev.badge}</span></td>
-            <td><div class="table-event-desc">${ev.desc}</div></td>
-            <td><a href="${ev.link}" target="_blank" class="btn btn-secondary btn-sm">Quick Apply</a></td>
+            <td><span class="table-event-name">${safeTitle}</span></td>
+            <td><span class="event-card-badge ${badgeClass}" style="display:inline-block;">${safeBadge}</span></td>
+            <td><div class="table-event-desc">${safeDesc}</div></td>
+            <td><a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">Quick Apply</a></td>
         `;
         tableBody.appendChild(row);
     });
@@ -1023,10 +1079,11 @@ let currentOrbitalIndex = 0;
 let adminCommPhotoData = "";
 
 function saveTeamData() {
+    if (READ_ONLY_SHOWCASE_MODE) return;
     try {
         localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
         localStorage.setItem("interactup_events", JSON.stringify(appTeamData.competitions));
-        if (db) {
+        if (db && auth && auth.currentUser && auth.currentUser.uid === ADMIN_AUTH_UID) {
             db.collection("interactup_config").doc("team_data").set(appTeamData)
                 .then(() => {
                     console.log("🔥 Successfully synced to Firebase Cloud Database!");
@@ -1096,7 +1153,7 @@ function renderCoreCommitteeMainView() {
         });
     });
     
-    const members = appTeamData.committeeMembers.filter(m => m.tenure === currentActiveTenure);
+    const members = appTeamData.committeeMembers.filter(m => m.tenure === currentActiveTenure && !m.portalHidden);
     
     if (members.length === 0) {
         if (orbitalWrapper) orbitalWrapper.style.display = "none";
@@ -1422,7 +1479,7 @@ function moveCommitteeMemberOrder(tenure, fromIdx, toIdx) {
 // Window resize listener to keep 3D orbital positions calibrated
 window.addEventListener("resize", () => {
     if (currentCommitteeViewMode === 'orbital') {
-        const members = appTeamData.committeeMembers.filter(m => m.tenure === currentActiveTenure);
+        const members = appTeamData.committeeMembers.filter(m => m.tenure === currentActiveTenure && !m.portalHidden);
         if (members && members.length > 0) updateOrbitalPositions(members);
     }
 });
@@ -2185,7 +2242,7 @@ function renderAdminCommitteeRosterList() {
     }
     
     list.innerHTML = members.map((m, idx) => `
-        <div class="admin-comm-item-card" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px;">
+        <div class="admin-comm-item-card" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; ${m.portalHidden ? 'opacity: 0.6;' : ''}">
             <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
                 <span style="font-weight: 800; font-size: 0.82rem; color: var(--primary); min-width: 26px;">#${idx + 1}</span>
                 <img src="${m.image || 'assets/images/logo.png'}" alt="${escapeHtml(m.name)}" class="admin-comm-item-img" onerror="this.src='assets/images/logo.png'">
@@ -2193,20 +2250,23 @@ function renderAdminCommitteeRosterList() {
                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                         <span class="admin-comm-item-name" style="font-weight: 800; font-size: 0.95rem;">${escapeHtml(m.name)}</span>
                         <span style="font-size: 0.72rem; background: rgba(37, 99, 235, 0.1); color: var(--primary); padding: 1px 8px; border-radius: 4px; font-weight: 700;">
-                            🔑 ${escapeHtml(m.passcode || 'Not set')}
+                            ✉️ ${escapeHtml(m.email || ((m.name || 'member').toLowerCase().replace(/[^a-z0-9]/g, '') + '@...'))}
                         </span>
+                        ${m.portalLocked ? `<span style="font-size: 0.7rem; background: rgba(239, 68, 68, 0.14); color: #ef4444; padding: 1px 7px; border-radius: 4px; font-weight: 800;">🔒 Locked</span>` : ''}
+                        ${m.portalHidden ? `<span style="font-size: 0.7rem; background: rgba(100, 116, 139, 0.18); color: #64748b; padding: 1px 7px; border-radius: 4px; font-weight: 800;">🙈 Hidden</span>` : ''}
                     </div>
                     <span class="admin-comm-item-tenure" style="font-size: 0.76rem; color: var(--text-muted);">${escapeHtml(m.tenure)}</span>
                     <p class="admin-comm-item-desc" style="font-size: 0.8rem; margin: 4px 0 0 0; color: var(--text-secondary);">${escapeHtml(m.desc)}</p>
                     ${m.trait ? `<div style="font-size: 0.74rem; color: #ea580c; font-weight: 700; margin-top: 2px;">🏷️ ${escapeHtml(m.trait)}</div>` : ''}
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 6px;">
-                <button type="button" class="btn-order-move btn-edit-comm-member" data-id="${m.id}" title="Edit Member & Photo" style="background: rgba(234, 88, 12, 0.12); color: #ea580c; border: 1px solid rgba(234, 88, 12, 0.35); font-weight: 700; padding: 4px 10px;">✏️ Edit</button>
-                <button type="button" class="btn-order-move btn-edit-comm-passcode" data-id="${m.id}" title="Edit Member Password">🔑 Pass</button>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
+                <button type="button" class="btn-order-move btn-edit-comm-member" data-id="${m.id}" title="Edit Member, Email & Photo" style="background: rgba(234, 88, 12, 0.12); color: #ea580c; border: 1px solid rgba(234, 88, 12, 0.35); font-weight: 700; padding: 4px 10px;">✏️ Edit</button>
+                <button type="button" class="btn-order-move btn-toggle-lock-member" data-id="${m.id}" title="${m.portalLocked ? 'Unlock Member Portal' : 'Lock Member Portal'}" style="font-weight: 700; padding: 4px 8px;">${m.portalLocked ? '🔓 Unlock' : '🔒 Lock'}</button>
+                <button type="button" class="btn-order-move btn-toggle-hide-member" data-id="${m.id}" title="${m.portalHidden ? 'Show on Public Site' : 'Hide from Public Site'}" style="font-weight: 700; padding: 4px 8px;">${m.portalHidden ? '👁️ Show' : '🙈 Hide'}</button>
                 <button type="button" class="btn-order-move btn-comm-move-up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move Earlier (Higher)">⬆️</button>
                 <button type="button" class="btn-order-move btn-comm-move-down" data-idx="${idx}" ${idx === members.length - 1 ? 'disabled' : ''} title="Move Later (Lower)">⬇️</button>
-                <button type="button" class="btn-order-delete btn-delete-row" data-id="${m.id}" title="Remove Member">🗑️</button>
+                <button type="button" class="btn-order-delete btn-delete-row" data-id="${m.id}" title="Delete Member & Portal">🗑️</button>
             </div>
         </div>
     `).join("");
@@ -2218,18 +2278,25 @@ function renderAdminCommitteeRosterList() {
         });
     });
 
-    list.querySelectorAll(".btn-edit-comm-passcode").forEach(btn => {
+    list.querySelectorAll(".btn-toggle-lock-member").forEach(btn => {
         btn.addEventListener("click", function() {
             const id = this.getAttribute("data-id");
             const m = appTeamData.committeeMembers.find(x => x.id === id);
             if (!m) return;
-            const currentPass = m.passcode || (m.name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026");
-            const newPass = prompt(`Set unique portal password for ${m.name}:`, currentPass);
-            if (newPass !== null && newPass.trim()) {
-                m.passcode = newPass.trim();
-                saveTeamData();
-                playClickSound();
-            }
+            m.portalLocked = !m.portalLocked;
+            saveTeamData();
+            playClickSound();
+        });
+    });
+
+    list.querySelectorAll(".btn-toggle-hide-member").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.getAttribute("data-id");
+            const m = appTeamData.committeeMembers.find(x => x.id === id);
+            if (!m) return;
+            m.portalHidden = !m.portalHidden;
+            saveTeamData();
+            playClickSound();
         });
     });
     
@@ -2292,8 +2359,11 @@ function openEditCommitteeMemberModal(memberId) {
     const traitInput = document.getElementById("edit-comm-trait");
     if (traitInput) traitInput.value = m.trait || "";
     
-    const passcodeInput = document.getElementById("edit-comm-passcode");
-    if (passcodeInput) passcodeInput.value = m.passcode || "";
+    const emailInput = document.getElementById("edit-comm-email");
+    if (emailInput) emailInput.value = m.email || "";
+
+    const newPasswordInput = document.getElementById("edit-comm-new-password");
+    if (newPasswordInput) newPasswordInput.value = "";
     
     editCommPhotoData = m.image || "";
     const preview = document.getElementById("edit-comm-photo-preview");
@@ -2313,7 +2383,7 @@ function closeEditCommitteeMemberModal() {
     editCommPhotoData = "";
 }
 
-function handleSaveEditCommitteeMember() {
+async function handleSaveEditCommitteeMember() {
     const idInput = document.getElementById("edit-comm-member-id");
     if (!idInput) return;
     const id = idInput.value;
@@ -2327,24 +2397,63 @@ function handleSaveEditCommitteeMember() {
     const nameInput = document.getElementById("edit-comm-name");
     const descInput = document.getElementById("edit-comm-desc");
     const traitInput = document.getElementById("edit-comm-trait");
-    const passcodeInput = document.getElementById("edit-comm-passcode");
+    const emailInput = document.getElementById("edit-comm-email");
+    const newPasswordInput = document.getElementById("edit-comm-new-password");
     
     const tenure = tenureSelect ? tenureSelect.value : m.tenure;
     const name = nameInput ? nameInput.value.trim() : m.name;
     const desc = descInput ? descInput.value.trim() : m.desc;
     const trait = traitInput ? traitInput.value.trim() : m.trait;
-    const passcode = passcodeInput ? passcodeInput.value.trim() : m.passcode;
+    const email = emailInput ? emailInput.value.trim().toLowerCase() : (m.email || "");
+    const newPassword = newPasswordInput ? newPasswordInput.value : "";
     
     if (!name || !desc) {
         alert("Please provide both the member name and role title/position.");
         return;
+    }
+
+    if (newPassword && !email) {
+        alert("Please enter a Linked Login Email to create their Firebase Auth account.");
+        return;
+    }
+    if (email && newPassword && newPassword.length < 6) {
+        alert("Firebase Auth password must be at least 6 characters.");
+        return;
+    }
+
+    if (email && newPassword) {
+        const secondaryApp = getSecondaryAuthApp();
+        if (secondaryApp && typeof secondaryApp.auth === 'function') {
+            const btnSave = document.getElementById("btn-save-edit-comm");
+            if (btnSave) btnSave.disabled = true;
+            try {
+                const secAuth = secondaryApp.auth();
+                await secAuth.createUserWithEmailAndPassword(email, newPassword);
+                await secAuth.signOut();
+            } catch (err) {
+                if (err && err.code === "auth/email-already-in-use") {
+                    if (btnSave) btnSave.disabled = false;
+                    alert("This email already has a Firebase Auth account. To change its password, use Reset Password in Firebase Console → Authentication → Users.");
+                } else {
+                    if (btnSave) btnSave.disabled = false;
+                    alert("Could not create Firebase Auth account: " + (err && err.message ? err.message : "Unknown error"));
+                    return;
+                }
+            }
+            if (btnSave) btnSave.disabled = false;
+        }
     }
     
     m.tenure = tenure;
     m.name = name;
     m.desc = desc;
     m.trait = trait || "Dedicated Student Leader | Empowering Peers";
-    m.passcode = passcode || (name.toLowerCase().replace(/[^a-z0-9]/g, '') + "2026");
+    if (email) {
+        m.email = email;
+    } else {
+        delete m.email;
+    }
+    delete m.passcode;
     if (editCommPhotoData) {
         m.image = editCommPhotoData;
     }
@@ -2557,14 +2666,15 @@ function renderAdminExportCode() {
 let isAdminModeActive = false;
 
 function openAdminMasterConsole() {
+    if (READ_ONLY_SHOWCASE_MODE || !auth || !auth.currentUser || auth.currentUser.uid !== ADMIN_AUTH_UID) return;
     const adminMasterModal = document.getElementById("admin-master-modal");
     if (!adminMasterModal) return;
     
     // Populate admin fields
     const teamInput = document.getElementById("admin-edit-team-passcode");
     const adminInput = document.getElementById("admin-edit-admin-passcode");
-    if (teamInput) teamInput.value = appTeamData.teamPasscode;
-    if (adminInput) adminInput.value = appTeamData.adminPasscode;
+    if (teamInput) teamInput.value = "";
+    if (adminInput) adminInput.value = "";
     
     renderAdminLeaderboardList();
     renderAdminDemeritDropdown();
@@ -2589,8 +2699,11 @@ function openAdminMasterConsole() {
 }
 
 function activateAdminMode() {
+    if (READ_ONLY_SHOWCASE_MODE || !auth || !auth.currentUser || auth.currentUser.uid !== ADMIN_AUTH_UID) {
+        sessionStorage.removeItem("interactup_is_admin");
+        return;
+    }
     isAdminModeActive = true;
-    sessionStorage.setItem("interactup_is_admin", "true");
     document.body.classList.add("admin-mode-active");
     
     const dock = document.getElementById("admin-persistent-dock");
@@ -2610,6 +2723,9 @@ function activateAdminMode() {
 function deactivateAdminMode() {
     isAdminModeActive = false;
     sessionStorage.removeItem("interactup_is_admin");
+    if (auth && auth.currentUser) {
+        auth.signOut().catch(() => {});
+    }
     document.body.classList.remove("admin-mode-active");
     
     const dock = document.getElementById("admin-persistent-dock");
@@ -2636,8 +2752,10 @@ function setupModalsController() {
     const teamLeaderboardModal = document.getElementById("team-leaderboard-modal");
     const adminMasterModal = document.getElementById("admin-master-modal");
     
-    // Check for existing active admin session
-    if (sessionStorage.getItem("interactup_is_admin") === "true") {
+    // Check for existing active admin session (verified strictly via Firebase Auth)
+    sessionStorage.removeItem("interactup_is_admin");
+    sessionStorage.removeItem("interactup_member_id");
+    if (!READ_ONLY_SHOWCASE_MODE && auth && auth.currentUser && auth.currentUser.uid === ADMIN_AUTH_UID) {
         activateAdminMode();
     }
     
@@ -2769,57 +2887,93 @@ function setupModalsController() {
         });
     }
     
-    // DUAL-ROLE PASSCODE VERIFICATION
+    // FIREBASE AUTHENTICATION LOGIN
+    const emailField = document.getElementById("team-login-email");
     const passcodeField = document.getElementById("team-passcode-input");
     const passcodeError = document.getElementById("team-passcode-error");
     const btnValidatePasscode = document.getElementById("btn-validate-team-passcode");
     
     function validateTeamPasscode() {
-        const val = (passcodeField.value || "").trim();
-        if (!val) return;
-        
-        if (val === appTeamData.adminPasscode) {
-            // ADMIN LOGIN
-            passcodeError.style.display = "none";
-            passcodeField.value = "";
-            if (teamLoginModal) teamLoginModal.classList.remove("active");
-            
-            activateAdminMode();
-            openAdminMasterConsole();
-        } else {
-            // Check if member passcode matches any committee member
-            const matchedMember = (appTeamData.committeeMembers || []).find(m => 
-                m.passcode && m.passcode.toLowerCase() === val.toLowerCase()
-            );
-            
-            if (matchedMember) {
-                // PERSONALIZED MEMBER PORTAL LOGIN
-                passcodeError.style.display = "none";
-                passcodeField.value = "";
-                if (teamLoginModal) teamLoginModal.classList.remove("active");
-                openMemberPortal(matchedMember);
-                return;
-            }
-            
-            if (val === appTeamData.teamPasscode) {
-                // TEAM LEADERBOARD LOGIN
-                passcodeError.style.display = "none";
-                passcodeField.value = "";
-                if (teamLoginModal) teamLoginModal.classList.remove("active");
-                
-                renderLeaderboardTable();
-                if (teamLeaderboardModal) teamLeaderboardModal.classList.add("active");
-                playClickSound();
-            } else {
+        if (READ_ONLY_SHOWCASE_MODE) return;
+        const email = (emailField ? emailField.value : "").trim();
+        const password = (passcodeField ? passcodeField.value : "").trim();
+        if (!email || !password) {
+            if (passcodeError) {
+                passcodeError.textContent = "Please enter both your email and password.";
                 passcodeError.style.display = "block";
-                passcodeError.style.animation = 'none';
-                passcodeError.offsetHeight;
-                passcodeError.style.animation = null;
             }
+            return;
         }
+        if (!auth) {
+            if (passcodeError) {
+                passcodeError.textContent = "Authentication service unavailable. Please refresh.";
+                passcodeError.style.display = "block";
+            }
+            return;
+        }
+
+        if (btnValidatePasscode) btnValidatePasscode.disabled = true;
+        auth.signInWithEmailAndPassword(email, password)
+            .then((cred) => {
+                if (btnValidatePasscode) btnValidatePasscode.disabled = false;
+                const user = cred.user;
+                if (passcodeError) passcodeError.style.display = "none";
+                if (passcodeField) passcodeField.value = "";
+                if (emailField) emailField.value = "";
+
+                if (user && user.uid === ADMIN_AUTH_UID) {
+                    if (teamLoginModal) teamLoginModal.classList.remove("active");
+                    activateAdminMode();
+                    openAdminMasterConsole();
+                    return;
+                }
+
+                const matchedMember = resolveCommitteeMemberFromUser(user);
+                if (matchedMember) {
+                    if (matchedMember.portalLocked) {
+                        auth.signOut().catch(() => {});
+                        if (passcodeError) {
+                            passcodeError.textContent = "Your Member Portal is currently locked by the Master Admin.";
+                            passcodeError.style.display = "block";
+                        }
+                        return;
+                    }
+                    if (teamLoginModal) teamLoginModal.classList.remove("active");
+                    openMemberPortal(matchedMember);
+                    return;
+                }
+
+                // Authenticated user without a matching committee profile
+                auth.signOut().catch(() => {});
+                if (passcodeError) {
+                    passcodeError.textContent = "No committee member profile linked to this email.";
+                    passcodeError.style.display = "block";
+                }
+            })
+            .catch(() => {
+                if (btnValidatePasscode) btnValidatePasscode.disabled = false;
+                if (passcodeError) {
+                    passcodeError.textContent = "Invalid email or password. Please check with Master Admin.";
+                    passcodeError.style.display = "block";
+                    passcodeError.style.animation = 'none';
+                    passcodeError.offsetHeight;
+                    passcodeError.style.animation = null;
+                }
+            });
     }
     
     if (btnValidatePasscode) btnValidatePasscode.addEventListener("click", validateTeamPasscode);
+    if (emailField) {
+        emailField.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                if (passcodeField && !passcodeField.value) {
+                    passcodeField.focus();
+                } else {
+                    validateTeamPasscode();
+                }
+            }
+        });
+    }
     if (passcodeField) {
         passcodeField.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
@@ -2944,24 +3098,54 @@ function setupModalsController() {
         });
     }
     
-    // Admin Add Committee Member
+    // Admin Add Committee Member (with optional Firebase Auth account creation)
     const btnAddCommittee = document.getElementById("btn-admin-add-committee");
     if (btnAddCommittee) {
-        btnAddCommittee.addEventListener("click", () => {
+        btnAddCommittee.addEventListener("click", async () => {
             const tenureSelect = document.getElementById("admin-comm-tenure-select");
             const nameInput = document.getElementById("admin-comm-name");
             const descInput = document.getElementById("admin-comm-desc");
             const traitInput = document.getElementById("admin-comm-trait");
+            const emailInput = document.getElementById("admin-comm-email");
             const passcodeInput = document.getElementById("admin-comm-passcode");
             
             if (!nameInput.value.trim() || !descInput.value.trim()) {
                 alert("Please enter both the member name and description.");
                 return;
             }
-            
-            const customPasscode = (passcodeInput && passcodeInput.value.trim()) ? 
-                passcodeInput.value.trim() : 
-                (nameInput.value.trim().toLowerCase().replace(/[^a-z0-9]/g, '') + "2026");
+
+            const memberEmail = emailInput ? emailInput.value.trim().toLowerCase() : "";
+            const initialPassword = passcodeInput ? passcodeInput.value : "";
+
+            if (initialPassword && !memberEmail) {
+                alert("Please enter a Member Login Email to create their Firebase Auth account.");
+                return;
+            }
+            if (memberEmail && initialPassword && initialPassword.length < 6) {
+                alert("Firebase Auth password must be at least 6 characters.");
+                return;
+            }
+
+            if (memberEmail && initialPassword) {
+                const secondaryApp = getSecondaryAuthApp();
+                if (secondaryApp && typeof secondaryApp.auth === 'function') {
+                    btnAddCommittee.disabled = true;
+                    try {
+                        const secAuth = secondaryApp.auth();
+                        await secAuth.createUserWithEmailAndPassword(memberEmail, initialPassword);
+                        await secAuth.signOut();
+                    } catch (err) {
+                        if (err && err.code === "auth/email-already-in-use") {
+                            // Account already exists in Firebase Auth; still link the email to this profile
+                        } else {
+                            btnAddCommittee.disabled = false;
+                            alert("Could not create Firebase Auth account: " + (err && err.message ? err.message : "Unknown error"));
+                            return;
+                        }
+                    }
+                    btnAddCommittee.disabled = false;
+                }
+            }
             
             const newComm = {
                 id: "comm-" + Date.now(),
@@ -2969,9 +3153,11 @@ function setupModalsController() {
                 tenure: tenureSelect.value,
                 desc: descInput.value.trim(),
                 trait: (traitInput && traitInput.value.trim()) ? traitInput.value.trim() : "Dedicated Student Leader | Empowering Peers",
-                passcode: customPasscode,
                 image: adminCommPhotoData || "assets/images/logo.png"
             };
+            if (memberEmail) {
+                newComm.email = memberEmail;
+            }
             
             appTeamData.committeeMembers.push(newComm);
             saveTeamData();
@@ -2979,6 +3165,7 @@ function setupModalsController() {
             nameInput.value = "";
             descInput.value = "";
             if (traitInput) traitInput.value = "";
+            if (emailInput) emailInput.value = "";
             if (passcodeInput) passcodeInput.value = "";
             if (commWordCount) commWordCount.textContent = "0";
             adminCommPhotoData = "";
@@ -3546,8 +3733,8 @@ function setupModalsController() {
     window.openImpactShowcase = openImpactShowcase;
     window.closeImpactShowcase = closeImpactShowcase;
     
-    // Restore Member Session if active
-    const savedMemberId = sessionStorage.getItem("interactup_member_id");
+    // Restore Member Session strictly from Firebase Auth (never sessionStorage)
+    const savedMemberId = null;
     if (savedMemberId) {
         const foundMember = (appTeamData.committeeMembers || []).find(m => m.id === savedMemberId);
         if (foundMember) {
@@ -3575,8 +3762,11 @@ function setupModalsController() {
 let currentLoggedInMember = null;
 
 function openMemberPortal(member) {
+    if (READ_ONLY_SHOWCASE_MODE || !auth || !auth.currentUser || !member || member.portalLocked) {
+        sessionStorage.removeItem("interactup_member_id");
+        return;
+    }
     currentLoggedInMember = member;
-    sessionStorage.setItem("interactup_member_id", member.id);
     
     const btnTeam = document.getElementById("btn-team-login-trigger");
     if (btnTeam && !isAdminModeActive) {
@@ -3612,6 +3802,9 @@ function closeMemberPortal() {
     if (memberFullscreenIcon) memberFullscreenIcon.textContent = "⛶";
     currentLoggedInMember = null;
     sessionStorage.removeItem("interactup_member_id");
+    if (auth && auth.currentUser && auth.currentUser.uid !== ADMIN_AUTH_UID) {
+        auth.signOut().catch(() => {});
+    }
     
     const btnTeam = document.getElementById("btn-team-login-trigger");
     if (btnTeam && !isAdminModeActive) {
@@ -4799,6 +4992,7 @@ function openTeamLoginPrompt() {
 }
 
 function checkHashAccess() {
+    if (READ_ONLY_SHOWCASE_MODE) return;
     if (window.location.hash === "#admin" || window.location.hash === "#team") {
         openTeamLoginPrompt();
         window.history.replaceState(null, null, ' ');
@@ -6920,6 +7114,11 @@ function initDashboardNavigation() {
             e.preventDefault();
             const targetView = this.getAttribute("data-view");
             const targetTheme = this.getAttribute("data-theme");
+            
+            if (targetView === "impact") {
+                if (typeof openImpactShowcase === "function") openImpactShowcase();
+                return;
+            }
             
             navItems.forEach(i => i.classList.remove("active"));
             this.classList.add("active");

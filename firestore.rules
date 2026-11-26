@@ -1,0 +1,66 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// This security rules file assumes the following data structure
+// for the InteractUp deployment (Firebase Authentication Step 2):
+//
+// Collection: interactup_config
+// Document ID: team_data (and any future showcase config docs)
+// Access Pattern:
+//   - Public read-only (get/list) for all showcase visitors via
+//     db.collection("interactup_config").doc("team_data").onSnapshot(...)
+//   - Authenticated Admin-only writes (create, update, delete) restricted
+//     strictly to the verified Firebase Auth Admin UID.
+//   - Note: team_data no longer stores any passcodes or secrets.
+//
+// Fields in interactup_config/team_data (from app.js DEFAULT_TEAM_DATA):
+//   - tenures: list (showcase tenure metadata)
+//   - leaderboard: list (team/member leaderboard entries)
+//   - committeeMembers: list (committee member profiles)
+//   - competitions: list (competition entries)
+//   - appreciations: list (appreciation entries)
+//   - appreciationTasks: list (appreciation task definitions)
+//   - impactContent: map (impact section content)
+//   - vaultContent: map (vault section content)
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -----------------------------------------------------------
+    // Helper Functions
+    // -----------------------------------------------------------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+             request.auth.uid == "FX9s7HkfmRhqRRy3S37WyLEVNkj2";
+    }
+
+    // -----------------------------------------------------------
+    // Showcase Configuration (Public Read, Admin-Only Write)
+    // -----------------------------------------------------------
+    // Allows visitors to read the public showcase configuration
+    // (e.g., interactup_config/team_data, which stores no secrets)
+    // while restricting all creates, updates, and deletes strictly
+    // to the verified Firebase Auth Admin UID.
+    match /interactup_config/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // -----------------------------------------------------------
+    // Default Deny (All Other Collections & Subcollections)
+    // -----------------------------------------------------------
+    // Explicitly deny all reads and writes to any other path.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

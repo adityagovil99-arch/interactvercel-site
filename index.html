@@ -742,12 +742,18 @@
                         <p class="section-subtitle text-center">Recognizing our dedicated student and alumni leadership who steered InteractUp across diverse operational tenures.</p>
                     </div>
 
-                    <div class="committee-archive-card committee-showcase-poster glass">
+                    <div class="committee-archive-card committee-showcase-poster glass" id="committee-directory-container">
                         <div class="committee-archive-icon">🏛️</div>
                         <h3>National Core Committee Directory</h3>
                         <p class="committee-archive-desc">
                             Recognizing dedicated student leadership and alumni who steered InteractUp across diverse operational tenures.
                         </p>
+
+                        <div class="committee-promo-cta-row">
+                            <button type="button" class="btn-committee-benefits" id="btn-open-committee-benefits">
+                                <span>💎</span> Benefits of National Core Committee Member <span class="benefits-arrow">→</span>
+                            </button>
+                        </div>
                         
                         <!-- Tenure Filter Tabs (Rendered Dynamically by JS) -->
                         <div class="committee-tenure-tabs" id="committee-tenure-tabs-container">
@@ -805,6 +811,129 @@
                                 Meet the people who make it happen — members united by a shared purpose of empowering individuals, nurturing talent, and creating opportunities for growth.
                             </p>
                             <div class="poster-footer-tag">@INTERACTUP ↗</div>
+                        </div>
+                    </div>
+
+                    <!-- BENEFITS OF NATIONAL CORE COMMITTEE MEMBER (PROMOTIONAL SUB-PAGE) -->
+                    <div class="committee-benefits-page glass" id="committee-benefits-page" style="display: none;">
+                        <div class="benefits-top-nav">
+                            <button type="button" class="btn-benefits-back" id="btn-back-to-committee-directory">
+                                ← Back to National Core Committee Directory
+                            </button>
+                            <span class="benefits-charter-pill">🏛️ EXECUTIVE &amp; VOLUNTEER PRIVILEGE CHARTER</span>
+                        </div>
+
+                        <div class="benefits-promo-hero">
+                            <div class="benefits-hero-glow"></div>
+                            <span class="benefits-hero-tag">💎 CAREER VAULT &amp; ANNUAL COMMUNITY ENDOWMENT</span>
+                            <h2 class="benefits-promo-title">Benefits of <span class="benefits-title-highlight">National Core Committee</span> Member</h2>
+                            <p class="benefits-promo-lead">
+                                If you are a member of National Core Committee and are volunteering for the NGO, you will get following benefits.
+                            </p>
+                        </div>
+
+                        <div class="benefits-promo-grid">
+                            <!-- 1. Official Executive Offer Letter -->
+                            <article class="benefit-promo-card accent-emerald">
+                                <div class="benefit-card-top">
+                                    <div class="benefit-icon-box">📄</div>
+                                    <span class="benefit-pill emerald">Onboarding Credential</span>
+                                </div>
+                                <h3>Official Executive Offer Letter</h3>
+                                <p id="promo-benefit-desc-offer">
+                                    Authenticated appointment letter on formal InteractUp corporate stationery certifying your tenure, executive role, and community credentials.
+                                </p>
+                                <div class="benefit-card-foot">Issued on formal corporate stationery</div>
+                            </article>
+
+                            <!-- 2. Certificate of Tenure Completion -->
+                            <article class="benefit-promo-card">
+                                <div class="benefit-card-top">
+                                    <div class="benefit-icon-box">🎓</div>
+                                    <span class="benefit-pill slate">End of Tenure</span>
+                                </div>
+                                <h3>Certificate of Tenure Completion</h3>
+                                <p id="promo-benefit-desc-completion">
+                                    Formal institutional accreditation awarded upon successful conclusion of your official executive tenure with a verifiable verification code.
+                                </p>
+                                <div class="benefit-card-foot">Includes verifiable credential code</div>
+                            </article>
+
+                            <!-- 3. Letter of Recommendation (LOR) -->
+                            <article class="benefit-promo-card">
+                                <div class="benefit-card-top">
+                                    <div class="benefit-icon-box">🖋️</div>
+                                    <span class="benefit-pill gold">Founder's Office</span>
+                                </div>
+                                <h3>Letter of Recommendation (LOR)</h3>
+                                <p id="promo-benefit-desc-lor">
+                                    Bespoke executive reference letter signed by Founders &amp; Board of Directors for university admissions, venture grants, and leadership roles. Authored strictly based on your performance, initiative, and appreciation standing during tenure.
+                                </p>
+                                <div class="benefit-card-foot">Signed by Founders &amp; Board</div>
+                            </article>
+
+                            <!-- 4. InteractUp Executive Alum Guild -->
+                            <article class="benefit-promo-card">
+                                <div class="benefit-card-top">
+                                    <div class="benefit-icon-box">🌐</div>
+                                    <span class="benefit-pill slate">Lifetime Access</span>
+                                </div>
+                                <h3>InteractUp Executive Alum Guild</h3>
+                                <p id="promo-benefit-desc-alumni">
+                                    Lifetime VIP access to our closed executive alumni directory, senior corporate mentors, venture capital syndicates, and private alumni mixers worldwide.
+                                </p>
+                                <div class="benefit-card-foot">Post-tenure executive network</div>
+                            </article>
+
+                            <!-- 5. Board Share & 20-Year Profit Endowment -->
+                            <article class="benefit-promo-card accent-gold">
+                                <div class="benefit-card-top">
+                                    <div class="benefit-icon-box">💼</div>
+                                    <span class="benefit-pill gold">20-Year Sovereign Board Fund</span>
+                                </div>
+                                <h3>Board Share &amp; 20-Year Profit Endowment</h3>
+                                <p id="promo-benefit-desc-board">
+                                    Receive annual financial distributions for 20 years post-tenure from the Sovereign Board Fund. Payout allocation is calculated based on net appreciation points, leadership tenure, and zero-infraction standing.
+                                </p>
+                                <div class="benefit-card-foot">Long-term board profit distribution</div>
+                            </article>
+
+                            <!-- 6. Community Fund (NEW) -->
+                            <article class="benefit-promo-card accent-gold benefit-card-featured">
+                                <div class="benefit-card-top">
+                                    <div class="benefit-icon-box">🤝</div>
+                                    <span class="benefit-pill featured">Annual Contribution Pool</span>
+                                </div>
+                                <h3>Community Fund</h3>
+                                <p>
+                                    Every year, a dedicated Community Fund is built across the tenure. All the amount collected in the Community Fund throughout the whole year is distributed at the end of tenure to the members in the exact ratio of their contribution.
+                                </p>
+                                <div class="benefit-card-foot">Distributed at end of tenure in contribution ratio</div>
+                            </article>
+
+                            <!-- 7. Many More Sovereign Privileges -->
+                            <article class="benefit-promo-card benefit-card-wide">
+                                <div class="benefit-card-top">
+                                    <div class="benefit-icon-box">✨</div>
+                                    <span class="benefit-pill violet">Milestone Unlocks</span>
+                                </div>
+                                <h3>Many More Sovereign Privileges</h3>
+                                <p id="promo-benefit-desc-more">
+                                    Classified institutional benefits, founder grants, speaker fellowships, and private global roundtables will be unsealed as milestones are conquered.
+                                </p>
+                                <div class="benefit-card-foot">Unlocked continuously with impact milestones</div>
+                            </article>
+                        </div>
+
+                        <div class="benefits-bottom-banner">
+                            <div class="benefits-bottom-actions">
+                                <button type="button" class="btn-benefits-back" id="btn-back-to-committee-bottom">
+                                    ← Return to Core Committee Members
+                                </button>
+                                <button type="button" class="btn-committee-benefits btn-volunteer-cta" id="btn-volunteer-committee-cta">
+                                    <span>🤝</span> Want to volunteer for NGO &amp; become Core Committee Member <span class="benefits-arrow">→</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -2158,8 +2287,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- 6B. EDIT COMMITTEE MEMBER MODAL (Admin Console) -->
+    <!-- 6B. EDIT COMMITTEE MEMBER MODAL (Admin Console) -->
     <div class="modal-backdrop" id="modal-edit-committee-member" style="display: none; align-items: center; justify-content: center; z-index: 1000010;">
         <div class="modal-card" style="max-width: 520px; width: 92%; background: var(--bg-surface); padding: 24px; border-radius: 16px; border: 1.5px solid var(--border-bold); box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
@@ -2423,6 +2554,33 @@
             <div class="modal-footer" style="padding: 12px 24px; border-top: 1px solid var(--border-light); display: flex; justify-content: flex-end;">
                 <button type="button" class="btn btn-primary" id="btn-close-accountability-policy-footer" style="padding: 8px 20px;">
                     Understood &amp; Acknowledge
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VOLUNTEER FOR NGO CONFIRMATION MODAL -->
+    <div class="modal-backdrop" id="modal-volunteer-confirm" style="z-index: 1000020;">
+        <div class="modal-card volunteer-confirm-card" style="max-width: 480px; width: 92%; background: var(--bg-surface); padding: 26px; border-radius: 18px; border: 1.5px solid rgba(245, 158, 11, 0.45); box-shadow: 0 24px 60px rgba(0,0,0,0.45);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+                <h4 style="margin: 0; font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 8px; color: var(--text-primary);">
+                    <span>🤝</span> Confirm Volunteering Inquiry
+                </h4>
+                <button type="button" class="btn-close-modal" id="btn-close-volunteer-confirm" aria-label="Close Confirmation Modal">&times;</button>
+            </div>
+            <p style="margin: 0 0 12px 0; font-size: 0.92rem; line-height: 1.6; color: var(--text-secondary);">
+                Are you sure you want to proceed to WhatsApp (<strong>+91 83838 48516</strong>) to apply for volunteering with the NGO and joining the National Core Committee?
+            </p>
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 12px 14px; margin-bottom: 20px; font-size: 0.84rem; color: var(--text-primary); line-height: 1.5;">
+                <strong style="display: block; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em; color: #10b981; margin-bottom: 4px;">Pre-filled WhatsApp Message</strong>
+                "I want to volunteer for the NGO, please let me know if there is any space and also let me know Round 1 of selection process."
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-volunteer-confirm" style="padding: 9px 18px;">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="btn-confirm-volunteer-whatsapp" style="background: #10b981; border-color: #10b981; font-weight: 800; padding: 9px 20px;">
+                    Yes, Proceed to WhatsApp →
                 </button>
             </div>
         </div>

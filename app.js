@@ -1253,13 +1253,48 @@ function saveTeamData() {
     renderAdminExportCode();
 }
 
+function renderCommitteeBenefitsContent() {
+    const vc = (appTeamData && appTeamData.vaultContent) || DEFAULT_TEAM_DATA.vaultContent || {};
+    const fieldMap = [
+        ['promo-benefit-desc-offer', vc.offerSubtitle],
+        ['promo-benefit-desc-completion', vc.completionSubtitle],
+        ['promo-benefit-desc-lor', vc.lorSubtitle],
+        ['promo-benefit-desc-alumni', vc.alumniSubtitle],
+        ['promo-benefit-desc-board', vc.boardSubtitle],
+        ['promo-benefit-desc-more', vc.moreSubtitle]
+    ];
+    fieldMap.forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el && val) el.textContent = val;
+    });
+}
+
+function showCommitteeBenefitsPage(showBenefits) {
+    const dirCard = document.getElementById("committee-directory-container");
+    const benefitsPage = document.getElementById("committee-benefits-page");
+    if (!dirCard || !benefitsPage) return;
+
+    if (showBenefits) {
+        renderCommitteeBenefitsContent();
+        dirCard.style.display = "none";
+        benefitsPage.style.display = "block";
+    } else {
+        benefitsPage.style.display = "none";
+        dirCard.style.display = "flex";
+    }
+
+    const viewport = document.getElementById("dashboard-viewport") || document.getElementById("main-viewport") || document.querySelector(".main-viewport");
+    if (viewport) viewport.scrollTop = 0;
+}
+
 // 1. RENDER MAIN PAGE CORE COMMITTEE DIRECTORY (3D ORBITAL & PLAIN GRID)
 function renderCoreCommitteeMainView() {
     const tabsContainer = document.getElementById("committee-tenure-tabs-container");
     const orbitalWrapper = document.getElementById("committee-orbital-wrapper");
     const plainWrapper = document.getElementById("committee-plain-wrapper");
     const emptyState = document.getElementById("committee-empty-state");
-    
+
+    renderCommitteeBenefitsContent();
     if (!tabsContainer) return;
     
     if (!appTeamData.tenures.includes(currentActiveTenure)) {
@@ -3124,6 +3159,65 @@ function setupModalsController() {
         });
     }
     
+    // Committee Benefits Promotional Sub-Page Navigation
+    const btnOpenBenefits = document.getElementById("btn-open-committee-benefits");
+    const btnBackBenefits = document.getElementById("btn-back-to-committee-directory");
+    const btnBackBenefitsBottom = document.getElementById("btn-back-to-committee-bottom");
+    if (btnOpenBenefits) {
+        btnOpenBenefits.addEventListener("click", () => {
+            showCommitteeBenefitsPage(true);
+            playClickSound();
+        });
+    }
+    [btnBackBenefits, btnBackBenefitsBottom].forEach(btn => {
+        if (btn) {
+            btn.addEventListener("click", () => {
+                showCommitteeBenefitsPage(false);
+                playClickSound();
+            });
+        }
+    });
+
+    // Volunteer for NGO & Become Core Committee Member Confirmation Flow
+    const btnVolunteerCta = document.getElementById("btn-volunteer-committee-cta");
+    const modalVolunteerConfirm = document.getElementById("modal-volunteer-confirm");
+    const btnCloseVolunteerConfirm = document.getElementById("btn-close-volunteer-confirm");
+    const btnCancelVolunteerConfirm = document.getElementById("btn-cancel-volunteer-confirm");
+    const btnConfirmVolunteerWhatsapp = document.getElementById("btn-confirm-volunteer-whatsapp");
+
+    const closeVolunteerConfirmModal = () => {
+        if (modalVolunteerConfirm) modalVolunteerConfirm.classList.remove("active");
+    };
+
+    if (btnVolunteerCta && modalVolunteerConfirm) {
+        btnVolunteerCta.addEventListener("click", () => {
+            modalVolunteerConfirm.classList.add("active");
+            playClickSound();
+        });
+    }
+    [btnCloseVolunteerConfirm, btnCancelVolunteerConfirm].forEach(btn => {
+        if (btn) {
+            btn.addEventListener("click", () => {
+                closeVolunteerConfirmModal();
+                playClickSound();
+            });
+        }
+    });
+    if (modalVolunteerConfirm) {
+        modalVolunteerConfirm.addEventListener("click", (e) => {
+            if (e.target === modalVolunteerConfirm) closeVolunteerConfirmModal();
+        });
+    }
+    if (btnConfirmVolunteerWhatsapp) {
+        btnConfirmVolunteerWhatsapp.addEventListener("click", () => {
+            const msg = "I want to volunteer for the NGO, please let me know if there is any space and also let me know Round 1 of selection process.";
+            const waUrl = `https://wa.me/918383848516?text=${encodeURIComponent(msg)}`;
+            closeVolunteerConfirmModal();
+            playClickSound();
+            window.open(waUrl, "_blank", "noopener,noreferrer");
+        });
+    }
+
     // Leaderboard search filter
     const searchInput = document.getElementById("leaderboard-search-input");
     if (searchInput) {
@@ -7283,7 +7377,10 @@ function initDashboardNavigation() {
             else if (targetView === "streak") morphStageToShape("ladder");
             else if (targetView === "matchmaker") morphStageToShape("constellation");
             else if (targetView === "announcements") morphStageToShape("sphere");
-            else if (targetView === "committee") morphStageToShape("sphere");
+            else if (targetView === "committee") {
+                morphStageToShape("sphere");
+                if (typeof showCommitteeBenefitsPage === "function") showCommitteeBenefitsPage(false);
+            }
             else if (targetView === "startup") morphStageToShape("rocket");
             else if (targetView === "nutrients") morphStageToShape("constellation");
             

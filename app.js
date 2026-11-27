@@ -705,6 +705,172 @@ function resolveCommitteeMemberFromUser(user) {
         || null;
 }
 
+function isHttpOrigin() {
+    return typeof window !== 'undefined' && /^https?:$/i.test(window.location.protocol);
+}
+
+function refreshAllUIViews() {
+    if (typeof renderLeaderboardTable === 'function') renderLeaderboardTable();
+    if (typeof renderCoreCommitteeMainView === 'function') renderCoreCommitteeMainView();
+    if (typeof renderLiveEventsCarousel === 'function') renderLiveEventsCarousel();
+    if (typeof renderAllEventsTable === 'function') renderAllEventsTable();
+    if (typeof renderAdminLeaderboardList === 'function') renderAdminLeaderboardList();
+    if (typeof renderAdminDemeritDropdown === 'function') renderAdminDemeritDropdown();
+    if (typeof renderAdminDemeritsList === 'function') renderAdminDemeritsList();
+    if (typeof renderAdminWarningDropdown === 'function') renderAdminWarningDropdown();
+    if (typeof renderAdminWarningsList === 'function') renderAdminWarningsList();
+    if (typeof renderAdminOfferLetterRequestsList === 'function') renderAdminOfferLetterRequestsList();
+    if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
+    if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
+    if (typeof renderAdminAppreciationDropdown === 'function') renderAdminAppreciationDropdown();
+    if (typeof renderAdminAppreciationsList === 'function') renderAdminAppreciationsList();
+    if (typeof renderPublicLeaderboardLogsBin === 'function') renderPublicLeaderboardLogsBin();
+    if (typeof renderMemberLogsBinTab === 'function') renderMemberLogsBinTab();
+    if (typeof renderAdminTenureChips === 'function') renderAdminTenureChips();
+    if (typeof renderAdminCommitteeTenureDropdown === 'function') renderAdminCommitteeTenureDropdown();
+    if (typeof renderAdminCommitteeRosterList === 'function') renderAdminCommitteeRosterList();
+    if (typeof renderAdminTasksList === 'function') renderAdminTasksList();
+    if (typeof renderAdminRatingsFeed === 'function') renderAdminRatingsFeed();
+    if (typeof renderAdminEventsList === 'function') renderAdminEventsList();
+    if (typeof renderAdminExportCode === 'function') renderAdminExportCode();
+    if (typeof renderImpactShowcase === 'function') renderImpactShowcase();
+}
+
+function clearPrivateDataFromState() {
+    appTeamData.demerits = [];
+    appTeamData.warnings = [];
+    appTeamData.offerLetterRequests = [];
+    appTeamData.peerRatings = [];
+    if (Array.isArray(appTeamData.committeeMembers)) {
+        appTeamData.committeeMembers = appTeamData.committeeMembers.map(m => {
+            if (!m || typeof m !== 'object') return m;
+            const clean = { ...m };
+            delete clean.email;
+            return clean;
+        });
+    }
+    try {
+        localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
+    } catch (e) {}
+}
+
+function applyCloudData(cloud) {
+    if (!cloud || typeof cloud !== 'object') return;
+    if (Array.isArray(cloud.tenures) && cloud.tenures.length > 0) {
+        appTeamData.tenures = cloud.tenures;
+    }
+    if (Array.isArray(cloud.leaderboard)) {
+        appTeamData.leaderboard = cloud.leaderboard;
+    }
+    if (Array.isArray(cloud.committeeMembers)) {
+        appTeamData.committeeMembers = cloud.committeeMembers;
+    }
+    if (Array.isArray(cloud.competitions) && cloud.competitions.length > 0) {
+        appTeamData.competitions = cloud.competitions;
+        liveEvents = appTeamData.competitions;
+    }
+    if (Array.isArray(cloud.peerRatings)) {
+        appTeamData.peerRatings = cloud.peerRatings;
+    }
+    if (Array.isArray(cloud.demerits)) {
+        appTeamData.demerits = cloud.demerits;
+    }
+    if (Array.isArray(cloud.warnings)) {
+        appTeamData.warnings = cloud.warnings;
+    }
+    if (Array.isArray(cloud.offerLetterRequests)) {
+        appTeamData.offerLetterRequests = cloud.offerLetterRequests;
+    }
+    if (Array.isArray(cloud.appreciations)) {
+        appTeamData.appreciations = cloud.appreciations;
+    }
+    if (Array.isArray(cloud.appreciationTasks)) {
+        appTeamData.appreciationTasks = cloud.appreciationTasks;
+    }
+    if (cloud.impactContent && typeof cloud.impactContent === 'object') {
+        appTeamData.impactContent = cloud.impactContent;
+    }
+    if (cloud.vaultContent && typeof cloud.vaultContent === 'object') {
+        appTeamData.vaultContent = cloud.vaultContent;
+    }
+    ensureDemoCommitteeMembers(appTeamData);
+    if (typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) {
+        const updatedSelf = appTeamData.committeeMembers.find(m => m.id === currentLoggedInMember.id);
+        if (updatedSelf) currentLoggedInMember = updatedSelf;
+        if (typeof renderMemberPortal === 'function') renderMemberPortal();
+    }
+    try {
+        localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
+    } catch (e) {}
+    refreshAllUIViews();
+}
+
+async function fetchPublicDataFromBackend() {
+    if (!isHttpOrigin()) return false;
+    try {
+        const res = await fetch('/api/public-data', { cache: 'no-store' });
+        if (!res.ok) return false;
+        const json = await res.json();
+        if (json && json.ok && json.data) {
+            applyCloudData(json.data);
+            return true;
+        }
+    } catch (e) {
+        // Backend not available (e.g. local static server); fall back cleanly
+    }
+    return false;
+}
+
+async function fetchPortalDataFromBackend(user) {
+    if (!isHttpOrigin() || !user || typeof user.getIdToken !== 'function') return null;
+    try {
+        const token = await user.getIdToken();
+        const res = await fetch('/api/portal-data', {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + token },
+            cache: 'no-store'
+        });
+        if (res.status === 503 || res.status === 404) return null; // Not configured yet
+        const json = await res.json();
+        if (!res.ok) return { error: json && json.error ? json.error : 'unauthorized' };
+
+        if (json.role === 'admin' && json.data) {
+            applyCloudData(json.data);
+            return { role: 'admin' };
+        }
+        if (json.role === 'member' && json.member) {
+            if (json.privateData) {
+                appTeamData.demerits = Array.isArray(json.privateData.demerits) ? json.privateData.demerits : [];
+                appTeamData.warnings = Array.isArray(json.privateData.warnings) ? json.privateData.warnings : [];
+                appTeamData.offerLetterRequests = Array.isArray(json.privateData.offerLetterRequests) ? json.privateData.offerLetterRequests : [];
+                appTeamData.peerRatings = Array.isArray(json.privateData.peerRatings) ? json.privateData.peerRatings : [];
+            }
+            return { role: 'member', member: json.member };
+        }
+    } catch (e) {
+        console.warn('Portal backend fetch skipped:', e);
+    }
+    return null;
+}
+
+async function sendMemberActionToBackend(payload) {
+    if (!isHttpOrigin() || !auth || !auth.currentUser) return false;
+    try {
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch('/api/member-action', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(payload)
+        });
+        return res.ok;
+    } catch (e) {
+        return false;
+    }
+}
+
 try {
     if (typeof firebase !== 'undefined' && firebase.initializeApp) {
         if (!firebase.apps.length) {
@@ -713,17 +879,25 @@ try {
         db = firebase.firestore();
         if (typeof firebase.auth === 'function') {
             auth = firebase.auth();
-            auth.onAuthStateChanged((user) => {
+            auth.onAuthStateChanged(async (user) => {
                 sessionStorage.removeItem("interactup_is_admin");
                 sessionStorage.removeItem("interactup_member_id");
                 if (user && user.uid === ADMIN_AUTH_UID) {
+                    await fetchPortalDataFromBackend(user);
                     if (typeof activateAdminMode === 'function') activateAdminMode();
                 } else if (user) {
                     if (typeof isAdminModeActive !== 'undefined' && isAdminModeActive && typeof deactivateAdminMode === 'function') {
                         isAdminModeActive = false;
                         document.body.classList.remove("admin-mode-active");
                     }
-                    const matched = resolveCommitteeMemberFromUser(user);
+                    const backendResult = await fetchPortalDataFromBackend(user);
+                    const matched = (backendResult && backendResult.member)
+                        ? backendResult.member
+                        : resolveCommitteeMemberFromUser(user);
+                    if (backendResult && backendResult.error === 'portal_locked') {
+                        auth.signOut().catch(() => {});
+                        return;
+                    }
                     if (matched && !matched.portalLocked) {
                         currentLoggedInMember = matched;
                         const btnTeam = document.getElementById("btn-team-login-trigger");
@@ -732,11 +906,13 @@ try {
                             if (label) label.textContent = `👤 ${matched.name}`;
                             btnTeam.style.borderColor = "#10b981";
                         }
+                        if (typeof renderMemberPortal === 'function') renderMemberPortal();
                     } else if (matched && matched.portalLocked) {
                         auth.signOut().catch(() => {});
                     }
                 } else {
                     currentLoggedInMember = null;
+                    clearPrivateDataFromState();
                     if (typeof isAdminModeActive !== 'undefined' && isAdminModeActive) {
                         isAdminModeActive = false;
                         document.body.classList.remove("admin-mode-active");
@@ -752,96 +928,25 @@ try {
                 }
             });
         }
-        console.log("🔥 Firebase initialized. Listening for real-time cloud updates...");
-        
-        db.collection("interactup_config").doc("team_data").onSnapshot((doc) => {
-            if (doc.exists) {
-                const cloud = doc.data();
-                if (cloud && typeof cloud === 'object') {
-                    if (Array.isArray(cloud.tenures) && cloud.tenures.length > 0) {
-                        appTeamData.tenures = cloud.tenures;
-                    }
-                    if (Array.isArray(cloud.leaderboard)) {
-                        appTeamData.leaderboard = cloud.leaderboard;
-                    }
-                    if (Array.isArray(cloud.committeeMembers)) {
-                        appTeamData.committeeMembers = cloud.committeeMembers;
-                    }
-                    if (Array.isArray(cloud.competitions) && cloud.competitions.length > 0) {
-                        appTeamData.competitions = cloud.competitions;
-                        liveEvents = appTeamData.competitions;
-                    }
-                    if (Array.isArray(cloud.peerRatings)) {
-                        appTeamData.peerRatings = cloud.peerRatings;
-                    }
-                    if (Array.isArray(cloud.demerits)) {
-                        appTeamData.demerits = cloud.demerits;
-                    }
-                    if (Array.isArray(cloud.warnings)) {
-                        appTeamData.warnings = cloud.warnings;
-                    }
-                    if (Array.isArray(cloud.offerLetterRequests)) {
-                        appTeamData.offerLetterRequests = cloud.offerLetterRequests;
-                    }
-                    if (Array.isArray(cloud.appreciations)) {
-                        appTeamData.appreciations = cloud.appreciations;
-                    }
-                    if (Array.isArray(cloud.appreciationTasks)) {
-                        appTeamData.appreciationTasks = cloud.appreciationTasks;
-                    }
-                    if (cloud.impactContent && typeof cloud.impactContent === 'object') {
-                        appTeamData.impactContent = cloud.impactContent;
-                    }
-                    if (cloud.vaultContent && typeof cloud.vaultContent === 'object') {
-                        appTeamData.vaultContent = cloud.vaultContent;
-                        if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
-                        if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
-                    }
-                    ensureDemoCommitteeMembers(appTeamData);
-                    if (typeof currentLoggedInMember !== 'undefined' && currentLoggedInMember) {
-                        const updatedSelf = appTeamData.committeeMembers.find(m => m.id === currentLoggedInMember.id);
-                        if (updatedSelf) currentLoggedInMember = updatedSelf;
-                        if (typeof renderMemberPortal === 'function') renderMemberPortal();
-                    }
-                    try {
-                        localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
-                    } catch(e) {}
-                    
-                    // Trigger live UI re-render across the entire website
-                    if (typeof renderLeaderboardTable === 'function') renderLeaderboardTable();
-                    if (typeof renderCoreCommitteeMainView === 'function') renderCoreCommitteeMainView();
-                    if (typeof renderLiveEventsCarousel === 'function') renderLiveEventsCarousel();
-                    if (typeof renderAllEventsTable === 'function') renderAllEventsTable();
-                    if (typeof renderAdminLeaderboardList === 'function') renderAdminLeaderboardList();
-                    if (typeof renderAdminDemeritDropdown === 'function') renderAdminDemeritDropdown();
-                    if (typeof renderAdminDemeritsList === 'function') renderAdminDemeritsList();
-                    if (typeof renderAdminWarningDropdown === 'function') renderAdminWarningDropdown();
-                    if (typeof renderAdminWarningsList === 'function') renderAdminWarningsList();
-                    if (typeof renderAdminOfferLetterRequestsList === 'function') renderAdminOfferLetterRequestsList();
-                    if (typeof renderAdminVaultSettings === 'function') renderAdminVaultSettings();
-                    if (typeof renderMemberVaultTab === 'function') renderMemberVaultTab();
-                    if (typeof renderAdminAppreciationDropdown === 'function') renderAdminAppreciationDropdown();
-                    if (typeof renderAdminAppreciationsList === 'function') renderAdminAppreciationsList();
-                    if (typeof renderPublicLeaderboardLogsBin === 'function') renderPublicLeaderboardLogsBin();
-                    if (typeof renderMemberLogsBinTab === 'function') renderMemberLogsBinTab();
-                    if (typeof renderAdminTenureChips === 'function') renderAdminTenureChips();
-                    if (typeof renderAdminCommitteeTenureDropdown === 'function') renderAdminCommitteeTenureDropdown();
-                    if (typeof renderAdminCommitteeRosterList === 'function') renderAdminCommitteeRosterList();
-                    if (typeof renderAdminTasksList === 'function') renderAdminTasksList();
-                    if (typeof renderAdminRatingsFeed === 'function') renderAdminRatingsFeed();
-                    if (typeof renderAdminEventsList === 'function') renderAdminEventsList();
-                    if (typeof renderAdminExportCode === 'function') renderAdminExportCode();
-                    if (typeof renderImpactShowcase === 'function') renderImpactShowcase();
+        console.log("🔥 Firebase initialized. Loading public & cloud data...");
+
+        // Prefer secure Vercel backend endpoint for public data
+        fetchPublicDataFromBackend().then((loadedFromApi) => {
+            if (loadedFromApi) return;
+            // Fallback to direct Firestore listener if backend env is not configured yet
+            db.collection("interactup_config").doc("team_data").onSnapshot((doc) => {
+                if (doc.exists) {
+                    applyCloudData(doc.data());
+                } else if (!READ_ONLY_SHOWCASE_MODE && !isFirestoreSeeded && auth && auth.currentUser && auth.currentUser.uid === ADMIN_AUTH_UID) {
+                    isFirestoreSeeded = true;
+                    console.log("🔥 Initializing Firestore document with current team data...");
+                    db.collection("interactup_config").doc("team_data").set(appTeamData)
+                        .then(() => console.log("🔥 Successfully seeded Firestore with initial team data!"))
+                        .catch(err => console.error("Firestore seed error:", err));
                 }
-            } else if (!READ_ONLY_SHOWCASE_MODE && !isFirestoreSeeded && auth && auth.currentUser && auth.currentUser.uid === ADMIN_AUTH_UID) {
-                isFirestoreSeeded = true;
-                console.log("🔥 Initializing Firestore document with current team data...");
-                db.collection("interactup_config").doc("team_data").set(appTeamData)
-                    .then(() => console.log("🔥 Successfully seeded Firestore with initial team data!"))
-                    .catch(err => console.error("Firestore seed error:", err));
-            }
-        }, (err) => {
-            console.warn("Firestore sync warning (falling back to local cache):", err);
+            }, (err) => {
+                console.warn("Firestore sync warning (falling back to local cache):", err);
+            });
         });
     }
 } catch (e) {
@@ -1083,23 +1188,47 @@ function saveTeamData() {
     try {
         localStorage.setItem("interactup_team_portal_data", JSON.stringify(appTeamData));
         localStorage.setItem("interactup_events", JSON.stringify(appTeamData.competitions));
-        if (db && auth && auth.currentUser && auth.currentUser.uid === ADMIN_AUTH_UID) {
-            db.collection("interactup_config").doc("team_data").set(appTeamData)
-                .then(() => {
-                    console.log("🔥 Successfully synced to Firebase Cloud Database!");
-                    const cloudSyncStatus = document.getElementById("cloud-sync-status");
-                    if (cloudSyncStatus) {
-                        cloudSyncStatus.style.display = "block";
-                        cloudSyncStatus.style.color = "#10b981";
-                        cloudSyncStatus.innerHTML = "✓ Auto-saved & Synced to Live Site! 🚀";
-                        setTimeout(() => {
-                            if (cloudSyncStatus) cloudSyncStatus.style.display = "none";
-                        }, 4000);
-                    }
-                })
-                .catch(err => {
-                    console.error("Firebase cloud sync error:", err);
-                });
+        if (auth && auth.currentUser && auth.currentUser.uid === ADMIN_AUTH_UID) {
+            const showSyncOk = () => {
+                console.log("🔥 Successfully synced to Firebase Cloud Database!");
+                const cloudSyncStatus = document.getElementById("cloud-sync-status");
+                if (cloudSyncStatus) {
+                    cloudSyncStatus.style.display = "block";
+                    cloudSyncStatus.style.color = "#10b981";
+                    cloudSyncStatus.innerHTML = "✓ Auto-saved & Synced to Live Site! 🚀";
+                    setTimeout(() => {
+                        if (cloudSyncStatus) cloudSyncStatus.style.display = "none";
+                    }, 4000);
+                }
+            };
+
+            if (isHttpOrigin()) {
+                auth.currentUser.getIdToken()
+                    .then(token => fetch('/api/admin-save', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify({ data: appTeamData })
+                    }))
+                    .then(res => {
+                        if (res.ok) {
+                            showSyncOk();
+                        } else if ((res.status === 503 || res.status === 404) && db) {
+                            return db.collection("interactup_config").doc("team_data").set(appTeamData).then(showSyncOk);
+                        } else {
+                            throw new Error("Admin save returned status " + res.status);
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Cloud sync error:", err);
+                    });
+            } else if (db) {
+                db.collection("interactup_config").doc("team_data").set(appTeamData)
+                    .then(showSyncOk)
+                    .catch(err => console.error("Firebase cloud sync error:", err));
+            }
         }
     } catch (e) {
         console.error("Failed to save team data to localStorage", e);
@@ -2914,12 +3043,14 @@ function setupModalsController() {
 
         if (btnValidatePasscode) btnValidatePasscode.disabled = true;
         auth.signInWithEmailAndPassword(email, password)
-            .then((cred) => {
+            .then(async (cred) => {
                 if (btnValidatePasscode) btnValidatePasscode.disabled = false;
                 const user = cred.user;
                 if (passcodeError) passcodeError.style.display = "none";
                 if (passcodeField) passcodeField.value = "";
                 if (emailField) emailField.value = "";
+
+                const backendResult = await fetchPortalDataFromBackend(user);
 
                 if (user && user.uid === ADMIN_AUTH_UID) {
                     if (teamLoginModal) teamLoginModal.classList.remove("active");
@@ -2928,7 +3059,18 @@ function setupModalsController() {
                     return;
                 }
 
-                const matchedMember = resolveCommitteeMemberFromUser(user);
+                if (backendResult && backendResult.error === 'portal_locked') {
+                    auth.signOut().catch(() => {});
+                    if (passcodeError) {
+                        passcodeError.textContent = "Your Member Portal is currently locked by the Master Admin.";
+                        passcodeError.style.display = "block";
+                    }
+                    return;
+                }
+
+                const matchedMember = (backendResult && backendResult.member)
+                    ? backendResult.member
+                    : resolveCommitteeMemberFromUser(user);
                 if (matchedMember) {
                     if (matchedMember.portalLocked) {
                         auth.signOut().catch(() => {});
@@ -4919,6 +5061,7 @@ function initMemberPortal() {
             if (!Array.isArray(appTeamData.peerRatings)) appTeamData.peerRatings = [];
             appTeamData.peerRatings.unshift(newReview);
             saveTeamData();
+            sendMemberActionToBackend({ action: 'peer_rating', review: newReview });
             playClickSound();
             
             projectInput.value = "";
@@ -7684,6 +7827,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             
             saveTeamData();
+            sendMemberActionToBackend({ action: 'offer_letter_request', email: emailVal });
             playClickSound();
             
             if (feedback) {

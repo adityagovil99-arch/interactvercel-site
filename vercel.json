@@ -1,4 +1,18 @@
 {
+  "rewrites": [
+    { "source": "/home", "destination": "/index.html" },
+    { "source": "/immersion", "destination": "/index.html" },
+    { "source": "/booth", "destination": "/index.html" },
+    { "source": "/gallery", "destination": "/index.html" },
+    { "source": "/streak", "destination": "/index.html" },
+    { "source": "/matchmaker", "destination": "/index.html" },
+    { "source": "/announcements", "destination": "/index.html" },
+    { "source": "/committee", "destination": "/index.html" },
+    { "source": "/committee-benefits", "destination": "/index.html" },
+    { "source": "/startup", "destination": "/index.html" },
+    { "source": "/nutrients", "destination": "/index.html" },
+    { "source": "/impact", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

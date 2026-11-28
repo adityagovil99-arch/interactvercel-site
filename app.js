@@ -1269,7 +1269,7 @@ function renderCommitteeBenefitsContent() {
     });
 }
 
-function showCommitteeBenefitsPage(showBenefits) {
+function showCommitteeBenefitsPage(showBenefits, options = {}) {
     const dirCard = document.getElementById("committee-directory-container");
     const benefitsPage = document.getElementById("committee-benefits-page");
     if (!dirCard || !benefitsPage) return;
@@ -1278,9 +1278,15 @@ function showCommitteeBenefitsPage(showBenefits) {
         renderCommitteeBenefitsContent();
         dirCard.style.display = "none";
         benefitsPage.style.display = "block";
+        if (!options.skipUrl && typeof updateBrowserRouteUrl === "function") {
+            updateBrowserRouteUrl("committee-benefits");
+        }
     } else {
         benefitsPage.style.display = "none";
         dirCard.style.display = "flex";
+        if (!options.skipUrl && typeof updateBrowserRouteUrl === "function") {
+            updateBrowserRouteUrl("committee");
+        }
     }
 
     const viewport = document.getElementById("dashboard-viewport") || document.getElementById("main-viewport") || document.querySelector(".main-viewport");
@@ -3942,14 +3948,20 @@ function setupModalsController() {
     const btnCloseImpact = document.getElementById("btn-close-impact-modal");
     const sidebarNavImpact = document.getElementById("sidebar-nav-impact");
     
-    function openImpactShowcase() {
+    function openImpactShowcase(options = {}) {
         if (impactModal) impactModal.classList.add("active");
         renderImpactShowcase();
+        if (!options.skipUrl && typeof updateBrowserRouteUrl === "function") {
+            updateBrowserRouteUrl("impact");
+        }
         playClickSound();
     }
     
-    function closeImpactShowcase() {
+    function closeImpactShowcase(options = {}) {
         if (impactModal) impactModal.classList.remove("active");
+        if (!options.skipUrl && typeof getActiveViewRoute === "function" && typeof updateBrowserRouteUrl === "function") {
+            updateBrowserRouteUrl(getActiveViewRoute(), { replace: true });
+        }
         playClickSound();
     }
     
@@ -7345,45 +7357,130 @@ function initDashboardNavigation() {
         });
     }
     
+    const SPA_ROUTE_MAP = {
+        "home": "/",
+        "immersion": "/immersion",
+        "booth": "/booth",
+        "gallery": "/gallery",
+        "streak": "/streak",
+        "matchmaker": "/matchmaker",
+        "announcements": "/announcements",
+        "committee": "/committee",
+        "committee-benefits": "/committee-benefits",
+        "startup": "/startup",
+        "nutrients": "/nutrients",
+        "impact": "/impact"
+    };
+
+    function getActiveViewRoute() {
+        const activePanel = document.querySelector(".view-panel.active");
+        const viewId = activePanel ? activePanel.id.replace("view-", "") : "home";
+        if (viewId === "committee") {
+            const benefitsPage = document.getElementById("committee-benefits-page");
+            if (benefitsPage && benefitsPage.style.display === "block") {
+                return "committee-benefits";
+            }
+        }
+        return SPA_ROUTE_MAP[viewId] ? viewId : "home";
+    }
+
+    function updateBrowserRouteUrl(routeKey, options = {}) {
+        const targetPath = SPA_ROUTE_MAP[routeKey] || "/";
+        if (isHttpOrigin() && window.history && typeof window.history.pushState === "function") {
+            const currentPath = window.location.pathname.replace(/\/+$/, "") || "/";
+            const normalizedTarget = targetPath === "/" ? "/" : targetPath;
+            if (currentPath !== normalizedTarget || options.force) {
+                const method = options.replace ? "replaceState" : "pushState";
+                window.history[method]({ route: routeKey }, "", targetPath);
+            }
+        } else {
+            const targetHash = routeKey === "home" ? "" : `#${routeKey}`;
+            if (window.location.hash !== targetHash) {
+                window.location.hash = targetHash;
+            }
+        }
+    }
+
+    window.getActiveViewRoute = getActiveViewRoute;
+    window.updateBrowserRouteUrl = updateBrowserRouteUrl;
+
+    function resolveRouteFromLocation() {
+        const hash = (window.location.hash || "").replace(/^#/, "").trim().toLowerCase();
+        if (hash && SPA_ROUTE_MAP[hash]) {
+            return hash;
+        }
+        if (isHttpOrigin()) {
+            const pathSlug = (window.location.pathname || "/").replace(/^\/+|\/+$/g, "").toLowerCase();
+            if (pathSlug && SPA_ROUTE_MAP[pathSlug]) {
+                return pathSlug;
+            }
+        }
+        return "home";
+    }
+
+    function activateRoute(routeKey, options = {}) {
+        const normalized = SPA_ROUTE_MAP[routeKey] ? routeKey : "home";
+
+        if (normalized === "impact") {
+            if (typeof openImpactShowcase === "function") {
+                openImpactShowcase({ skipUrl: true });
+            }
+            if (!options.skipUrl) {
+                updateBrowserRouteUrl("impact", { replace: options.replace });
+            }
+            return;
+        }
+
+        // Ensure Impact modal is closed when navigating to a regular view
+        const impactModalEl = document.getElementById("impact-showcase-modal");
+        if (impactModalEl && impactModalEl.classList.contains("active")) {
+            impactModalEl.classList.remove("active");
+        }
+
+        const targetView = normalized === "committee-benefits" ? "committee" : normalized;
+        const navItem = document.querySelector(`.nav-item[data-view="${targetView}"]`);
+        const targetTheme = navItem ? navItem.getAttribute("data-theme") : "light";
+
+        navItems.forEach(i => i.classList.remove("active"));
+        if (navItem) navItem.classList.add("active");
+
+        viewPanels.forEach(p => p.classList.remove("active"));
+        const targetPanel = document.getElementById(`view-${targetView}`);
+        if (targetPanel) {
+            targetPanel.classList.add("active");
+            if (viewport) viewport.scrollTop = 0;
+        }
+
+        document.body.className = `theme-${targetTheme}`;
+
+        if (targetView === "home") morphStageToShape("sphere");
+        else if (targetView === "immersion") morphStageToShape("sphere");
+        else if (targetView === "booth") morphStageToShape("soundwave");
+        else if (targetView === "gallery") morphStageToShape("sphere");
+        else if (targetView === "streak") morphStageToShape("ladder");
+        else if (targetView === "matchmaker") morphStageToShape("constellation");
+        else if (targetView === "announcements") morphStageToShape("sphere");
+        else if (targetView === "committee") {
+            morphStageToShape("sphere");
+            if (typeof showCommitteeBenefitsPage === "function") {
+                showCommitteeBenefitsPage(normalized === "committee-benefits", { skipUrl: true });
+            }
+        }
+        else if (targetView === "startup") morphStageToShape("rocket");
+        else if (targetView === "nutrients") morphStageToShape("constellation");
+
+        if (!options.skipUrl) {
+            updateBrowserRouteUrl(normalized, { replace: options.replace });
+        }
+    }
+
     // Smooth navigation viewport swap
     navItems.forEach(item => {
         item.addEventListener("click", function(e) {
             e.preventDefault();
             const targetView = this.getAttribute("data-view");
-            const targetTheme = this.getAttribute("data-theme");
-            
-            if (targetView === "impact") {
-                if (typeof openImpactShowcase === "function") openImpactShowcase();
-                return;
-            }
-            
-            navItems.forEach(i => i.classList.remove("active"));
-            this.classList.add("active");
-            
-            viewPanels.forEach(p => p.classList.remove("active"));
-            const targetPanel = document.getElementById(`view-${targetView}`);
-            if (targetPanel) {
-                targetPanel.classList.add("active");
-                if (viewport) viewport.scrollTop = 0; // Reset scroll container position
-            }
-            
-            document.body.className = `theme-${targetTheme}`;
-            
-            // Adjust 3D Particle morph shape
-            if (targetView === "home") morphStageToShape("sphere");
-            else if (targetView === "immersion") morphStageToShape("sphere");
-            else if (targetView === "booth") morphStageToShape("soundwave");
-            else if (targetView === "gallery") morphStageToShape("sphere");
-            else if (targetView === "streak") morphStageToShape("ladder");
-            else if (targetView === "matchmaker") morphStageToShape("constellation");
-            else if (targetView === "announcements") morphStageToShape("sphere");
-            else if (targetView === "committee") {
-                morphStageToShape("sphere");
-                if (typeof showCommitteeBenefitsPage === "function") showCommitteeBenefitsPage(false);
-            }
-            else if (targetView === "startup") morphStageToShape("rocket");
-            else if (targetView === "nutrients") morphStageToShape("constellation");
-            
+            activateRoute(targetView);
+
             // Close mobile sidebar drawer after tapping a view
             if (window.innerWidth <= 1024) {
                 closeMobileSidebar();
@@ -7391,6 +7488,25 @@ function initDashboardNavigation() {
 
             playClickSound();
         });
+    });
+
+    // Apply initial route on page load (Deep Linking)
+    const initialRoute = resolveRouteFromLocation();
+    if (initialRoute !== "home") {
+        activateRoute(initialRoute, { skipUrl: true });
+    }
+
+    // Support Browser Back / Forward buttons
+    window.addEventListener("popstate", () => {
+        const route = resolveRouteFromLocation();
+        activateRoute(route, { skipUrl: true });
+    });
+
+    window.addEventListener("hashchange", () => {
+        const hash = (window.location.hash || "").replace(/^#/, "").trim().toLowerCase();
+        if (hash && SPA_ROUTE_MAP[hash]) {
+            activateRoute(hash, { skipUrl: true });
+        }
     });
     
     // Support intra-view link button jumps
